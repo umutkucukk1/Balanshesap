@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+<html lang="tr" style="background:#0d0d0d;color-scheme:dark;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Fan Balans</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#0d0d0d;color:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;min-height:100vh;color-scheme:dark;}
+.wrap{max-width:620px;margin:0 auto;padding:20px 14px 80px;}
+
+h1{font-size:26px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:4px;}
+h1 span{color:#ff5533;}
+.subtitle{font-size:12px;color:#555;margin-bottom:20px;font-family:monospace;}
+
+/* ====== SEKME ÇUBUĞU ====== */
+.tab-bar{display:flex;gap:0;margin-bottom:20px;border:1px solid #2a2a2a;border-radius:8px;overflow:hidden;background:#111;}
+.tab-btn{flex:1;padding:12px 6px;font-size:12px;font-family:monospace;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;background:transparent;color:#555;border:none;cursor:pointer;transition:all 0.15s;position:relative;-webkit-appearance:none;}
+.tab-btn.active{background:#ff5533;color:#fff;}
+.tab-btn.has-result{color:#4488ff;}
+.tab-btn.has-result.active{background:#ff5533;color:#fff;}
+.tab-btn .tab-dot{width:6px;height:6px;border-radius:50%;background:#00cc66;display:inline-block;margin-left:4px;vertical-align:middle;}
+.tab-btn .tab-dot.hidden{display:none;}
+.tab-add{flex:0 0 44px;font-size:20px;color:#444;background:transparent;border:none;cursor:pointer;-webkit-appearance:none;}
+.tab-add:hover{color:#fff;}
+
+/* ====== KART ====== */
+.card{background:#141414;border:1px solid #2a2a2a;border-left:4px solid #4488ff;border-radius:4px;padding:18px 14px;margin-bottom:14px;}
+.card-label{font-size:11px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:monospace;}
+.card-title{font-size:19px;font-weight:700;color:#fff;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid #2a2a2a;}
+.f2-badge{display:inline-block;background:#1a2a4a;color:#4488ff;border:1px solid #4488ff;font-size:11px;font-family:monospace;padding:2px 7px;margin-left:8px;vertical-align:middle;border-radius:2px;}
+
+/* ====== INPUT ====== */
+.input-group{margin-bottom:16px;}
+.input-label{display:flex;align-items:center;gap:8px;font-size:12px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:6px;}
+.color-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+input{width:100%;height:54px;padding:0 14px;font-size:21px;font-family:monospace;font-weight:500;color:#fff;background-color:#0a0a0a;border:2px solid #444;border-radius:6px;outline:none;-webkit-appearance:none;appearance:none;display:block;-webkit-text-fill-color:#fff;box-shadow:inset 0 0 0 9999px #0a0a0a;caret-color:#4488ff;}
+input:focus{border-color:#4488ff;box-shadow:inset 0 0 0 9999px #111;-webkit-text-fill-color:#fff;}
+input::placeholder{color:#444;-webkit-text-fill-color:#444;}
+input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0px 9999px #0a0a0a inset!important;-webkit-text-fill-color:#fff!important;}
+.input-unit{font-size:11px;color:#555;font-family:monospace;margin-top:3px;}
+.hint{background:#1a1500;border-left:3px solid #ffaa00;padding:11px 13px;font-size:13px;color:#aaa;line-height:1.6;margin-top:4px;border-radius:0 4px 4px 0;}
+.hint strong{color:#eee;}
+
+/* ====== BUTONLAR ====== */
+.calc-button{display:block;width:100%;height:62px;margin-top:14px;background-color:#ff5533;color:#fff;border:none;border-radius:6px;font-size:19px;font-weight:800;letter-spacing:3px;text-transform:uppercase;cursor:pointer;-webkit-appearance:none;appearance:none;-webkit-text-fill-color:#fff;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;}
+.pdf-button{display:block;width:100%;height:52px;margin-top:10px;background-color:#1a3a1a;color:#00cc66;border:1.5px solid #00cc66;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;-webkit-appearance:none;appearance:none;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;}
+.reset-btn{display:block;width:100%;height:50px;margin-top:10px;background:transparent;color:#555;border:1px solid #2a2a2a;border-radius:6px;font-size:13px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;cursor:pointer;-webkit-appearance:none;appearance:none;}
+
+/* ====== SONUÇ ====== */
+.result-box{display:none;margin-top:18px;}
+.result-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.result-card{border-radius:6px;padding:14px;text-align:center;}
+.result-card.blue{background:#2244aa;}
+.result-card.dark{background:#1a1a1a;border:1px solid #2a2a2a;}
+.rc-label{font-size:10px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:5px;}
+.rc-val{font-size:30px;font-weight:800;color:#fff;line-height:1;}
+.rc-unit{font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;}
+
+.info-rows{margin-bottom:14px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;margin-bottom:5px;font-family:monospace;}
+.info-row .lbl{font-size:12px;color:#777;}
+.info-row .val{font-size:13px;color:#eee;font-weight:600;}
+.val.ok{color:#00cc66;}.val.warn{color:#ffaa00;}.val.bad{color:#ff5533;}
+
+.iso-banner{padding:11px 13px;border-radius:4px;margin-bottom:14px;font-family:monospace;font-size:12px;line-height:1.6;}
+.iso-banner.ok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;}
+.iso-banner.warn{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;}
+.iso-banner.bad{background:rgba(255,85,51,0.1);border:1.5px solid #ff5533;color:#ff5533;}
+
+.speed-warn{background:rgba(255,85,51,0.08);border:1.5px solid #ff5533;color:#ff5533;padding:11px 13px;border-radius:4px;margin-bottom:14px;font-size:12px;font-family:monospace;line-height:1.6;}
+.speed-ok{background:rgba(0,204,102,0.08);border:1.5px solid #00cc66;color:#00cc66;padding:11px 13px;border-radius:4px;margin-bottom:14px;font-size:12px;font-family:monospace;line-height:1.6;}
+.second-run{background:#181818;border:1px solid #2a2a2a;border-left:4px solid #ffaa00;padding:13px 14px;border-radius:0 4px 4px 0;margin-bottom:14px;font-size:13px;color:#bbb;line-height:1.7;}
+.second-run strong{color:#ffaa00;}
+.status-ok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;padding:13px 14px;border-radius:4px;font-size:14px;margin-bottom:14px;}
+.status-warn{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;padding:13px 14px;border-radius:4px;font-size:14px;margin-bottom:14px;}
+
+.blade-table{width:100%;border-collapse:collapse;margin-bottom:14px;}
+.blade-table th{background:#1a1a1a;color:#555;font-size:10px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;text-align:left;border:1px solid #2a2a2a;}
+.blade-table td{padding:9px 10px;font-size:13px;font-family:monospace;color:#bbb;border:1px solid #2a2a2a;}
+.blade-table tr.best td{background:#1a2a1a;color:#00cc66;font-weight:700;}
+
+.guide{background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:14px;margin-bottom:14px;}
+.guide-title{font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#333;margin-bottom:12px;}
+.guide-section-title{font-size:11px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:#4488ff;margin-bottom:9px;margin-top:12px;}
+.guide-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;font-size:15px;color:#ccc;line-height:1.5;}
+.guide-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px;}
+.guide-num.blue{background:#4488ff;}.guide-num.green{background:#00cc66;}
+.highlight-blue{color:#4488ff;font-weight:700;}.highlight-green{color:#00cc66;font-weight:700;}
+
+.dial-wrap{display:flex;flex-direction:column;align-items:center;gap:7px;margin:14px 0;}
+.dial-label{font-size:11px;font-family:monospace;color:#4488ff;letter-spacing:1px;text-transform:uppercase;}
+.section-divider{font-size:10px;font-family:monospace;color:#333;letter-spacing:2px;text-transform:uppercase;margin:18px 0 7px;padding-bottom:5px;border-bottom:1px solid #1a1a1a;}
+
+/* ====== STEPS BOX ====== */
+.steps-box{background:#1a1a1a;border:1px solid #2a2a2a;border-left:4px solid #4488ff;padding:14px;margin-bottom:20px;border-radius:4px;}
+.steps-box h2{font-size:10px;color:#444;letter-spacing:2px;text-transform:uppercase;margin-bottom:11px;}
+.step-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;font-size:14px;color:#bbb;}
+.step-dot{width:21px;height:21px;background:#4488ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px;}
+.step-dot.green{background:#00cc66;}
+
+/* ====== FORMÜL KUTUSU ====== */
+.formula-box{background:#0a0f1a;border:1px solid #1a2a4a;border-left:4px solid #4488ff;border-radius:4px;padding:12px 14px;margin-bottom:14px;font-family:monospace;font-size:11px;color:#4488ff;line-height:2;}
+.formula-box .f-title{font-size:10px;color:#2255aa;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.formula-box .f-line{color:#6699cc;}
+.formula-box .f-line span{color:#88bbff;font-weight:700;}
+
+footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:11px;font-family:monospace;color:#333;}
+
+/* ====== DÖNÜŞ YÖNÜ SEÇİCİ ====== */
+.dir-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.dir-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px;background:#111;border:2px solid #333;border-radius:8px;cursor:pointer;-webkit-appearance:none;appearance:none;gap:3px;transition:all 0.15s;}
+.dir-btn.active{border-color:#ff5533;background:#1a0f0a;}
+.dir-icon{font-size:26px;color:#555;line-height:1;}
+.dir-btn.active .dir-icon{color:#ff5533;}
+.dir-text{font-size:12px;font-family:monospace;font-weight:700;color:#666;letter-spacing:0.5px;}
+.dir-btn.active .dir-text{color:#ff5533;}
+.dir-sub{font-size:10px;font-family:monospace;color:#444;letter-spacing:1px;}
+.dir-btn.active .dir-sub{color:#cc4422;}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+<h1>Tek Düzlem <span>Fan Balans</span></h1>
+<div class="subtitle">// Fan Tarafı (F2) — 3 Nokta Yöntemi (Thearle)</div>
+
+<!-- SEKME ÇUBUĞU -->
+
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" id="tab0" onclick="switchTab(0)">
+    1. Çalışma <span class="tab-dot hidden" id="dot0"></span>
+  </button>
+  <button class="tab-add" id="addTabBtn" onclick="addTab()" title="Yeni balans çalışması ekle">＋</button>
+</div>
+
+<!-- FORM ALANI -->
+
+<div id="formArea">
+
+  <div class="steps-box">
+    <h2>// Uygulama Sırası</h2>
+    <div class="step-row"><div class="step-dot">1</div><div>Ağırlıksız 1. ölçümü al (V0)</div></div>
+    <div class="step-row"><div class="step-dot">2</div><div>0° → 120° → 240° konumlarında 3 tur ölçüm al</div></div>
+    <div class="step-row"><div class="step-dot green">✓</div><div>Değerleri gir → Hesapla → En yakın kanada ağırlığı tak</div></div>
+  </div>
+
+  <!-- ÖLÇÜMLER -->
+
+  <div class="card">
+    <div class="card-label">Fan Tarafı Ölçümleri</div>
+    <div class="card-title">4 Tur Titreşim Ölçümü <span class="f2-badge">F2</span></div>
+    <div class="input-group">
+      <div class="input-label"><span class="color-dot" style="background:#888"></span>1. Ölçüm — Ağırlıksız (V0)</div>
+      <input id="v0" type="text" inputmode="decimal" placeholder="örn: 25.30">
+      <div class="input-unit">mm/s — 0 to peak — 1X bileşeni</div>
+    </div>
+    <div class="input-group">
+      <div class="input-label"><span class="color-dot" style="background:#ff5533"></span>2. Ölçüm — Deneme ağırlığı 0°</div>
+      <input id="vA" type="text" inputmode="decimal" placeholder="örn: 14.50">
+      <div class="input-unit">mm/s — 0 to peak</div>
+    </div>
+    <div class="input-group">
+      <div class="input-label"><span class="color-dot" style="background:#ffaa00"></span>3. Ölçüm — Deneme ağırlığı 120°</div>
+      <input id="vB" type="text" inputmode="decimal" placeholder="örn: 8.20">
+      <div class="input-unit">mm/s — 0 to peak</div>
+    </div>
+    <div class="input-group">
+      <div class="input-label"><span class="color-dot" style="background:#4488ff"></span>4. Ölçüm — Deneme ağırlığı 240°</div>
+      <input id="vC" type="text" inputmode="decimal" placeholder="örn: 30.10">
+      <div class="input-unit">mm/s — 0 to peak</div>
+    </div>
+    <div class="hint"><strong>Ölçüm noktası:</strong> Fan yatak gövdesinden radyal yönde. Her turda deneme ağırlığını tamamen söküp sonraki konuma takın.</div>
+  </div>
+
+  <!-- EKİPMAN -->
+
+  <div class="card">
+    <div class="card-label">Deneme Ağırlığı &amp; Ekipman</div>
+    <div class="card-title">Fan Bilgileri <span class="f2-badge">F2</span></div>
+    <div class="input-group">
+      <div class="input-label">Deneme Ağırlığı (W_t)</div>
+      <input id="wt" type="text" inputmode="decimal" placeholder="örn: 105.3">
+      <div class="input-unit">gram</div>
+    </div>
+    <div class="input-group">
+      <div class="input-label">Fan Ağırlığı</div>
+      <input id="fanM" type="text" inputmode="decimal" placeholder="örn: 25">
+      <div class="input-unit">kg</div>
+    </div>
+    <div class="input-group">
+      <div class="input-label">Fan Yarıçapı</div>
+      <input id="fanR" type="text" inputmode="decimal" placeholder="örn: 200">
+      <div class="input-unit">mm</div>
+    </div>
+    <div class="input-group">
+      <div class="input-label">Devir (RPM)</div>
+      <input id="rpm" type="text" inputmode="numeric" placeholder="örn: 1480">
+      <div class="input-unit">rpm</div>
+    </div>
+    <div class="input-group">
+      <div class="input-label">Fan Kanat Sayısı</div>
+      <input id="blades" type="text" inputmode="numeric" placeholder="örn: 8">
+      <div class="input-unit">adet — opsiyonel, en yakın kanat tespiti için</div>
+    </div>
+
+```
+<div class="input-group">
+  <div class="input-label">Fan Dönüş Yönü</div>
+  <div class="dir-selector">
+    <button class="dir-btn active" id="dirCW" onclick="setDir('CW')">
+      <span class="dir-icon">↻</span>
+      <span class="dir-text">Saat Yönü</span>
+      <span class="dir-sub">CW</span>
+    </button>
+    <button class="dir-btn" id="dirCCW" onclick="setDir('CCW')">
+      <span class="dir-icon">↺</span>
+      <span class="dir-text">Saat Yönü Tersi</span>
+      <span class="dir-sub">CCW</span>
+    </button>
+  </div>
+  <div class="input-unit">Açılar dönüş yönünün tersine işaretlenir</div>
+</div>
+```
+
+  </div>
+
+<button class="calc-button" id="btn">⟶ HESAPLA</button>
+
+  <!-- SONUÇ KUTUSU -->
+
+  <div class="result-box" id="resultBox">
+    <div class="card" style="border-left-color:#4488ff;">
+      <div class="card-label">Sonuç</div>
+      <div class="card-title">Düzeltme Ağırlığı &amp; Konum</div>
+
+```
+  <div class="result-cards">
+    <div class="result-card blue">
+      <div class="rc-label">Düzeltme Ağırlığı</div>
+      <div class="rc-val" id="resW">—</div>
+      <div class="rc-unit">gram</div>
+    </div>
+    <div class="result-card dark">
+      <div class="rc-label">Konum</div>
+      <div class="rc-val" id="resA">—</div>
+      <div class="rc-unit">derece (0°'den)</div>
+    </div>
+  </div>
+
+  <!-- Ara değerler kutusu -->
+  <div class="formula-box" id="calcStepsBox">
+    <div class="f-title">// Ara Hesaplama Değerleri</div>
+    <div class="f-line" id="fLine1"></div>
+    <div class="f-line" id="fLine2"></div>
+    <div class="f-line" id="fLine3"></div>
+    <div class="f-line" id="fLine4"></div>
+    <div class="f-line" id="fLine5"></div>
+    <div class="f-line" id="fLine6"></div>
+    <div class="f-line" id="fLine7"></div>
+  </div>
+
+  <div class="info-rows">
+    <div class="info-row"><span class="lbl">Dengesizlik (U)</span><span class="val" id="resU">—</span></div>
+    <div class="info-row"><span class="lbl">Özgül dengesizlik (e)</span><span class="val" id="resE">—</span></div>
+    <div class="info-row"><span class="lbl">Hedef titreşim</span><span class="val" id="resTgt">—</span></div>
+    <div class="info-row"><span class="lbl">ISO Kalite Sınıfı (G)</span><span class="val" id="resG">—</span></div>
+    <div class="info-row"><span class="lbl">Çalışma frekansı</span><span class="val" id="resHz">—</span></div>
+  </div>
+
+  <div id="isoBanner" class="iso-banner ok">—</div>
+  <div id="speedDiv" class="speed-ok">—</div>
+  <div id="secondRunDiv" class="second-run">—</div>
+
+  <!-- Kadran -->
+  <div class="dial-wrap">
+    <svg width="220" height="236" viewBox="-10 -20 220 236">
+      <circle cx="100" cy="100" r="90" fill="#111" stroke="#222" stroke-width="1.5"/>
+      <g id="dialTicks"></g>
+      <circle cx="100" cy="100" r="70" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="100" cy="100" r="45" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+      <g id="bladeMarkers"></g>
+      <circle cx="100" cy="12" r="5" fill="#ff5533"/>
+      <text x="100" y="-8" text-anchor="middle" fill="#ff5533" font-size="12" font-family="monospace" font-weight="bold">0°</text>
+      <circle cx="100" cy="100" r="8" fill="#333"/>
+      <line id="dialArrow" x1="100" y1="100" x2="100" y2="22" stroke="#4488ff" stroke-width="3" stroke-linecap="round" style="display:none"/>
+      <circle id="dialDot" cx="100" cy="18" r="7" fill="#4488ff" style="display:none"/>
+      <text id="dialLbl" x="100" y="148" text-anchor="middle" fill="#88ccff" font-family="monospace" font-size="13" font-weight="bold" style="display:none"></text>
+    </svg>
+    <div class="dial-label" id="dialFooter">F2 &nbsp;|&nbsp; <span style="color:#555">● Kanat konumları</span></div>
+  </div>
+
+  <div class="section-divider">// En Yakın Kanat Analizi</div>
+  <table class="blade-table">
+    <thead><tr><th>Kanat No</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead>
+    <tbody id="bladeTableBody"></tbody>
+  </table>
+
+  <div id="statusDiv" class="status-ok">—</div>
+
+  <div class="guide">
+    <div class="guide-title">// Yerleştirme Talimatı</div>
+    <div id="guideContent"></div>
+  </div>
+
+  <button class="pdf-button" id="pdfBtn" onclick="downloadPDF()">⬇ PDF İndir</button>
+  <button class="reset-btn" id="resetBtn">↺ Bu Çalışmayı Temizle</button>
+</div>
+```
+
+  </div>
+
+</div><!-- /formArea -->
+
+<footer>Tek Düzlem Fan Balans — 3 Nokta Yöntemi (Thearle) — 0-to-Peak — v2.1</footer>
+</div>
+
+<script>
+// ============================================================
+// DÖNÜŞ YÖNÜ
+// ============================================================
+var currentRotation = 'CW';
+
+window.setDir = function(dir) {
+  currentRotation = dir;
+  var cw  = document.getElementById('dirCW');
+  var ccw = document.getElementById('dirCCW');
+  if (!cw || !ccw) return;
+  if (dir === 'CW') {
+    cw.className  = 'dir-btn active';
+    ccw.className = 'dir-btn';
+  } else {
+    cw.className  = 'dir-btn';
+    ccw.className = 'dir-btn active';
+  }
+};
+
+// ============================================================
+// VERİ YAPISI
+// ============================================================
+var MAX_TABS = 5;
+var sessions = [newSession(1)];
+var activeTab = 0;
+
+function newSession(num) {
+  return {
+    num: num,
+    inputs: { v0:'', vA:'', vB:'', vC:'', wt:'', fanM:'', fanR:'', rpm:'', blades:'', rotation:'CW' },
+    result: null
+  };
+}
+
+var INPUT_IDS = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades'];
+
+// ============================================================
+// SEKME YÖNETİMİ
+// ============================================================
+function saveCurrentInputs() {
+  var s = sessions[activeTab];
+  for (var i = 0; i < INPUT_IDS.length; i++) {
+    var el = document.getElementById(INPUT_IDS[i]);
+    if (el) s.inputs[INPUT_IDS[i]] = el.value;
+  }
+  s.inputs.rotation = currentRotation;
+}
+
+function loadSessionToForm(idx) {
+  var s = sessions[idx];
+  for (var i = 0; i < INPUT_IDS.length; i++) {
+    var el = document.getElementById(INPUT_IDS[i]);
+    if (el) el.value = s.inputs[INPUT_IDS[i]] || '';
+  }
+  setDir(s.inputs.rotation || 'CW');
+  if (s.result) {
+    renderResult(s.result);
+    document.getElementById('resultBox').style.display = 'block';
+  } else {
+    document.getElementById('resultBox').style.display = 'none';
+  }
+}
+
+function switchTab(idx) {
+  saveCurrentInputs();
+  activeTab = idx;
+  for (var i = 0; i < sessions.length; i++) {
+    var btn = document.getElementById('tab' + i);
+    if (!btn) continue;
+    btn.className = 'tab-btn' + (sessions[i].result ? ' has-result' : '') + (i === activeTab ? ' active' : '');
+  }
+  loadSessionToForm(idx);
+  window.scrollTo(0, 0);
+}
+
+function addTab() {
+  if (sessions.length >= MAX_TABS) {
+    alert('En fazla ' + MAX_TABS + ' balans çalışması açılabilir.'); return;
+  }
+  saveCurrentInputs();
+  var newNum = sessions.length + 1;
+  sessions.push(newSession(newNum));
+  rebuildTabBar();
+  switchTab(sessions.length - 1);
+}
+
+function rebuildTabBar() {
+  var bar = document.getElementById('tabBar');
+  bar.innerHTML = '';
+  for (var i = 0; i < sessions.length; i++) {
+    var btn = document.createElement('button');
+    btn.className = 'tab-btn' + (sessions[i].result ? ' has-result' : '') + (i === activeTab ? ' active' : '');
+    btn.id = 'tab' + i;
+    btn.setAttribute('data-idx', i);
+    btn.innerHTML = (i + 1) + '. Çalışma <span class="tab-dot' + (sessions[i].result ? '' : ' hidden') + '" id="dot' + i + '"></span>';
+    (function(idx){ btn.addEventListener('click', function(){ switchTab(idx); }); })(i);
+    bar.appendChild(btn);
+  }
+  if (sessions.length < MAX_TABS) {
+    var addBtn = document.createElement('button');
+    addBtn.className = 'tab-add';
+    addBtn.id = 'addTabBtn';
+    addBtn.textContent = '＋';
+    addBtn.title = 'Yeni balans çalışması ekle';
+    addBtn.addEventListener('click', addTab);
+    bar.appendChild(addBtn);
+  }
+}
+
+// ============================================================
+// KADRAN ÇIZGILERI
+// ============================================================
+(function() {
+  var g = document.getElementById('dialTicks');
+  for (var i = 0; i < 36; i++) {
+    var rad = (i * 10 - 90) * Math.PI / 180;
+    var isMajor = (i % 3 === 0);
+    var r1 = 90, r2 = isMajor ? 80 : 85;
+    var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', 100 + r1*Math.cos(rad)); line.setAttribute('y1', 100 + r1*Math.sin(rad));
+    line.setAttribute('x2', 100 + r2*Math.cos(rad)); line.setAttribute('y2', 100 + r2*Math.sin(rad));
+    line.setAttribute('stroke', isMajor ? '#444' : '#222');
+    line.setAttribute('stroke-width', isMajor ? '1.5' : '0.8');
+    g.appendChild(line);
+  }
+})();
+
+// ============================================================
+// YARDIMCILAR
+// ============================================================
+function getVal(id) {
+  var el = document.getElementById(id);
+  if (!el) return NaN;
+  var s = el.value.replace(',','.').trim();
+  return s === '' ? NaN : parseFloat(s);
+}
+
+function isoFromG(G) {
+  if (G < 1)   return {cls:'G1',   desc:'Hassas balans — Türbin seviyesi',                  cat:'ok'};
+  if (G < 2.5) return {cls:'G2.5', desc:'İyi balans — Elektrik motoru seviyesi',            cat:'ok'};
+  if (G < 6.3) return {cls:'G6.3', desc:'Normal — Endüstriyel fan için kabul edilebilir',   cat:'ok'};
+  if (G < 16)  return {cls:'G16',  desc:'Kaba balans — İyileştirme önerilir',               cat:'warn'};
+  if (G < 40)  return {cls:'G40',  desc:'Çok kaba — Ek balans turu gerekli',                cat:'warn'};
+  return        {cls:'G40+', desc:'Kritik dengesizlik — Acil müdahale gerekli',             cat:'bad'};
+}
+
+// ============================================================
+// HESAPLAMA — DÜZELTİLMİŞ FORMÜLLER
+// ============================================================
+function doCalculate() {
+  var v0   = getVal('v0');
+  var vA   = getVal('vA');
+  var vB   = getVal('vB');
+  var vC   = getVal('vC');
+  var wt   = getVal('wt');
+  var fanM = getVal('fanM');
+  var fanR = getVal('fanR');
+  var rpm  = getVal('rpm');
+  var nb   = getVal('blades');
+
+  var names  = ['1. Ölçüm (V0)','2. Ölçüm (VA)','3. Ölçüm (VB)','4. Ölçüm (VC)','Deneme Ağırlığı','Fan Ağırlığı','Fan Yarıçapı','RPM'];
+  var values = [v0, vA, vB, vC, wt, fanM, fanR, rpm];
+  var miss = [];
+  for (var i = 0; i < values.length; i++) { if (isNaN(values[i]) || values[i] <= 0) miss.push(names[i]); }
+  if (miss.length > 0) { alert('Eksik veya geçersiz alan:\n' + miss.join('\n')); return; }
+
+  var bladeCount = (!isNaN(nb) && nb >= 2) ? Math.round(nb) : 0;
+
+  // -------------------------------------------------------
+  // ADIM 1 — Fark kareler (Thearle)
+  // -------------------------------------------------------
+  var dA = vA*vA - v0*v0;
+  var dB = vB*vB - v0*v0;
+  var dC = vC*vC - v0*v0;
+
+  // -------------------------------------------------------
+  // ADIM 2 — Vektör bileşenleri
+  // -------------------------------------------------------
+  var x = (2*dA - dB - dC) / 3.0;
+  var y = (dB - dC) / Math.sqrt(3.0);
+
+  // -------------------------------------------------------
+  // ADIM 3 — Düzeltme açısı
+  // DÜZELTME: atan2(y,x) — /2 OLMADAN, doğrudan derece
+  // -------------------------------------------------------
+  var thetaDeg = Math.atan2(y, x) * 180.0 / Math.PI;
+  if (thetaDeg < 0) thetaDeg += 360.0;
+  var corrAngle = (thetaDeg + 180.0) % 360.0;
+
+  // -------------------------------------------------------
+  // ADIM 4 — Düzeltme ağırlığı
+  // DÜZELTME: wCorr = (2 × V0² × Wt) / unbalMag
+  // -------------------------------------------------------
+  var unbalMag = Math.sqrt(x*x + y*y);
+  if (unbalMag < 0.0001) unbalMag = 0.0001; // sıfır bölme koruması
+  var wCorr = (2.0 * v0 * v0 * wt) / unbalMag;
+
+  // -------------------------------------------------------
+  // ADIM 5 — Türetilmiş değerler
+  // -------------------------------------------------------
+  var U      = wCorr * fanR;                        // g·mm
+  var e      = U / fanM;                            // μm  (fanM kg, fanR mm → e μm)
+  var target = v0 * 0.15;                           // mm/s hedef
+  var omega  = rpm * 2.0 * Math.PI / 60.0;         // rad/s
+  var G      = (e / 1000.0) * omega;               // mm/s → ISO G
+  var freqHz = rpm / 60.0;
+  var iso    = isoFromG(G);
+  var bpf    = bladeCount > 0 ? freqHz * bladeCount : 0;
+
+  // -------------------------------------------------------
+  // ADIM 6 — En yakın kanat listesi
+  // -------------------------------------------------------
+  var bladeList = [];
+  if (bladeCount > 0) {
+    var bStep = 360.0 / bladeCount;
+    for (var b = 0; b < bladeCount; b++) {
+      var bDeg = b * bStep;
+      var diff = Math.abs(((corrAngle - bDeg + 540.0) % 360.0) - 180.0);
+      bladeList.push({num: b+1, deg: bDeg, diff: diff});
+    }
+    bladeList.sort(function(a, b){ return a.diff - b.diff; });
+  }
+  var nearLabel = bladeList.length > 0
+    ? 'Kanat ' + bladeList[0].num + ' (' + bladeList[0].deg.toFixed(1) + '°)'
+    : '—';
+
+  // Sonuç objesi
+  var res = {
+    rotation: currentRotation,
+    v0:v0, vA:vA, vB:vB, vC:vC, wt:wt, fanM:fanM, fanR:fanR, rpm:rpm, bladeCount:bladeCount,
+    dA:dA, dB:dB, dC:dC, x:x, y:y, thetaDeg:thetaDeg,
+    corrAngle:corrAngle, unbalMag:unbalMag, wCorr:wCorr,
+    U:U, e:e, target:target, G:G, freqHz:freqHz, bpf:bpf,
+    iso:iso, bladeList:bladeList, nearLabel:nearLabel
+  };
+
+  saveCurrentInputs();
+  sessions[activeTab].result = res;
+  rebuildTabBar();
+
+  renderResult(res);
+  document.getElementById('resultBox').style.display = 'block';
+  document.getElementById('resultBox').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ============================================================
+// SONUÇ RENDER
+// ============================================================
+function renderResult(res) {
+  document.getElementById('resW').textContent   = res.wCorr.toFixed(1);
+  document.getElementById('resA').textContent   = res.corrAngle.toFixed(1) + '°';
+  document.getElementById('resU').textContent   = res.U.toFixed(0) + ' g·mm';
+  document.getElementById('resE').textContent   = res.e.toFixed(1) + ' μm';
+  document.getElementById('resTgt').textContent = '< ' + res.target.toFixed(2) + ' mm/s';
+  document.getElementById('resG').textContent   = 'G ' + res.G.toFixed(1);
+  document.getElementById('resHz').textContent  = res.freqHz.toFixed(2) + ' Hz  (' + res.rpm + ' RPM)';
+
+  document.getElementById('resE').className = 'val ' + (res.e < 150 ? 'ok' : res.e < 400 ? 'warn' : 'bad');
+  document.getElementById('resG').className = 'val ' + (res.G < 6.3 ? 'ok' : res.G < 16 ? 'warn' : 'bad');
+
+  // Ara değerler kutusu
+  document.getElementById('fLine1').innerHTML = 'dA = VA²−V0² = ' + res.vA.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = <span>' + res.dA.toFixed(4) + '</span>';
+  document.getElementById('fLine2').innerHTML = 'dB = VB²−V0² = ' + res.vB.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = <span>' + res.dB.toFixed(4) + '</span>';
+  document.getElementById('fLine3').innerHTML = 'dC = VC²−V0² = ' + res.vC.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = <span>' + res.dC.toFixed(4) + '</span>';
+  document.getElementById('fLine4').innerHTML = 'x  = (2·dA−dB−dC)/3 = <span>' + res.x.toFixed(4) + '</span>';
+  document.getElementById('fLine5').innerHTML = 'y  = (dB−dC)/√3    = <span>' + res.y.toFixed(4) + '</span>';
+  document.getElementById('fLine6').innerHTML = 'θ  = atan2(y,x)     = <span>' + res.thetaDeg.toFixed(2) + '°</span>  →  +180° = ' + res.corrAngle.toFixed(2) + '°';
+  document.getElementById('fLine7').innerHTML = 'Wdüz = 2·V0²·Wt / |UV| = 2·' + res.v0.toFixed(2) + '²·' + res.wt.toFixed(1) + ' / ' + res.unbalMag.toFixed(4) + ' = <span>' + res.wCorr.toFixed(1) + ' g</span>';
+
+  // ISO banner
+  var isoBanner = document.getElementById('isoBanner');
+  isoBanner.className = 'iso-banner ' + res.iso.cat;
+  isoBanner.textContent = 'ISO 1940-1  |  G = ' + res.G.toFixed(1) + ' mm/s  →  ' + res.iso.cls + '  |  ' + res.iso.desc;
+
+  // Kritik devir
+  var speedDiv = document.getElementById('speedDiv');
+  var critTxt;
+  if (res.rpm < 200) {
+    speedDiv.className = 'speed-warn';
+    critTxt = '⚠ Devir çok düşük (' + res.rpm + ' RPM) — 3-nokta yöntemi düşük devirlerde hassasiyet kaybeder.';
+  } else if (res.rpm > 4000) {
+    speedDiv.className = 'speed-warn';
+    critTxt = '⚠ Yüksek devir (' + res.rpm + ' RPM — ' + res.freqHz.toFixed(1) + ' Hz). Spektrum analizi önerilir.';
+  } else {
+    speedDiv.className = 'speed-ok';
+    critTxt = '✓ Çalışma frekansı: ' + res.freqHz.toFixed(2) + ' Hz';
+    if (res.bpf > 0) critTxt += '  |  BPF: ' + res.bpf.toFixed(1) + ' Hz';
+  }
+  speedDiv.textContent = critTxt;
+
+  // 2. tur tahmini
+  var srDiv = document.getElementById('secondRunDiv');
+  if (res.e > 200 || res.G > 10) {
+    srDiv.innerHTML = '<strong>⚠ 2. Tur Gerekebilir:</strong> Yüksek dengesizlik — ilk turdan sonra tahmini kalan: <strong>' +
+      (res.v0 * 0.20).toFixed(2) + ' mm/s</strong>. Hedef (' + res.target.toFixed(2) + ' mm/s) tutmadıysa yeni sekme açıp 2. tur yapın.';
+  } else {
+    srDiv.innerHTML = '✓ Dengesizlik makul — tek turda hedefe ulaşma olasılığı yüksek.';
+  }
+
+  // -------------------------------------------------------
+  // KADRAN
+  // CW fan → açılar CCW yönünde → svgDeg = -corrAngle - 90
+  // CCW fan → açılar CW yönünde → svgDeg = corrAngle - 90
+  // -------------------------------------------------------
+  var svgDeg = (res.rotation === 'CW')
+    ? (-res.corrAngle - 90.0)
+    : ( res.corrAngle - 90.0);
+  var rad = svgDeg * Math.PI / 180.0;
+  var ax = 100 + 78*Math.cos(rad), ay = 100 + 78*Math.sin(rad);
+
+  document.getElementById('dialArrow').setAttribute('x2', ax);
+  document.getElementById('dialArrow').setAttribute('y2', ay);
+  document.getElementById('dialArrow').style.display = '';
+  document.getElementById('dialDot').setAttribute('cx', 100 + 82*Math.cos(rad));
+  document.getElementById('dialDot').setAttribute('cy', 100 + 82*Math.sin(rad));
+  document.getElementById('dialDot').style.display = '';
+  document.getElementById('dialLbl').style.display = 'none';
+
+  // Açı etiketi — HTML overlay
+  var existingDiv = document.getElementById('dialAngleDiv');
+  if (existingDiv) existingDiv.parentNode.removeChild(existingDiv);
+
+  var dialWrap = document.querySelector('.dial-wrap');
+  if (dialWrap) {
+    var svgEl3 = document.querySelector('#resultBox svg');
+    var svgW = svgEl3 ? svgEl3.getBoundingClientRect().width  : 220;
+    var svgH = svgEl3 ? svgEl3.getBoundingClientRect().height : 236;
+    if (svgW < 10) { svgW = 220; svgH = 236; } // DOM henüz hazır değilse fallback
+    var scaleX = svgW / 220.0;
+    var scaleY = svgH / 236.0;
+    var lblDist = 88;
+    var lblRawX = 100 + lblDist * Math.cos(rad);
+    var lblRawY = 100 + lblDist * Math.sin(rad);
+    var pxX = (lblRawX + 10) * scaleX;
+    var pxY = (lblRawY + 20) * scaleY;
+
+    var angleDiv = document.createElement('div');
+    angleDiv.id = 'dialAngleDiv';
+    angleDiv.textContent = res.corrAngle.toFixed(1) + '°';
+    angleDiv.style.cssText =
+      'position:absolute;left:' + pxX.toFixed(0) + 'px;top:' + pxY.toFixed(0) + 'px;' +
+      'transform:translate(-50%,-50%);background:#050d1a;border:1.5px solid #3377cc;' +
+      'border-radius:5px;padding:3px 8px;font-size:13px;font-weight:bold;font-family:monospace;' +
+      'color:#66aaff;pointer-events:none;white-space:nowrap;z-index:10;';
+    dialWrap.style.position = 'relative';
+    dialWrap.appendChild(angleDiv);
+  }
+
+  // Kanat işaretleri kadrana
+  var bm = document.getElementById('bladeMarkers'); bm.innerHTML = '';
+  if (res.bladeCount > 0) {
+    var bStep = 360.0 / res.bladeCount;
+    for (var b = 0; b < res.bladeCount; b++) {
+      var bSvgDeg = (res.rotation === 'CW')
+        ? (-(b * bStep) - 90.0)
+        : ( b * bStep  - 90.0);
+      var bRad = bSvgDeg * Math.PI / 180.0;
+      var circ = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circ.setAttribute('cx', (100 + 70*Math.cos(bRad)).toFixed(1));
+      circ.setAttribute('cy', (100 + 70*Math.sin(bRad)).toFixed(1));
+      circ.setAttribute('r','4'); circ.setAttribute('fill','#555');
+      bm.appendChild(circ);
+    }
+    if (res.bladeList.length > 0) {
+      var bestK    = res.bladeList[0];
+      var bestKIdx = bestK.num - 1;
+      var bestKStep = 360.0 / res.bladeCount;
+      var bestKSvg  = (res.rotation === 'CW')
+        ? (-(bestKIdx * bestKStep) - 90.0)
+        : ( bestKIdx * bestKStep  - 90.0);
+      var bestBladeRad = bestKSvg * Math.PI / 180.0;
+
+      var bc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      bc.setAttribute('cx', (100 + 70*Math.cos(bestBladeRad)).toFixed(1));
+      bc.setAttribute('cy', (100 + 70*Math.sin(bestBladeRad)).toFixed(1));
+      bc.setAttribute('r','9'); bc.setAttribute('fill','#00cc66');
+      bc.setAttribute('stroke','#004400'); bc.setAttribute('stroke-width','2');
+      bm.appendChild(bc);
+
+      var bLbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+      bLbl.setAttribute('x', (100 + 70*Math.cos(bestBladeRad)).toFixed(1));
+      bLbl.setAttribute('y', (100 + 70*Math.sin(bestBladeRad) + 4).toFixed(1));
+      bLbl.setAttribute('text-anchor','middle');
+      bLbl.setAttribute('fill','#001a00');
+      bLbl.setAttribute('font-size','8');
+      bLbl.setAttribute('font-family','monospace');
+      bLbl.setAttribute('font-weight','bold');
+      bLbl.textContent = 'K' + bestK.num;
+      bm.appendChild(bLbl);
+    }
+  }
+
+  // Kadrana dönüş yönü oku
+  var existingArrow = document.getElementById('rotArrow');
+  if (existingArrow) existingArrow.parentNode.removeChild(existingArrow);
+  var svgEl = document.querySelector('#resultBox svg');
+  if (svgEl) {
+    var rotG = document.createElementNS('http://www.w3.org/2000/svg','g');
+    rotG.setAttribute('id','rotArrow');
+    var r = 98;
+    if (res.rotation === 'CW') {
+      var aStart = (-50 - 90) * Math.PI/180;
+      var aEnd   = ( 50 - 90) * Math.PI/180;
+      var x1 = 100 + r*Math.cos(aStart), y1 = 100 + r*Math.sin(aStart);
+      var x2 = 100 + r*Math.cos(aEnd),   y2 = 100 + r*Math.sin(aEnd);
+      var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d','M '+x1+' '+y1+' A '+r+' '+r+' 0 0 1 '+x2+' '+y2);
+      path.setAttribute('fill','none'); path.setAttribute('stroke','#ff5533');
+      path.setAttribute('stroke-width','2.5'); path.setAttribute('stroke-linecap','round');
+      var hAngle = aEnd + 0.35;
+      var hx = 100 + r*Math.cos(aEnd), hy = 100 + r*Math.sin(aEnd);
+      var h1x = hx - 7*Math.cos(hAngle-0.4), h1y = hy - 7*Math.sin(hAngle-0.4);
+      var h2x = hx - 7*Math.cos(hAngle+0.4), h2y = hy - 7*Math.sin(hAngle+0.4);
+      var arrowHead = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+      arrowHead.setAttribute('points', h1x+','+h1y+' '+hx+','+hy+' '+h2x+','+h2y);
+      arrowHead.setAttribute('fill','none'); arrowHead.setAttribute('stroke','#ff5533');
+      arrowHead.setAttribute('stroke-width','2.5'); arrowHead.setAttribute('stroke-linecap','round');
+      var lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+      lbl.setAttribute('x','170'); lbl.setAttribute('y','52');
+      lbl.setAttribute('text-anchor','middle'); lbl.setAttribute('fill','#ff5533');
+      lbl.setAttribute('font-size','10'); lbl.setAttribute('font-family','monospace');
+      lbl.setAttribute('font-weight','bold');
+      lbl.textContent = 'CCW ↺';
+      rotG.appendChild(path); rotG.appendChild(arrowHead); rotG.appendChild(lbl);
+    } else {
+      var aStart2 = ( 50 - 90) * Math.PI/180;
+      var aEnd2   = (-50 - 90) * Math.PI/180;
+      var x1b = 100 + r*Math.cos(aStart2), y1b = 100 + r*Math.sin(aStart2);
+      var x2b = 100 + r*Math.cos(aEnd2),   y2b = 100 + r*Math.sin(aEnd2);
+      var path2 = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path2.setAttribute('d','M '+x1b+' '+y1b+' A '+r+' '+r+' 0 0 0 '+x2b+' '+y2b);
+      path2.setAttribute('fill','none'); path2.setAttribute('stroke','#4488ff');
+      path2.setAttribute('stroke-width','2.5'); path2.setAttribute('stroke-linecap','round');
+      var hAngle2 = aEnd2 - 0.35;
+      var hxb = 100 + r*Math.cos(aEnd2), hyb = 100 + r*Math.sin(aEnd2);
+      var h1xb = hxb - 7*Math.cos(hAngle2-0.4), h1yb = hyb - 7*Math.sin(hAngle2-0.4);
+      var h2xb = hxb - 7*Math.cos(hAngle2+0.4), h2yb = hyb - 7*Math.sin(hAngle2+0.4);
+      var arrowHead2 = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+      arrowHead2.setAttribute('points', h1xb+','+h1yb+' '+hxb+','+hyb+' '+h2xb+','+h2yb);
+      arrowHead2.setAttribute('fill','none'); arrowHead2.setAttribute('stroke','#4488ff');
+      arrowHead2.setAttribute('stroke-width','2.5'); arrowHead2.setAttribute('stroke-linecap','round');
+      var lbl2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+      lbl2.setAttribute('x','30'); lbl2.setAttribute('y','52');
+      lbl2.setAttribute('text-anchor','middle'); lbl2.setAttribute('fill','#4488ff');
+      lbl2.setAttribute('font-size','10'); lbl2.setAttribute('font-family','monospace');
+      lbl2.setAttribute('font-weight','bold');
+      lbl2.textContent = 'CW ↻';
+      rotG.appendChild(path2); rotG.appendChild(arrowHead2); rotG.appendChild(lbl2);
+    }
+    svgEl.appendChild(rotG);
+  }
+
+  // Kanat tablosu
+  var tbody = document.getElementById('bladeTableBody'); tbody.innerHTML = '';
+  if (res.bladeList.length > 0) {
+    var top3 = res.bladeList.slice(0, Math.min(3, res.bladeList.length));
+    for (var t = 0; t < top3.length; t++) {
+      var bl = top3[t], tr = document.createElement('tr');
+      if (t === 0) tr.className = 'best';
+      tr.innerHTML = '<td>Kanat ' + bl.num + '</td><td>' + bl.deg.toFixed(1) + '°</td><td>' +
+        bl.diff.toFixed(1) + '°</td><td>' + (t===0?'✓ En yakın':t===1?'2. yakın':'3. yakın') + '</td>';
+      tbody.appendChild(tr);
+    }
+  } else {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:#444;text-align:center;font-size:12px;">Kanat sayısı girilmedi</td></tr>';
+  }
+
+  // Genel durum
+  var statusDiv = document.getElementById('statusDiv');
+  statusDiv.className = res.e < 400 ? 'status-ok' : 'status-warn';
+  statusDiv.textContent = res.e < 400
+    ? '✓ Hesaplama tamamlandı — düzeltme ağırlığını takın ve doğrulama ölçümü alın'
+    : '⚠ Yüksek dengesizlik — düzeltme sonrası doğrulama kritik';
+
+  // Kadran alt etiketi
+  var df = document.getElementById('dialFooter');
+  if (df) {
+    var dirTxt = res.rotation === 'CW'
+      ? '<span style="color:#ff5533;font-weight:700;">↻ CW</span> — düzeltme CCW yönünde'
+      : '<span style="color:#4488ff;font-weight:700;">↺ CCW</span> — düzeltme CW yönünde';
+    df.innerHTML = 'F2 &nbsp;|&nbsp; <span style="color:#555">● Kanat konumları</span> &nbsp;|&nbsp; ' + dirTxt;
+  }
+
+  // Rehber
+  document.getElementById('guideContent').innerHTML =
+    '<div class="guide-section-title">Fan Tarafı (F2)</div>' +
+    '<div class="guide-row"><div class="guide-num blue">1</div><div>Ekipmanı durdurun — LOTO uygulayın</div></div>' +
+    '<div class="guide-row"><div class="guide-num blue">2</div><div>0°\'den <span class="highlight-blue">' + res.corrAngle.toFixed(1) + '°</span> konumunu işaretleyin</div></div>' +
+    '<div class="guide-row"><div class="guide-num blue">3</div><div>En yakın kanat: <span class="highlight-blue">' + res.nearLabel + '</span></div></div>' +
+    '<div class="guide-row"><div class="guide-num blue">4</div><div><span class="highlight-blue">' + res.wCorr.toFixed(1) + ' gram</span> ağırlık takın (r = ' + res.fanR + ' mm)</div></div>' +
+    '<div class="guide-section-title" style="color:#00cc66;margin-top:14px;">Doğrulama</div>' +
+    '<div class="guide-row"><div class="guide-num green">5</div><div>Ekipmanı çalıştırın ve ölçüm alın</div></div>' +
+    '<div class="guide-row"><div class="guide-num green">6</div><div>Hedef: <span class="highlight-green">&lt; ' + res.target.toFixed(2) + ' mm/s</span>  (ISO ' + res.iso.cls + ')</div></div>' +
+    '<div class="guide-row"><div class="guide-num green">7</div><div>Hedef tutmadıysa yeni sekme açıp 2. çalışma başlatın</div></div>';
+}
+
+// ============================================================
+// PDF İNDİR
+// ============================================================
+window.downloadPDF = function() {
+  var res = sessions[activeTab].result;
+  if (!res) { alert('Önce hesaplama yapın.'); return; }
+  var tabNum = activeTab + 1;
+  var today = new Date().toLocaleDateString('tr-TR');
+  var isoColor = res.iso.cat==='ok'?'#006633':res.iso.cat==='warn'?'#885500':'#cc2200';
+
+  var bladeRows = '';
+  if (res.bladeList.length > 0) {
+    var top3 = res.bladeList.slice(0, Math.min(3, res.bladeList.length));
+    for (var i = 0; i < top3.length; i++) {
+      bladeRows += '<tr'+(i===0?' style="background:#e8f5e9;font-weight:700;"':'')+'>'+
+        '<td>Kanat '+top3[i].num+'</td><td>'+top3[i].deg.toFixed(1)+'°</td>'+
+        '<td>'+top3[i].diff.toFixed(1)+'°</td><td>'+(i===0?'✓ En yakın':i===1?'2. yakın':'3. yakın')+'</td></tr>';
+    }
+  } else {
+    bladeRows = '<tr><td colspan="4" style="color:#999;text-align:center;">Kanat sayısı girilmedi</td></tr>';
+  }
+
+  var srTxt = (res.e > 200 || res.G > 10)
+    ? '<b style="color:#cc6600;">⚠ 2. Tur Gerekebilir:</b> Tahmini kalan: <b>'+(res.v0*0.20).toFixed(2)+' mm/s</b>. Hedef ('+res.target.toFixed(2)+' mm/s) tutmadıysa 2. çalışma başlatın.'
+    : '<span style="color:#006633;">✓</span> Dengesizlik makul — tek turda hedefe ulaşma olasılığı yüksek.';
+
+  var bpfRow = res.bpf > 0
+    ? '<tr style="background:#fafafa"><td>Kanat Geçiş Frekansı (BPF)</td><td><b>'+res.bpf.toFixed(1)+' Hz</b> ('+res.bladeCount+' × '+res.freqHz.toFixed(2)+' Hz)</td></tr>'
+    : '';
+
+  var bladeSection = res.bladeList.length > 0
+    ? '<div class="sec"><div class="st">En Yakın Kanat Analizi</div>'+
+      '<table><tr><th>Kanat</th><th>Konum</th><th>Fark</th><th>Durum</th></tr>'+bladeRows+'</table></div>'
+    : '';
+
+  var h = '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Fan Balans '+tabNum+'. Çalışma</title><style>'+
+    '*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:10.5pt;color:#111;}'+
+    '.pg{max-width:720px;margin:0 auto;padding:18px 24px;}'+
+    '.hdr{background:#0d0d0d;color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}'+
+    '.hdr h1{font-size:15pt;margin:0;color:#fff;}.hdr .dt{font-size:9pt;color:#aaa;}'+
+    '.sec{margin-bottom:16px;}.st{font-size:10.5pt;font-weight:700;color:#cc3311;border-bottom:2px solid #cc3311;padding-bottom:3px;margin-bottom:9px;letter-spacing:1px;text-transform:uppercase;}'+
+    'table{width:100%;border-collapse:collapse;margin-bottom:8px;}td,th{padding:5px 9px;border:1px solid #ddd;font-size:10pt;}th{background:#f0f0f0;font-weight:700;text-align:left;}'+
+    '.rb{font-size:15pt;font-weight:800;}.bl{color:#1144aa;}.rd{color:#cc3311;}.gr{color:#006633;}'+
+    '.ibox{padding:9px 12px;border-radius:3px;margin-bottom:10px;font-size:10pt;}'+
+    '.iok{background:#e8f5e9;border:1.5px solid #006633;color:#006633;}'+
+    '.iwarn{background:#fff8e0;border:1.5px solid #885500;color:#885500;}'+
+    '.ibad{background:#fdecea;border:1.5px solid #cc2200;color:#cc2200;}'+
+    '.sr{background:#fff8e0;border-left:4px solid #cc6600;padding:9px 12px;margin-bottom:10px;font-size:10pt;}'+
+    '.gs{display:flex;gap:9px;margin-bottom:6px;align-items:flex-start;font-size:10pt;}'+
+    '.gn{min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5pt;font-weight:700;color:#fff;flex-shrink:0;}'+
+    '.gb{background:#2255cc;}.gg{background:#006633;}'+
+    '.ft{margin-top:20px;padding-top:8px;border-top:1px solid #ddd;font-size:8pt;color:#999;text-align:center;}'+
+    '.pbtn{display:block;width:100%;padding:14px;background:#006633;color:#fff;border:none;border-radius:5px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:18px;}'+
+    '.fbox{background:#f0f4ff;border-left:4px solid #2255cc;padding:10px 14px;font-family:monospace;font-size:9.5pt;line-height:2;margin-bottom:10px;}'+
+    '@media print{.pbtn,.nop{display:none!important;}@page{margin:12mm;}}'+
+    '</style></head><body><div class="pg">'+
+
+```
+'<div class="hdr"><h1>Fan Balans — '+tabNum+'. Çalışma</h1><span class="dt">'+today+'</span></div>'+
+
+'<div class="sec"><div class="st">Giriş Değerleri</div>'+
+'<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>'+
+'<tr><td>Referans Titreşim (Ağırlıksız)</td><td>V0</td><td>'+res.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
+'<tr style="background:#fafafa"><td>0° Titreşim</td><td>VA</td><td>'+res.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
+'<tr><td>120° Titreşim</td><td>VB</td><td>'+res.vB.toFixed(2)+'</td><td>mm/s</td></tr>'+
+'<tr style="background:#fafafa"><td>240° Titreşim</td><td>VC</td><td>'+res.vC.toFixed(2)+'</td><td>mm/s</td></tr>'+
+'<tr><td>Deneme Ağırlığı</td><td>Wt</td><td>'+res.wt.toFixed(1)+'</td><td>gram</td></tr>'+
+'<tr style="background:#fafafa"><td>Fan Ağırlığı</td><td>m</td><td>'+res.fanM.toFixed(1)+'</td><td>kg</td></tr>'+
+'<tr><td>Fan Yarıçapı</td><td>r</td><td>'+res.fanR.toFixed(0)+'</td><td>mm</td></tr>'+
+'<tr style="background:#fafafa"><td>Devir</td><td>n</td><td>'+res.rpm+'</td><td>RPM</td></tr>'+
+(res.bladeCount>0?'<tr><td>Kanat Sayısı</td><td>—</td><td>'+res.bladeCount+'</td><td>adet</td></tr>':'')+
+'<tr style="background:#fafafa"><td>Dönüş Yönü</td><td>—</td><td><b>'+(res.rotation==='CW'?'Saat Yönü (CW)':'Saat Yönü Tersi (CCW)')+'</b></td><td>—</td></tr>'+
+'</table></div>'+
+
+'<div class="sec"><div class="st">Ara Hesaplama Değerleri</div>'+
+'<div class="fbox">'+
+'dA = VA²−V0² = '+res.vA.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dA.toFixed(4)+' (mm/s)²<br>'+
+'dB = VB²−V0² = '+res.vB.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dB.toFixed(4)+' (mm/s)²<br>'+
+'dC = VC²−V0² = '+res.vC.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dC.toFixed(4)+' (mm/s)²<br>'+
+'x  = (2·dA−dB−dC)/3 = '+res.x.toFixed(4)+'<br>'+
+'y  = (dB−dC)/√3    = '+res.y.toFixed(4)+'<br>'+
+'θ  = atan2(y,x)     = '+res.thetaDeg.toFixed(2)+'°  →  +180° = '+res.corrAngle.toFixed(2)+'°<br>'+
+'Wdüz = 2·V0²·Wt / |UV| = 2·'+res.v0.toFixed(2)+'²·'+res.wt.toFixed(1)+' / '+res.unbalMag.toFixed(4)+' = <b>'+res.wCorr.toFixed(1)+' g</b>'+
+'</div></div>'+
+
+'<div class="sec"><div class="st">Hesaplanan Sonuçlar</div>'+
+'<table><tr><th>Sonuç</th><th>Sembol</th><th>Değer</th></tr>'+
+'<tr><td>Düzeltme Ağırlığı</td><td>Wdüz</td><td><span class="rb rd">'+res.wCorr.toFixed(1)+' gram</span></td></tr>'+
+'<tr style="background:#fafafa"><td>Yerleştirme Açısı</td><td>θdüz</td><td><span class="rb bl">'+res.corrAngle.toFixed(1)+'°</span> (0°\'den)</td></tr>'+
+(res.bladeList.length>0?'<tr><td>En Yakın Kanat</td><td>—</td><td><span class="gr" style="font-weight:700;">'+res.nearLabel+'</span> (fark: '+res.bladeList[0].diff.toFixed(1)+'°)</td></tr>':'')+
+'<tr style="background:#fafafa"><td>Dengesizlik (U = Wdüz × r)</td><td>U</td><td>'+res.U.toFixed(0)+' g·mm</td></tr>'+
+'<tr><td>Özgül Dengesizlik</td><td>e</td><td>'+res.e.toFixed(1)+' μm</td></tr>'+
+'<tr style="background:#fafafa"><td>Hedef Titreşim (V0 × 0,15)</td><td>—</td><td>&lt; '+res.target.toFixed(2)+' mm/s</td></tr>'+
+'</table></div>'+
+
+'<div class="sec"><div class="st">ISO 1940-1 Kalite Sınıfı</div>'+
+'<div class="ibox i'+res.iso.cat+'"><b>ISO '+res.iso.cls+'</b>  |  G = '+res.G.toFixed(2)+' mm/s  |  '+res.iso.desc+'</div>'+
+'<table><tr><th>Parametre</th><th>Değer</th></tr>'+
+'<tr><td>G Değeri</td><td style="font-weight:700;color:'+isoColor+';">'+res.G.toFixed(2)+' mm/s → '+res.iso.cls+'</td></tr>'+
+'<tr style="background:#fafafa"><td>Çalışma Frekansı</td><td>'+res.freqHz.toFixed(2)+' Hz ('+res.rpm+' RPM)</td></tr>'+
+bpfRow+
+'</table></div>'+
+
+'<div class="sec"><div class="st">2. Tur Değerlendirmesi</div><div class="sr">'+srTxt+'</div></div>'+
+
+bladeSection+
+
+'<div class="sec"><div class="st">Yerleştirme Talimatı</div>'+
+'<div class="gs"><div class="gn gb">1</div><div>Ekipmanı durdurun — LOTO uygulayın</div></div>'+
+'<div class="gs"><div class="gn gb">2</div><div>0° referansından <b>'+res.corrAngle.toFixed(1)+'°</b> konumunu işaretleyin</div></div>'+
+'<div class="gs"><div class="gn gb">3</div><div>En yakın kanat: <b>'+res.nearLabel+'</b></div></div>'+
+'<div class="gs"><div class="gn gb">4</div><div><b>'+res.wCorr.toFixed(1)+' gram</b> ağırlık takın (r = '+res.fanR+' mm)</div></div>'+
+'<div class="gs"><div class="gn gg">5</div><div>Ekipmanı çalıştırın ve doğrulama ölçümü alın</div></div>'+
+'<div class="gs"><div class="gn gg">6</div><div>Hedef: <b>&lt; '+res.target.toFixed(2)+' mm/s</b> (ISO '+res.iso.cls+')</div></div>'+
+'</div>'+
+
+'<button class="pbtn" onclick="window.print()">⬇ PDF OLARAK KAYDET / YAZDIR</button>'+
+'<p class="nop" style="font-size:9pt;color:#999;text-align:center;margin-top:6px;">Yazdır → Hedef: PDF Kaydet</p>'+
+'<div class="ft">Fan Balans Hesap Aracı — Thearle 3-Nokta Yöntemi — v2.1 — '+today+'</div>'+
+'</div></body></html>';
+```
+
+var pw = null;
+try { pw = window.open(’’, ‘_blank’); } catch(ignored) {}
+if (pw && pw.document) {
+pw.document.write(h);
+pw.document.close();
+} else {
+var old = document.getElementById(’_pf’);
+if (old) old.parentNode.removeChild(old);
+var ifr = document.createElement(‘iframe’);
+ifr.id = ‘_pf’;
+ifr.style.cssText = ‘position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff;’;
+document.body.appendChild(ifr);
+ifr.contentDocument.write(h);
+ifr.contentDocument.close();
+var cb = document.createElement(‘button’);
+cb.textContent = ‘✕ Kapat’;
+cb.style.cssText = ‘position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;’;
+cb.onclick = function(){ document.body.removeChild(ifr); document.body.removeChild(cb); };
+document.body.appendChild(cb);
+}
+};
+
+// ============================================================
+// RESET
+// ============================================================
+function doReset() {
+sessions[activeTab] = newSession(activeTab + 1);
+for (var i = 0; i < INPUT_IDS.length; i++) {
+var el = document.getElementById(INPUT_IDS[i]);
+if (el) el.value = ‘’;
+}
+setDir(‘CW’);
+document.getElementById(‘resultBox’).style.display = ‘none’;
+rebuildTabBar();
+window.scrollTo(0, 0);
+}
+
+// ============================================================
+// BUTON BAĞLAMA
+// ============================================================
+document.getElementById(‘btn’).addEventListener(‘click’, doCalculate);
+document.getElementById(‘btn’).addEventListener(‘touchend’, function(e){ e.preventDefault(); doCalculate(); });
+document.getElementById(‘pdfBtn’).addEventListener(‘click’, window.downloadPDF);
+document.getElementById(‘pdfBtn’).addEventListener(‘touchend’, function(e){ e.preventDefault(); window.downloadPDF(); });
+document.getElementById(‘resetBtn’).addEventListener(‘click’, doReset);
+document.getElementById(‘resetBtn’).addEventListener(‘touchend’, function(e){ e.preventDefault(); doReset(); });
+
+rebuildTabBar();
+</script>
+
+</body>
+</html>
