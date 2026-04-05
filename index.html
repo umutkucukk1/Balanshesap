@@ -197,10 +197,10 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
   <div class="ig">
     <div class="ilbl">Fan Dönüş Yönü</div>
     <div class="dirsel">
-      <button type="button" class="dbtn act" id="dirCW" onclick="APP.setDir('CW')">
+      <button type="button" class="dbtn act" id="dirCW">
         <span class="dico">↻</span><span class="dtxt">Saat Yönü</span><span class="dsub">CW</span>
       </button>
-      <button type="button" class="dbtn" id="dirCCW" onclick="APP.setDir('CCW')">
+      <button type="button" class="dbtn" id="dirCCW">
         <span class="dico">↺</span><span class="dtxt">Saat Yönü Tersi</span><span class="dsub">CCW</span>
       </button>
     </div>
@@ -208,7 +208,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
   </div>
 </div>
 
-<button type="button" class="cbtn" onclick="APP.calc()">⟶ HESAPLA</button>
+<button type="button" class="cbtn">⟶ HESAPLA</button>
 
 <!-- SONUÇ -->
 
@@ -262,8 +262,8 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
 <div id="statDiv" class="sok">—</div>
 <div class="guide"><div id="guideDiv"></div></div>
 
-<button type="button" class="pbtn" onclick="APP.pdf()">⬇ PDF İndir</button>
-<button type="button" class="rbtn" onclick="APP.reset()">↺ Bu Çalışmayı Temizle</button>
+<button type="button" class="pbtn" id="pdfBtn">⬇ PDF İndir</button>
+<button type="button" class="rbtn" id="rstBtn">↺ Bu Çalışmayı Temizle</button>
 ```
 
   </div>
@@ -740,10 +740,23 @@ buildTabs();
 drawTicks();
 }
 
-init();
-return { calc:calc, pdf:pdf, reset:reset, setDir:setDir };
+return { calc:calc, pdf:pdf, reset:reset, setDir:setDir, init:init };
 
 })();
+
+window.addEventListener(‘load’, function() {
+APP.init();
+var calcBtn = document.querySelector(’.cbtn’);
+var pdfBtn  = document.getElementById(‘pdfBtn’);
+var rstBtn  = document.getElementById(‘rstBtn’);
+var cwBtn   = document.getElementById(‘dirCW’);
+var ccwBtn  = document.getElementById(‘dirCCW’);
+if (calcBtn) calcBtn.onclick = function(){ APP.calc(); };
+if (pdfBtn)  pdfBtn.onclick  = function(){ APP.pdf(); };
+if (rstBtn)  rstBtn.onclick  = function(){ APP.reset(); };
+if (cwBtn)   cwBtn.onclick   = function(){ APP.setDir(‘CW’); };
+if (ccwBtn)  ccwBtn.onclick  = function(){ APP.setDir(‘CCW’); };
+});
 </script>
 
 </body>
