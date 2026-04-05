@@ -639,89 +639,86 @@ function doPdf() {
   var h =
     '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8">' +
     '<title>Fan Balans ' + tn + '. Calisma</title>' +
-    '<style>' + css + '</style></head><body><div class="pg">' +
+    '<style>' + css + '<\/style><\/head><body><div class="pg">' +
+    '<div class="hdr"><h1>Fan Balans &#8212; ' + tn + '. &#199;al&#305;&#351;ma</h1><span class="dt">' + td + '</span></div>' +
 
-```
-'<div class="hdr"><h1>Fan Balans &#8212; ' + tn + '. &#199;al&#305;&#351;ma</h1><span class="dt">' + td + '</span></div>' +
+    '<div class="sec"><div class="st">Giri&#351; De&#287;erleri</div>' +
+    '<table><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>' +
+    '<tr><td>Referans Titre&#351;im (V&#8320; &#8212; A&#287;&#305;rl&#305;ks&#305;z)</td><td>V&#8320;</td><td>' + r.v0.toFixed(2) + '</td><td>mm/s</td></tr>' +
+    '<tr style="background:#fafafa"><td>0&#176; Titre&#351;im De&#287;eri</td><td>V_A</td><td>' + r.vA.toFixed(2) + '</td><td>mm/s</td></tr>' +
+    '<tr><td>120&#176; Titre&#351;im De&#287;eri</td><td>V_B</td><td>' + r.vB.toFixed(2) + '</td><td>mm/s</td></tr>' +
+    '<tr style="background:#fafafa"><td>240&#176; Titre&#351;im De&#287;eri</td><td>V_C</td><td>' + r.vC.toFixed(2) + '</td><td>mm/s</td></tr>' +
+    '<tr><td>Deneme A&#287;&#305;rl&#305;&#287;&#305;</td><td>W_t</td><td>' + r.wt.toFixed(1) + '</td><td>gram</td></tr>' +
+    '<tr style="background:#fafafa"><td>Fan K&#252;tlesi</td><td>m</td><td>' + r.fm.toFixed(1) + '</td><td>kg</td></tr>' +
+    '<tr><td>Fan Yar&#305;&#231;ap&#305;</td><td>r</td><td>' + r.fr.toFixed(0) + '</td><td>mm</td></tr>' +
+    '<tr style="background:#fafafa"><td>&#199;al&#305;&#351;ma Devri</td><td>n</td><td>' + r.rpm + '</td><td>RPM</td></tr>' +
+    '<tr><td>A&#231;&#305;sal H&#305;z</td><td>&#969; = 2&#960;&#183;n/60</td><td>' + r.om.toFixed(3) + '</td><td>rad/s</td></tr>' +
+    zr + fnr + knr +
+    '<tr style="background:#fafafa"><td>Fan D&#246;n&#252;&#351; Y&#246;n&#252;</td><td>&#8212;</td><td><b>' + (r.rot === 'CW' ? 'Saat Y&#246;n&#252; (CW)' : 'Saat Y&#246;n&#252; Tersi (CCW)') + '</b></td><td>&#8212;</td></tr>' +
+    '</table></div>' +
 
-'<div class="sec"><div class="st">Giri&#351; De&#287;erleri</div>' +
-'<table><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>' +
-'<tr><td>Referans Titre&#351;im (V&#8320; &#8212; A&#287;&#305;rl&#305;ks&#305;z)</td><td>V&#8320;</td><td>' + r.v0.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'<tr style="background:#fafafa"><td>0&#176; Titre&#351;im De&#287;eri</td><td>V_A</td><td>' + r.vA.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'<tr><td>120&#176; Titre&#351;im De&#287;eri</td><td>V_B</td><td>' + r.vB.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'<tr style="background:#fafafa"><td>240&#176; Titre&#351;im De&#287;eri</td><td>V_C</td><td>' + r.vC.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'<tr><td>Deneme A&#287;&#305;rl&#305;&#287;&#305;</td><td>W_t</td><td>' + r.wt.toFixed(1) + '</td><td>gram</td></tr>' +
-'<tr style="background:#fafafa"><td>Fan K&#252;tlesi</td><td>m</td><td>' + r.fm.toFixed(1) + '</td><td>kg</td></tr>' +
-'<tr><td>Fan Yar&#305;&#231;ap&#305;</td><td>r</td><td>' + r.fr.toFixed(0) + '</td><td>mm</td></tr>' +
-'<tr style="background:#fafafa"><td>&#199;al&#305;&#351;ma Devri</td><td>n</td><td>' + r.rpm + '</td><td>RPM</td></tr>' +
-'<tr><td>A&#231;&#305;sal H&#305;z</td><td>&#969; = 2&#960;&#183;n/60</td><td>' + r.om.toFixed(3) + '</td><td>rad/s</td></tr>' +
-zr + fnr + knr +
-'<tr style="background:#fafafa"><td>Fan D&#246;n&#252;&#351; Y&#246;n&#252;</td><td>&#8212;</td><td><b>' + (r.rot === 'CW' ? 'Saat Y&#246;n&#252; (CW)' : 'Saat Y&#246;n&#252; Tersi (CCW)') + '</b></td><td>&#8212;</td></tr>' +
-'</table></div>' +
+    '<div class="sec"><div class="st">Ara Hesaplama De&#287;erleri</div>' +
+    '<div class="fbox">' +
+    'dA = V_A&#178; &#8722; V&#8320;&#178; = ' + r.vA.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dA.toFixed(4) + ' (mm/s)&#178;<br>' +
+    'dB = V_B&#178; &#8722; V&#8320;&#178; = ' + r.vB.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dB.toFixed(4) + ' (mm/s)&#178;<br>' +
+    'dC = V_C&#178; &#8722; V&#8320;&#178; = ' + r.vC.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dC.toFixed(4) + ' (mm/s)&#178;<br>' +
+    'x = (2&#183;dA &#8722; dB &#8722; dC) / 3 = ' + r.x.toFixed(4) + '<br>' +
+    'y = (dB &#8722; dC) / &#8730;3 = ' + r.y.toFixed(4) + '<br>' +
+    '&#952; = atan2(y, x) = ' + r.tDeg.toFixed(2) + '&#176;  &#8594;  +180&#176; = ' + r.ang.toFixed(2) + '&#176;<br>' +
+    'W_d&#252;z = 2&#183;V&#8320;&#178;&#183;W_t / &#8730;(x&#178;+y&#178;) = <b>' + r.wc.toFixed(1) + ' g</b>' +
+    '</div></div>' +
 
-'<div class="sec"><div class="st">Ara Hesaplama De&#287;erleri</div>' +
-'<div class="fbox">' +
-'dA = V_A&#178; &#8722; V&#8320;&#178; = ' + r.vA.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dA.toFixed(4) + ' (mm/s)&#178;<br>' +
-'dB = V_B&#178; &#8722; V&#8320;&#178; = ' + r.vB.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dB.toFixed(4) + ' (mm/s)&#178;<br>' +
-'dC = V_C&#178; &#8722; V&#8320;&#178; = ' + r.vC.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dC.toFixed(4) + ' (mm/s)&#178;<br>' +
-'x = (2&#183;dA &#8722; dB &#8722; dC) / 3 = ' + r.x.toFixed(4) + '<br>' +
-'y = (dB &#8722; dC) / &#8730;3 = ' + r.y.toFixed(4) + '<br>' +
-'&#952; = atan2(y, x) = ' + r.tDeg.toFixed(2) + '&#176;  &#8594;  +180&#176; = ' + r.ang.toFixed(2) + '&#176;<br>' +
-'W_d&#252;z = 2&#183;V&#8320;&#178;&#183;W_t / &#8730;(x&#178;+y&#178;) = <b>' + r.wc.toFixed(1) + ' g</b>' +
-'</div></div>' +
+    '<div class="sec"><div class="st">Hesaplanan Sonu&#231;lar</div>' +
+    '<table><tr><th>Sonu&#231;</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>' +
+    '<tr><td>D&#252;zeltme A&#287;&#305;rl&#305;&#287;&#305; B&#252;y&#252;kl&#252;&#287;&#252;</td><td>W_d&#252;z</td><td><span class="rb rd">' + r.wc.toFixed(1) + ' gram</span></td><td>gram</td></tr>' +
+    '<tr style="background:#fafafa"><td>Yerle&#351;tirme A&#231;&#305;s&#305;</td><td>&#952;_d&#252;z</td><td><span class="rb bl">' + r.ang.toFixed(1) + '&#176;</span> (0&#176;\'den saat y&#246;n&#252;nde)</td><td>&#8212;</td></tr>' +
+    (r.bList.length > 0 ? '<tr><td>En Yak&#305;n Kanat</td><td>&#8212;</td><td><span class="gr" style="font-weight:700">Kanat ' + r.bList[0].n + ' (' + r.bList[0].d.toFixed(1) + '&#176;)</span></td><td>fark: ' + r.bList[0].f.toFixed(1) + '&#176;</td></tr>' : '') +
+    '<tr style="background:#fafafa"><td>Dengesizlik (U = W_d&#252;z &#215; r)</td><td>U</td><td>' + r.U.toFixed(0) + '</td><td>g&#183;mm</td></tr>' +
+    '<tr><td>&#214;zg&#252;l Dengesizlik (e = U / m)</td><td>e</td><td>' + r.e.toFixed(1) + '</td><td>&#956;m</td></tr>' +
+    '<tr style="background:#fafafa"><td>Hedef Titre&#351;im (V&#8320; &#215; 0,15)</td><td>&#8212;</td><td>&lt; ' + r.tgt.toFixed(2) + ' mm/s (%85 azalma hedefi)</td><td>mm/s</td></tr>' +
+    '</table></div>' +
 
-'<div class="sec"><div class="st">Hesaplanan Sonu&#231;lar</div>' +
-'<table><tr><th>Sonu&#231;</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>' +
-'<tr><td>D&#252;zeltme A&#287;&#305;rl&#305;&#287;&#305; B&#252;y&#252;kl&#252;&#287;&#252;</td><td>W_d&#252;z</td><td><span class="rb rd">' + r.wc.toFixed(1) + ' gram</span></td><td>gram</td></tr>' +
-'<tr style="background:#fafafa"><td>Yerle&#351;tirme A&#231;&#305;s&#305;</td><td>&#952;_d&#252;z</td><td><span class="rb bl">' + r.ang.toFixed(1) + '&#176;</span> (0&#176;\'den saat y&#246;n&#252;nde)</td><td>&#8212;</td></tr>' +
-(r.bList.length > 0 ? '<tr><td>En Yak&#305;n Kanat</td><td>&#8212;</td><td><span class="gr" style="font-weight:700">Kanat ' + r.bList[0].n + ' (' + r.bList[0].d.toFixed(1) + '&#176;)</span></td><td>fark: ' + r.bList[0].f.toFixed(1) + '&#176;</td></tr>' : '') +
-'<tr style="background:#fafafa"><td>Dengesizlik (U = W_d&#252;z &#215; r)</td><td>U</td><td>' + r.U.toFixed(0) + '</td><td>g&#183;mm</td></tr>' +
-'<tr><td>&#214;zg&#252;l Dengesizlik (e = U / m)</td><td>e</td><td>' + r.e.toFixed(1) + '</td><td>&#956;m</td></tr>' +
-'<tr style="background:#fafafa"><td>Hedef Titre&#351;im (V&#8320; &#215; 0,15)</td><td>&#8212;</td><td>&lt; ' + r.tgt.toFixed(2) + ' mm/s (%85 azalma hedefi)</td><td>mm/s</td></tr>' +
-'</table></div>' +
+    '<div class="sec"><div class="st">ISO 1940-1 Kalite S&#305;n&#305;f&#305; &amp; Teknik Bilgi</div>' +
+    '<div class="ibox i' + r.iso.q.replace('wa','warn').replace('ba','bad') + '">ISO ' + r.iso.c + ' | G = ' + r.G.toFixed(2) + ' mm/s | ' + r.iso.d + '</div>' +
+    '<table><tr><th>Parametre</th><th>De&#287;er</th></tr>' +
+    '<tr><td>Hesaplanan G De&#287;eri</td><td style="font-weight:700;color:' + ic + '">' + r.G.toFixed(2) + ' mm/s &#8594; ' + r.iso.c + '</td></tr>' +
+    '<tr style="background:#fafafa"><td>&#199;al&#305;&#351;ma Frekans&#305;</td><td>' + r.fHz.toFixed(2) + ' Hz (' + r.rpm + ' RPM)</td></tr>' +
+    (r.bpf > 0 ? '<tr><td>Kanat Ge&#231;i&#351; Frekans&#305; (BPF)</td><td>' + r.bpf.toFixed(1) + ' Hz (' + r.z + ' &#215; ' + r.fHz.toFixed(2) + ' Hz)</td></tr>' : '') +
+    '</table></div>' +
 
-'<div class="sec"><div class="st">ISO 1940-1 Kalite S&#305;n&#305;f&#305; &amp; Teknik Bilgi</div>' +
-'<div class="ibox i' + r.iso.q.replace('wa','warn').replace('ba','bad') + '">ISO ' + r.iso.c + ' | G = ' + r.G.toFixed(2) + ' mm/s | ' + r.iso.d + '</div>' +
-'<table><tr><th>Parametre</th><th>De&#287;er</th></tr>' +
-'<tr><td>Hesaplanan G De&#287;eri</td><td style="font-weight:700;color:' + ic + '">' + r.G.toFixed(2) + ' mm/s &#8594; ' + r.iso.c + '</td></tr>' +
-'<tr style="background:#fafafa"><td>&#199;al&#305;&#351;ma Frekans&#305;</td><td>' + r.fHz.toFixed(2) + ' Hz (' + r.rpm + ' RPM)</td></tr>' +
-(r.bpf > 0 ? '<tr><td>Kanat Ge&#231;i&#351; Frekans&#305; (BPF)</td><td>' + r.bpf.toFixed(1) + ' Hz (' + r.z + ' &#215; ' + r.fHz.toFixed(2) + ' Hz)</td></tr>' : '') +
-'</table></div>' +
+    '<div class="sec"><div class="st">2. Tur De&#287;erlendirmesi</div><div class="sr">' + srt + '</div></div>' +
 
-'<div class="sec"><div class="st">2. Tur De&#287;erlendirmesi</div><div class="sr">' + srt + '</div></div>' +
+    rsec + bsec +
 
-rsec + bsec +
+    '<div class="sec"><div class="st">Yerle&#351;tirme Talimat&#305;</div>' +
+    '<div class="gs"><div class="gn gb">1</div><div>Ekipman&#305; durdurun &#8212; LOTO uygulay&#305;n</div></div>' +
+    '<div class="gs"><div class="gn gb">2</div><div>0&#176; referans&#305;ndan <b>' + r.ang.toFixed(1) + '&#176;</b> konumunu i&#351;aretleyin</div></div>' +
+    '<div class="gs"><div class="gn gb">3</div><div>En yak&#305;n kanat: <b>' + r.nLbl + '</b></div></div>' +
+    '<div class="gs"><div class="gn gb">4</div><div><b>' + r.wc.toFixed(1) + ' gram</b> a&#287;&#305;rl&#305;k tak&#305;n (r = ' + r.fr + ' mm)</div></div>' +
+    '<div class="gs"><div class="gn gg">5</div><div>Ekipman&#305; &#231;al&#305;&#351;t&#305;r&#305;n ve do&#287;rulama &#246;l&#231;&#252;m&#252; al&#305;n</div></div>' +
+    '<div class="gs"><div class="gn gg">6</div><div>Hedef: <b>&lt; ' + r.tgt.toFixed(2) + ' mm/s</b> (ISO ' + r.iso.c + ')</div></div>' +
+    '</div>' +
 
-'<div class="sec"><div class="st">Yerle&#351;tirme Talimat&#305;</div>' +
-'<div class="gs"><div class="gn gb">1</div><div>Ekipman&#305; durdurun &#8212; LOTO uygulay&#305;n</div></div>' +
-'<div class="gs"><div class="gn gb">2</div><div>0&#176; referans&#305;ndan <b>' + r.ang.toFixed(1) + '&#176;</b> konumunu i&#351;aretleyin</div></div>' +
-'<div class="gs"><div class="gn gb">3</div><div>En yak&#305;n kanat: <b>' + r.nLbl + '</b></div></div>' +
-'<div class="gs"><div class="gn gb">4</div><div><b>' + r.wc.toFixed(1) + ' gram</b> a&#287;&#305;rl&#305;k tak&#305;n (r = ' + r.fr + ' mm)</div></div>' +
-'<div class="gs"><div class="gn gg">5</div><div>Ekipman&#305; &#231;al&#305;&#351;t&#305;r&#305;n ve do&#287;rulama &#246;l&#231;&#252;m&#252; al&#305;n</div></div>' +
-'<div class="gs"><div class="gn gg">6</div><div>Hedef: <b>&lt; ' + r.tgt.toFixed(2) + ' mm/s</b> (ISO ' + r.iso.c + ')</div></div>' +
-'</div>' +
+    '<button class="pbtn" onclick="window.print()">&#11015; PDF OLARAK KAYDET / YAZDIR</button>' +
+    '<p class="nop" style="font-size:9pt;color:#999;text-align:center;margin-top:6px">Yazd&#305;r &#8594; Hedef: PDF Kaydet</p>' +
+    '<div class="ft">Fan Balans Hesap Arac&#305; &#8212; Thearle 3 Nokta Y&#246;ntemi &#8212; v2.8 &#8212; ' + td + '</div>' +
+    '</div><\/body><\/html>';
 
-'<button class="pbtn" onclick="window.print()">&#11015; PDF OLARAK KAYDET / YAZDIR</button>' +
-'<p class="nop" style="font-size:9pt;color:#999;text-align:center;margin-top:6px">Yazd&#305;r &#8594; Hedef: PDF Kaydet</p>' +
-'<div class="ft">Fan Balans Hesap Arac&#305; &#8212; Thearle 3 Nokta Y&#246;ntemi &#8212; v2.8 &#8212; ' + td + '</div>' +
-'</div></body></html>';
-```
-
-var pw = null;
-try { pw = window.open(’’, ‘_blank’); } catch(e) {}
-if (pw && pw.document) {
-pw.document.write(h);
-pw.document.close();
-} else {
-var old2 = document.getElementById(’_pf’); if (old2) old2.parentNode.removeChild(old2);
-var ifr = document.createElement(‘iframe’); ifr.id = ‘_pf’;
-ifr.style.cssText = ‘position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff’;
-document.body.appendChild(ifr); ifr.contentDocument.write(h); ifr.contentDocument.close();
-var cb = document.createElement(‘button’); cb.textContent = ‘X Kapat’;
-cb.style.cssText = ‘position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer’;
-cb.onclick = function() { document.body.removeChild(ifr); document.body.removeChild(cb); };
-document.body.appendChild(cb);
-}
+  var pw = null;
+  try { pw = window.open('', '_blank'); } catch(e) {}
+  if (pw && pw.document) {
+    pw.document.write(h);
+    pw.document.close();
+  } else {
+    var old2 = document.getElementById('_pf'); if (old2) old2.parentNode.removeChild(old2);
+    var ifr = document.createElement('iframe'); ifr.id = '_pf';
+    ifr.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff';
+    document.body.appendChild(ifr); ifr.contentDocument.write(h); ifr.contentDocument.close();
+    var cb = document.createElement('button'); cb.textContent = 'X Kapat';
+    cb.style.cssText = 'position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer';
+    cb.onclick = function() { document.body.removeChild(ifr); document.body.removeChild(cb); };
+    document.body.appendChild(cb);
+  }
 }
 
 // Baslatma
