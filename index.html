@@ -188,21 +188,21 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
     <div class="lbl">Sonuç</div>
     <div class="tit">Düzeltme Ağırlığı &amp; Konum</div>
     <div class="rcards">
-      <div class="rc bl"><div class="rclbl">Düzeltme Ağırlığı</div><div class="rcv" id="rW">-</div><div class="rcu">gram</div></div>
-      <div class="rc dk"><div class="rclbl">Konum</div><div class="rcv" id="rA">-</div><div class="rcu">derece (0°'den)</div></div>
+      <div class="rc bl"><div class="rclbl">Takılacak Düzeltme Ağırlığı</div><div class="rcv" id="rW">-</div><div class="rcu">gram — fan yarıçapına takılacak</div></div>
+      <div class="rc dk"><div class="rclbl">Yerleştirme Konumu (0°'den)</div><div class="rcv" id="rA">-</div><div class="rcu">derece — saat yönünde işaretle</div></div>
     </div>
     <div class="fbox">
       <div class="ft">// Ara Hesaplama Değerleri</div>
       <div id="f1"></div><div id="f2"></div><div id="f3"></div>
       <div id="f4"></div><div id="f5"></div><div id="f6"></div><div id="f7"></div>
     </div>
-    <div class="irow"><span class="l">Dengesizlik (U = W_düz × r)</span><span class="v" id="rU">-</span></div>
-    <div class="irow"><span class="l">Özgül dengesizlik (e = U / m)</span><span class="v" id="rE">-</span></div>
-    <div class="irow"><span class="l">Hedef titreşim (V₀ × 0.15)</span><span class="v" id="rT">-</span></div>
-    <div class="irow"><span class="l">ISO Kalite Sınıfı (G)</span><span class="v" id="rG">-</span></div>
-    <div class="irow"><span class="l">Çalışma frekansı (f = n/60)</span><span class="v" id="rHz">-</span></div>
-    <div class="irow" id="rrRow" style="display:none"><span class="l">Kritik devir (n_krit)</span><span class="v" id="rNc">-</span></div>
-    <div class="irow" id="rrRow2" style="display:none"><span class="l">Frekans oranı (Ω/ω_n)</span><span class="v" id="rRR">-</span></div>
+    <div class="irow"><span class="l">Dengesizlik — U = W_düz × r (ağırlık × yarıçap)</span><span class="v" id="rU">-</span></div>
+    <div class="irow"><span class="l">Özgül dengesizlik — e = U / m (kütle merkezinden sapma)</span><span class="v" id="rE">-</span></div>
+    <div class="irow"><span class="l">Hedef titreşim — V₀ × 0.15 (%85 azalma hedefi)</span><span class="v" id="rT">-</span></div>
+    <div class="irow"><span class="l">ISO 1940-1 Kalite Sınıfı — G = (e/1000) × ω</span><span class="v" id="rG">-</span></div>
+    <div class="irow"><span class="l">Çalışma frekansı — f = n / 60</span><span class="v" id="rHz">-</span></div>
+    <div class="irow" id="rrRow" style="display:none"><span class="l">Kritik devir — n_krit = f_n × 60 (rezonans hızı)</span><span class="v" id="rNc">-</span></div>
+    <div class="irow" id="rrRow2" style="display:none"><span class="l">Frekans oranı — Ω/ω_n (1.0 = kritik hız, &lt;0.7 güvenli)</span><span class="v" id="rRR">-</span></div>
     <div id="isoBan" class="ban ok" style="margin-top:12px">-</div>
     <div id="resonBan" class="ban ok" style="display:none">-</div>
     <div id="spdDiv" class="spok">-</div>
@@ -231,7 +231,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
   </div>
 </div>
 
-<footer>Fan Balans — Thearle 3 Nokta — v2.8</footer>
+<footer>Fan Balans — Thearle 3 Nokta — Umut Küçük</footer>
 </div>
 
 <script>
@@ -400,37 +400,37 @@ function doCalc() {
 
 function showResult(r) {
   document.getElementById('rW').textContent  = r.wc.toFixed(1);
-  document.getElementById('rA').textContent  = r.ang.toFixed(1);
+  document.getElementById('rA').textContent  = r.ang.toFixed(1)+'°';
   document.getElementById('rU').textContent  = r.U.toFixed(0)+' g.mm';
-  document.getElementById('rE').textContent  = r.e.toFixed(1)+' um';
+  document.getElementById('rE').textContent  = r.e.toFixed(1)+' μm';
   document.getElementById('rT').textContent  = '< '+r.tgt.toFixed(2)+' mm/s';
-  document.getElementById('rG').textContent  = 'G '+r.G.toFixed(1);
-  document.getElementById('rHz').textContent = r.fHz.toFixed(2)+' Hz ('+r.rpm+' RPM)';
+  document.getElementById('rG').textContent  = 'G '+r.G.toFixed(1)+' mm/s  →  '+r.iso.c;
+  document.getElementById('rHz').textContent = r.fHz.toFixed(2)+' Hz  ('+r.rpm+' RPM)';
   document.getElementById('rE').className = 'v '+(r.e<150?'ok':r.e<400?'wa':'ba');
   document.getElementById('rG').className = 'v '+(r.G<6.3?'ok':r.G<16?'wa':'ba');
 
-  document.getElementById('f1').innerHTML='dA=VA2-V02=<em>'+r.dA.toFixed(4)+'</em>';
-  document.getElementById('f2').innerHTML='dB=VB2-V02=<em>'+r.dB.toFixed(4)+'</em>';
-  document.getElementById('f3').innerHTML='dC=VC2-V02=<em>'+r.dC.toFixed(4)+'</em>';
-  document.getElementById('f4').innerHTML='x=(2*dA-dB-dC)/3=<em>'+r.x.toFixed(4)+'</em>';
-  document.getElementById('f5').innerHTML='y=(dB-dC)/sqrt3=<em>'+r.y.toFixed(4)+'</em>';
-  document.getElementById('f6').innerHTML='Teta=atan2(y,x)=<em>'+r.tDeg.toFixed(2)+'</em>  ->  +180='+r.ang.toFixed(2);
-  document.getElementById('f7').innerHTML='Wduz=2*V02*Wt/sqrt(x2+y2)=<em>'+r.wc.toFixed(1)+' g</em>';
+  document.getElementById('f1').innerHTML='dA = VA&sup2; - V0&sup2; = '+r.vA.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dA.toFixed(4)+' (mm/s)&sup2;</em>';
+  document.getElementById('f2').innerHTML='dB = VB&sup2; - V0&sup2; = '+r.vB.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dB.toFixed(4)+' (mm/s)&sup2;</em>';
+  document.getElementById('f3').innerHTML='dC = VC&sup2; - V0&sup2; = '+r.vC.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dC.toFixed(4)+' (mm/s)&sup2;</em>';
+  document.getElementById('f4').innerHTML='x = (2&times;dA - dB - dC) / 3 = <em>'+r.x.toFixed(4)+'</em>';
+  document.getElementById('f5').innerHTML='y = (dB - dC) / &radic;3 = <em>'+r.y.toFixed(4)+'</em>';
+  document.getElementById('f6').innerHTML='&theta; = atan2(y, x) = <em>'+r.tDeg.toFixed(2)+'&deg;</em>  &rarr;  +180&deg; = '+r.ang.toFixed(2)+'&deg;  (yerlesim acisi)';
+  document.getElementById('f7').innerHTML='W_duz = 2&times;V0&sup2;&times;Wt / &radic;(x&sup2;+y&sup2;) = <em>'+r.wc.toFixed(1)+' g</em>  (takilacak agirlik)';
 
   var ib=document.getElementById('isoBan');
   ib.className='ban '+r.iso.q;
-  ib.textContent='ISO 1940-1 | G='+r.G.toFixed(1)+' mm/s -> '+r.iso.c+' | '+r.iso.d;
+  ib.textContent='ISO 1940-1  |  G = '+r.G.toFixed(1)+' mm/s  →  '+r.iso.c+'  |  '+r.iso.d;
 
   var rb=document.getElementById('resonBan');
   var rr=document.getElementById('rrRow'), rr2=document.getElementById('rrRow2');
   if (r.hasR) {
-    document.getElementById('rNc').textContent=r.nCrit.toFixed(0)+' RPM ('+r.fCrit.toFixed(2)+' Hz)';
-    document.getElementById('rRR').textContent=r.rRat.toFixed(3);
+    document.getElementById('rNc').textContent=r.nCrit.toFixed(0)+' RPM  ('+r.fCrit.toFixed(2)+' Hz)';
+    document.getElementById('rRR').textContent=r.rRat.toFixed(3)+'  →  '+(r.rZone==='ok'?'Guvenli bolge':r.rZone==='ba'?'KRITIK BOLGE!':'Ust kritik');
     document.getElementById('rRR').className='v '+r.rZone;
     rr.style.display=rr2.style.display=rb.style.display='';
     rb.className='ban '+r.rZone;
-    var rt=r.rZone==='ok'?'Alt kritik - Guvenli':r.rZone==='ba'?'KRITIK REZONANS! Kritik hiza cok yakin!':'Ust kritik - Izleme onerili';
-    rb.textContent=rt+' | Oran='+r.rRat.toFixed(3)+' ['+r.rSrc+']';
+    var rt=r.rZone==='ok'?'✓ Alt kritik bolge — Guvenli calisma (Oran < 0.70)':r.rZone==='ba'?'⚠ KRITIK REZONANS! Calisma devri kritik hiza cok yakin (Oran 0.70–1.30)!':'⚡ Ust kritik bolge — Kritik hiz gecilmis, surekli izleme onerilir (Oran > 1.30)';
+    rb.textContent=rt+'  |  Oran = '+r.rRat.toFixed(3)+'  ['+r.rSrc+']';
   } else { rr.style.display=rr2.style.display=rb.style.display='none'; }
 
   var sd=document.getElementById('spdDiv');
