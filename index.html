@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="tr" style="background:#0d0d0d;color-scheme:dark;">
 <head>
 <meta charset="UTF-8">
@@ -119,6 +120,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
 .dir-sub{font-size:10px;font-family:monospace;color:#444;letter-spacing:1px;}
 .dir-btn.active .dir-sub{color:#cc4422;}
 </style>
+
 </head>
 <body>
 <div class="wrap">
@@ -127,6 +129,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
 <div class="subtitle">// Fan Tarafı (F2) — 3 Nokta Yöntemi (Thearle)</div>
 
 <!-- SEKME ÇUBUĞU -->
+
 <div class="tab-bar" id="tabBar">
   <button class="tab-btn active" id="tab0" onclick="switchTab(0)">
     1. Çalışma <span class="tab-dot hidden" id="dot0"></span>
@@ -135,6 +138,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
 </div>
 
 <!-- FORM ALANI -->
+
 <div id="formArea">
 
   <div class="steps-box">
@@ -145,6 +149,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
   </div>
 
   <!-- ÖLÇÜMLER -->
+
   <div class="card">
     <div class="card-label">Fan Tarafı Ölçümleri</div>
     <div class="card-title">4 Tur Titreşim Ölçümü <span class="f2-badge">F2</span></div>
@@ -172,6 +177,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
   </div>
 
   <!-- EKİPMAN -->
+
   <div class="card">
     <div class="card-label">Deneme Ağırlığı &amp; Ekipman</div>
     <div class="card-title">Fan Bilgileri <span class="f2-badge">F2</span></div>
@@ -201,112 +207,132 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
       <div class="input-unit">adet — opsiyonel, en yakın kanat tespiti için</div>
     </div>
 
-    <div class="input-group">
-      <div class="input-label">Yatak Rijitliği (k) <span style="color:#555;font-size:10px;margin-left:4px;">— opsiyonel, rezonans için</span></div>
-      <input id="stiff" type="text" inputmode="decimal" placeholder="örn: 5000000">
-      <div class="input-unit">N/m — yatak + mil rijitliği (bilinmiyorsa boş bırakın)</div>
-    </div>
+```
+<!-- REZONANS GİRİŞ BLOĞU -->
+<div style="background:#0d1a0d;border:1px solid #1a3a1a;border-left:4px solid #00cc66;border-radius:4px;padding:14px;margin-bottom:16px;">
+  <div style="font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#00cc66;margin-bottom:12px;">// Rezonans Analizi — Opsiyonel</div>
 
-    <div class="input-group">
-      <div class="input-label">Fan Dönüş Yönü</div>
-      <div class="dir-selector">
-        <button class="dir-btn active" id="dirCW" onclick="setDir('CW')">
-          <span class="dir-icon">↻</span>
-          <span class="dir-text">Saat Yönü</span>
-          <span class="dir-sub">CW</span>
-        </button>
-        <button class="dir-btn" id="dirCCW" onclick="setDir('CCW')">
-          <span class="dir-icon">↺</span>
-          <span class="dir-text">Saat Yönü Tersi</span>
-          <span class="dir-sub">CCW</span>
-        </button>
-      </div>
-      <div class="input-unit">Açılar dönüş yönünün tersine işaretlenir</div>
-    </div>
+  <div class="input-group" style="margin-bottom:12px;">
+    <div class="input-label" style="color:#00cc66;">Doğal Frekans — f_n <span style="color:#555;font-size:10px;margin-left:4px;">VibXpert II darbe testi</span></div>
+    <input id="fn" type="text" inputmode="decimal" placeholder="örn: 18.5">
+    <div class="input-unit">Hz — Darbe testi spektrumundan okunan tepe frekansı (öncelikli)</div>
   </div>
 
-  <button class="calc-button" id="btn">⟶ HESAPLA</button>
+  <div style="font-size:11px;font-family:monospace;color:#333;text-align:center;margin:8px 0;">— veya —</div>
+
+  <div class="input-group" style="margin-bottom:4px;">
+    <div class="input-label" style="color:#556644;">Yatak Rijitliği — k <span style="color:#555;font-size:10px;margin-left:4px;">Rulman kataloğu</span></div>
+    <input id="stiff" type="text" inputmode="decimal" placeholder="örn: 5000000">
+    <div class="input-unit">N/m — SKF/FAG/NSK kataloğu veya statik test (f_n girilmişse kullanılmaz)</div>
+  </div>
+</div>
+
+<div class="input-group">
+  <div class="input-label">Fan Dönüş Yönü</div>
+  <div class="dir-selector">
+    <button class="dir-btn active" id="dirCW" onclick="setDir('CW')">
+      <span class="dir-icon">↻</span>
+      <span class="dir-text">Saat Yönü</span>
+      <span class="dir-sub">CW</span>
+    </button>
+    <button class="dir-btn" id="dirCCW" onclick="setDir('CCW')">
+      <span class="dir-icon">↺</span>
+      <span class="dir-text">Saat Yönü Tersi</span>
+      <span class="dir-sub">CCW</span>
+    </button>
+  </div>
+  <div class="input-unit">Açılar dönüş yönünün tersine işaretlenir</div>
+</div>
+```
+
+  </div>
+
+<button class="calc-button" id="btn">⟶ HESAPLA</button>
 
   <!-- SONUÇ KUTUSU -->
+
   <div class="result-box" id="resultBox">
     <div class="card" style="border-left-color:#4488ff;">
       <div class="card-label">Sonuç</div>
       <div class="card-title">Düzeltme Ağırlığı &amp; Konum</div>
 
-      <div class="result-cards">
-        <div class="result-card blue">
-          <div class="rc-label">Düzeltme Ağırlığı</div>
-          <div class="rc-val" id="resW">—</div>
-          <div class="rc-unit">gram</div>
-        </div>
-        <div class="result-card dark">
-          <div class="rc-label">Konum</div>
-          <div class="rc-val" id="resA">—</div>
-          <div class="rc-unit">derece (0°'den)</div>
-        </div>
-      </div>
-
-      <!-- Ara değerler kutusu -->
-      <div class="formula-box" id="calcStepsBox">
-        <div class="f-title">// Ara Hesaplama Değerleri</div>
-        <div class="f-line" id="fLine1"></div>
-        <div class="f-line" id="fLine2"></div>
-        <div class="f-line" id="fLine3"></div>
-        <div class="f-line" id="fLine4"></div>
-        <div class="f-line" id="fLine5"></div>
-        <div class="f-line" id="fLine6"></div>
-        <div class="f-line" id="fLine7"></div>
-      </div>
-
-      <div class="info-rows">
-        <div class="info-row"><span class="lbl">Dengesizlik (U)</span><span class="val" id="resU">—</span></div>
-        <div class="info-row"><span class="lbl">Özgül dengesizlik (e)</span><span class="val" id="resE">—</span></div>
-        <div class="info-row"><span class="lbl">Hedef titreşim</span><span class="val" id="resTgt">—</span></div>
-        <div class="info-row"><span class="lbl">ISO Kalite Sınıfı (G)</span><span class="val" id="resG">—</span></div>
-        <div class="info-row"><span class="lbl">Çalışma frekansı</span><span class="val" id="resHz">—</span></div>
-        <div class="info-row" id="resonRow" style="display:none"><span class="lbl">Kritik hız (n_krit)</span><span class="val" id="resNcrit">—</span></div>
-        <div class="info-row" id="resonRatioRow" style="display:none"><span class="lbl">Ω/ω_n oranı</span><span class="val" id="resResonRatio">—</span></div>
-      </div>
-
-      <div id="isoBanner" class="iso-banner ok">—</div>
-      <div id="resonBanner" class="iso-banner ok" style="display:none">—</div>
-      <div id="speedDiv" class="speed-ok">—</div>
-      <div id="secondRunDiv" class="second-run">—</div>
-
-      <!-- Kadran -->
-      <div class="dial-wrap">
-        <svg width="220" height="236" viewBox="-10 -20 220 236">
-          <circle cx="100" cy="100" r="90" fill="#111" stroke="#222" stroke-width="1.5"/>
-          <g id="dialTicks"></g>
-          <circle cx="100" cy="100" r="70" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-          <circle cx="100" cy="100" r="45" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-          <g id="bladeMarkers"></g>
-          <circle cx="100" cy="12" r="5" fill="#ff5533"/>
-          <text x="100" y="-8" text-anchor="middle" fill="#ff5533" font-size="12" font-family="monospace" font-weight="bold">0°</text>
-          <circle cx="100" cy="100" r="8" fill="#333"/>
-          <line id="dialArrow" x1="100" y1="100" x2="100" y2="22" stroke="#4488ff" stroke-width="3" stroke-linecap="round" style="display:none"/>
-          <circle id="dialDot" cx="100" cy="18" r="7" fill="#4488ff" style="display:none"/>
-          <text id="dialLbl" x="100" y="148" text-anchor="middle" fill="#88ccff" font-family="monospace" font-size="13" font-weight="bold" style="display:none"></text>
-        </svg>
-        <div class="dial-label" id="dialFooter">F2 &nbsp;|&nbsp; <span style="color:#555">● Kanat konumları</span></div>
-      </div>
-
-      <div class="section-divider">// En Yakın Kanat Analizi</div>
-      <table class="blade-table">
-        <thead><tr><th>Kanat No</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead>
-        <tbody id="bladeTableBody"></tbody>
-      </table>
-
-      <div id="statusDiv" class="status-ok">—</div>
-
-      <div class="guide">
-        <div class="guide-title">// Yerleştirme Talimatı</div>
-        <div id="guideContent"></div>
-      </div>
-
-      <button class="pdf-button" id="pdfBtn" onclick="downloadPDF()">⬇ PDF İndir</button>
-      <button class="reset-btn" id="resetBtn">↺ Bu Çalışmayı Temizle</button>
+```
+  <div class="result-cards">
+    <div class="result-card blue">
+      <div class="rc-label">Düzeltme Ağırlığı</div>
+      <div class="rc-val" id="resW">—</div>
+      <div class="rc-unit">gram</div>
     </div>
+    <div class="result-card dark">
+      <div class="rc-label">Konum</div>
+      <div class="rc-val" id="resA">—</div>
+      <div class="rc-unit">derece (0°'den)</div>
+    </div>
+  </div>
+
+  <!-- Ara değerler kutusu -->
+  <div class="formula-box" id="calcStepsBox">
+    <div class="f-title">// Ara Hesaplama Değerleri</div>
+    <div class="f-line" id="fLine1"></div>
+    <div class="f-line" id="fLine2"></div>
+    <div class="f-line" id="fLine3"></div>
+    <div class="f-line" id="fLine4"></div>
+    <div class="f-line" id="fLine5"></div>
+    <div class="f-line" id="fLine6"></div>
+    <div class="f-line" id="fLine7"></div>
+  </div>
+
+  <div class="info-rows">
+    <div class="info-row"><span class="lbl">Dengesizlik (U)</span><span class="val" id="resU">—</span></div>
+    <div class="info-row"><span class="lbl">Özgül dengesizlik (e)</span><span class="val" id="resE">—</span></div>
+    <div class="info-row"><span class="lbl">Hedef titreşim</span><span class="val" id="resTgt">—</span></div>
+    <div class="info-row"><span class="lbl">ISO Kalite Sınıfı (G)</span><span class="val" id="resG">—</span></div>
+    <div class="info-row"><span class="lbl">Çalışma frekansı</span><span class="val" id="resHz">—</span></div>
+    <div class="info-row" id="resonRow" style="display:none"><span class="lbl">Kritik hız (n_krit)</span><span class="val" id="resNcrit">—</span></div>
+    <div class="info-row" id="resonRatioRow" style="display:none"><span class="lbl">Ω/ω_n oranı</span><span class="val" id="resResonRatio">—</span></div>
+  </div>
+
+  <div id="isoBanner" class="iso-banner ok">—</div>
+  <div id="resonBanner" class="iso-banner ok" style="display:none">—</div>
+  <div id="speedDiv" class="speed-ok">—</div>
+  <div id="secondRunDiv" class="second-run">—</div>
+
+  <!-- Kadran -->
+  <div class="dial-wrap">
+    <svg width="220" height="236" viewBox="-10 -20 220 236">
+      <circle cx="100" cy="100" r="90" fill="#111" stroke="#222" stroke-width="1.5"/>
+      <g id="dialTicks"></g>
+      <circle cx="100" cy="100" r="70" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="100" cy="100" r="45" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+      <g id="bladeMarkers"></g>
+      <circle cx="100" cy="12" r="5" fill="#ff5533"/>
+      <text x="100" y="-8" text-anchor="middle" fill="#ff5533" font-size="12" font-family="monospace" font-weight="bold">0°</text>
+      <circle cx="100" cy="100" r="8" fill="#333"/>
+      <line id="dialArrow" x1="100" y1="100" x2="100" y2="22" stroke="#4488ff" stroke-width="3" stroke-linecap="round" style="display:none"/>
+      <circle id="dialDot" cx="100" cy="18" r="7" fill="#4488ff" style="display:none"/>
+      <text id="dialLbl" x="100" y="148" text-anchor="middle" fill="#88ccff" font-family="monospace" font-size="13" font-weight="bold" style="display:none"></text>
+    </svg>
+    <div class="dial-label" id="dialFooter">F2 &nbsp;|&nbsp; <span style="color:#555">● Kanat konumları</span></div>
+  </div>
+
+  <div class="section-divider">// En Yakın Kanat Analizi</div>
+  <table class="blade-table">
+    <thead><tr><th>Kanat No</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead>
+    <tbody id="bladeTableBody"></tbody>
+  </table>
+
+  <div id="statusDiv" class="status-ok">—</div>
+
+  <div class="guide">
+    <div class="guide-title">// Yerleştirme Talimatı</div>
+    <div id="guideContent"></div>
+  </div>
+
+  <button class="pdf-button" id="pdfBtn" onclick="downloadPDF()">⬇ PDF İndir</button>
+  <button class="reset-btn" id="resetBtn">↺ Bu Çalışmayı Temizle</button>
+</div>
+```
+
   </div>
 
 </div><!-- /formArea -->
@@ -344,12 +370,12 @@ var activeTab = 0;
 function newSession(num) {
   return {
     num: num,
-    inputs: { v0:'', vA:'', vB:'', vC:'', wt:'', fanM:'', fanR:'', rpm:'', blades:'', stiff:'', rotation:'CW' },
+    inputs: { v0:'', vA:'', vB:'', vC:'', wt:'', fanM:'', fanR:'', rpm:'', blades:'', fn:'', stiff:'', rotation:'CW' },
     result: null
   };
 }
 
-var INPUT_IDS = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','stiff'];
+var INPUT_IDS = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff'];
 
 // ============================================================
 // SEKME YÖNETİMİ
@@ -475,6 +501,7 @@ function doCalculate() {
   var rpm  = getVal('rpm');
   var nb   = getVal('blades');
   var stiff = getVal('stiff'); // N/m — opsiyonel
+  var fn    = getVal('fn');    // Hz  — darbe testi, öncelikli
 
   var names  = ['1. Ölçüm (V0)','2. Ölçüm (VA)','3. Ölçüm (VB)','4. Ölçüm (VC)','Deneme Ağırlığı','Fan Ağırlığı','Fan Yarıçapı','RPM'];
   var values = [v0, vA, vB, vC, wt, fanM, fanR, rpm];
@@ -527,19 +554,37 @@ function doCalculate() {
 
   // -------------------------------------------------------
   // ADIM 7 — Rezonans / Kritik Hız
-  // k (N/m) girilmişse: f_krit = (1/2π)·√(k/m_kg)
-  // m_kg = fanM (kg), k (N/m) → f_krit (Hz), n_krit (RPM)
-  // Oran: Ω/ω_n = freqHz / f_krit
+  // Öncelik: f_n (darbe testi) → k (katalog) → yok
+  // f_n girilmişse: doğrudan kullan
+  // Sadece k girilmişse: f_n = (1/2π)·√(k/m)
+  // Her iki durumda: k_hesap = m·(2π·f_n)²
   // -------------------------------------------------------
+  var hasFn    = (!isNaN(fn)    && fn    > 0);
   var hasStiff = (!isNaN(stiff) && stiff > 0);
+  var hasReson = hasFn || hasStiff;
+
   var fCrit = NaN, nCrit = NaN, resonRatio = NaN, resonZone = '';
-  if (hasStiff) {
-    fCrit      = (1.0 / (2.0 * Math.PI)) * Math.sqrt(stiff / fanM);  // Hz
-    nCrit      = fCrit * 60.0;                                         // RPM
-    resonRatio = freqHz / fCrit;                                       // Ω/ω_n
-    if (resonRatio < 0.7)       resonZone = 'ok';      // alt kritik
-    else if (resonRatio < 1.3)  resonZone = 'bad';     // kritik bölge
-    else                        resonZone = 'warn';    // üst kritik
+  var kHesap = NaN, resonSrc = '';
+
+  if (hasFn) {
+    // Darbe testi — en güvenilir
+    fCrit    = fn;
+    nCrit    = fCrit * 60.0;
+    kHesap   = fanM * Math.pow(2.0 * Math.PI * fCrit, 2);  // N/m (geri hesap)
+    resonSrc = 'Darbe testi (VibXpert II)';
+  } else if (hasStiff) {
+    // Katalog rijitliği
+    fCrit    = (1.0 / (2.0 * Math.PI)) * Math.sqrt(stiff / fanM);
+    nCrit    = fCrit * 60.0;
+    kHesap   = stiff;
+    resonSrc = 'Rulman kataloğu (k)';
+  }
+
+  if (hasReson) {
+    resonRatio = freqHz / fCrit;
+    if      (resonRatio < 0.7)  resonZone = 'ok';   // alt kritik
+    else if (resonRatio < 1.3)  resonZone = 'bad';  // kritik bölge
+    else                        resonZone = 'warn';  // üst kritik
   }
 
   // -------------------------------------------------------
@@ -567,7 +612,9 @@ function doCalculate() {
     corrAngle:corrAngle, unbalMag:unbalMag, wCorr:wCorr,
     U:U, e:e, target:target, G:G, freqHz:freqHz, bpf:bpf,
     iso:iso, bladeList:bladeList, nearLabel:nearLabel,
-    stiff:stiff, hasStiff:hasStiff, fCrit:fCrit, nCrit:nCrit, resonRatio:resonRatio, resonZone:resonZone
+    stiff:stiff, fn:fn, hasFn:hasFn, hasStiff:hasStiff, hasReson:hasReson,
+    fCrit:fCrit, nCrit:nCrit, kHesap:kHesap, resonSrc:resonSrc,
+    resonRatio:resonRatio, resonZone:resonZone
   };
 
   saveCurrentInputs();
@@ -611,7 +658,7 @@ function renderResult(res) {
   var resonRow      = document.getElementById('resonRow');
   var resonRatioRow = document.getElementById('resonRatioRow');
   var resonBanner   = document.getElementById('resonBanner');
-  if (res.hasStiff) {
+  if (res.hasReson) {
     document.getElementById('resNcrit').textContent      = res.nCrit.toFixed(0) + ' RPM  (' + res.fCrit.toFixed(2) + ' Hz)';
     document.getElementById('resResonRatio').textContent = res.resonRatio.toFixed(3) + '  (Ω/ω_n)';
     document.getElementById('resResonRatio').className   = 'val ' + res.resonZone;
@@ -619,12 +666,13 @@ function renderResult(res) {
     resonRatioRow.style.display = '';
     resonBanner.style.display   = '';
     resonBanner.className = 'iso-banner ' + res.resonZone;
+    var srcTag = ' <span style="font-size:10px;opacity:0.7;">[' + res.resonSrc + ']</span>';
     if (res.resonZone === 'ok') {
-      resonBanner.textContent = '✓ Rezonans — Alt kritik bölge (Ω/ω_n = ' + res.resonRatio.toFixed(3) + ') — Güvenli çalışma';
+      resonBanner.innerHTML = '✓ Alt kritik bölge — Ω/ω_n = ' + res.resonRatio.toFixed(3) + ' — Güvenli çalışma' + srcTag;
     } else if (res.resonZone === 'bad') {
-      resonBanner.textContent = '⚠ KRİTİK REZONANS BÖLGESİ! Ω/ω_n = ' + res.resonRatio.toFixed(3) + ' — Kritik hıza çok yakın (±%30). Çalışma devrini kontrol edin!';
+      resonBanner.innerHTML = '⚠ KRİTİK REZONANS! Ω/ω_n = ' + res.resonRatio.toFixed(3) + ' — Kritik hıza çok yakın (±%30)!' + srcTag;
     } else {
-      resonBanner.textContent = '⚡ Üst kritik bölge (Ω/ω_n = ' + res.resonRatio.toFixed(3) + ') — Kritik hız geçilmiş, sürekli izleme önerilir';
+      resonBanner.innerHTML = '⚡ Üst kritik bölge — Ω/ω_n = ' + res.resonRatio.toFixed(3) + ' — Kritik hız geçilmiş' + srcTag;
     }
   } else {
     resonRow.style.display      = 'none';
@@ -910,138 +958,148 @@ window.downloadPDF = function() {
     '.fbox{background:#f0f4ff;border-left:4px solid #2255cc;padding:10px 14px;font-family:monospace;font-size:9.5pt;line-height:2;margin-bottom:10px;}'+
     '@media print{.pbtn,.nop{display:none!important;}@page{margin:12mm;}}'+
     '</style></head><body><div class="pg">'+
-    '<div class="hdr"><h1>Fan Balans — '+tabNum+'. Çalışma</h1><span class="dt">'+today+'</span></div>'+
 
-    '<div class="sec"><div class="st">Giriş Değerleri</div>'+
+```
+'<div class="hdr"><h1>Fan Balans — '+tabNum+'. Çalışma</h1><span class="dt">'+today+'</span></div>'+
+
+'<div class="sec"><div class="st">Giriş Değerleri</div>'+
+'<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>'+
+'<tr><td>Referans Titreşim (Ağırlıksız)</td><td>V₀</td><td>'+res.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
+'<tr style="background:#fafafa"><td>0° Titreşim (deneme ağırlığı 0°)</td><td>V_A</td><td>'+res.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
+'<tr><td>120° Titreşim (deneme ağırlığı 120°)</td><td>V_B</td><td>'+res.vB.toFixed(2)+'</td><td>mm/s</td></tr>'+
+'<tr style="background:#fafafa"><td>240° Titreşim (deneme ağırlığı 240°)</td><td>V_C</td><td>'+res.vC.toFixed(2)+'</td><td>mm/s</td></tr>'+
+'<tr><td>Deneme Ağırlığı</td><td>W_t</td><td>'+res.wt.toFixed(1)+'</td><td>gram</td></tr>'+
+'<tr style="background:#fafafa"><td>Fan Kütlesi</td><td>m</td><td>'+res.fanM.toFixed(1)+'</td><td>kg</td></tr>'+
+'<tr><td>Düzeltme Yarıçapı</td><td>r</td><td>'+res.fanR.toFixed(0)+'</td><td>mm</td></tr>'+
+'<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>'+res.rpm+'</td><td>RPM</td></tr>'+
+'<tr><td>Açısal Hız</td><td>ω = 2π·n/60</td><td>'+(res.rpm*2*Math.PI/60).toFixed(3)+'</td><td>rad/s</td></tr>'+
+(res.bladeCount>0?'<tr style="background:#fafafa"><td>Kanat Sayısı</td><td>z</td><td>'+res.bladeCount+'</td><td>adet</td></tr>':'')+
+(res.hasFn?'<tr style="background:#eaf5ea;"><td>Doğal Frekans (darbe testi)</td><td>f_n</td><td><b>'+res.fCrit.toFixed(2)+'</b></td><td>Hz</td></tr>':'')+
+(res.hasStiff&&!res.hasFn?'<tr style="background:#eaf0ff;"><td>Yatak Rijitliği (katalog)</td><td>k</td><td><b>'+res.stiff.toExponential(3)+'</b></td><td>N/m</td></tr>':'')+
+(res.hasReson&&res.hasFn&&res.hasStiff?'<tr style="background:#fafafa"><td>Yatak Rijitliği (katalog, referans)</td><td>k</td><td>'+res.stiff.toExponential(3)+'</td><td>N/m</td></tr>':'')+
+'<tr style="background:#fafafa"><td>Dönüş Yönü</td><td>—</td><td><b>'+(res.rotation==='CW'?'Saat Yönü (CW)':'Saat Yönü Tersi (CCW)')+'</b></td><td>—</td></tr>'+
+'</table></div>'+
+
+'<div class="sec"><div class="st">Ara Hesaplama Değerleri</div>'+
+'<div class="fbox">'+
+'dA = VA²−V0² = '+res.vA.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dA.toFixed(4)+' (mm/s)²<br>'+
+'dB = VB²−V0² = '+res.vB.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dB.toFixed(4)+' (mm/s)²<br>'+
+'dC = VC²−V0² = '+res.vC.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dC.toFixed(4)+' (mm/s)²<br>'+
+'x  = (2·dA−dB−dC)/3 = '+res.x.toFixed(4)+'<br>'+
+'y  = (dB−dC)/√3    = '+res.y.toFixed(4)+'<br>'+
+'θ  = atan2(y,x)     = '+res.thetaDeg.toFixed(2)+'°  →  +180° = '+res.corrAngle.toFixed(2)+'°<br>'+
+'Wdüz = 2·V0²·Wt / |UV| = 2·'+res.v0.toFixed(2)+'²·'+res.wt.toFixed(1)+' / '+res.unbalMag.toFixed(4)+' = <b>'+res.wCorr.toFixed(1)+' g</b>'+
+'</div></div>'+
+
+'<div class="sec"><div class="st">Hesaplanan Sonuçlar</div>'+
+'<table><tr><th>Sonuç</th><th>Sembol</th><th>Değer</th></tr>'+
+'<tr><td>Düzeltme Ağırlığı</td><td>Wdüz</td><td><span class="rb rd">'+res.wCorr.toFixed(1)+' gram</span></td></tr>'+
+'<tr style="background:#fafafa"><td>Yerleştirme Açısı</td><td>θdüz</td><td><span class="rb bl">'+res.corrAngle.toFixed(1)+'°</span> (0°\'den)</td></tr>'+
+(res.bladeList.length>0?'<tr><td>En Yakın Kanat</td><td>—</td><td><span class="gr" style="font-weight:700;">'+res.nearLabel+'</span> (fark: '+res.bladeList[0].diff.toFixed(1)+'°)</td></tr>':'')+
+'<tr style="background:#fafafa"><td>Dengesizlik (U = Wdüz × r)</td><td>U</td><td>'+res.U.toFixed(0)+' g·mm</td></tr>'+
+'<tr><td>Özgül Dengesizlik</td><td>e</td><td>'+res.e.toFixed(1)+' μm</td></tr>'+
+'<tr style="background:#fafafa"><td>Hedef Titreşim (V0 × 0,15)</td><td>—</td><td>&lt; '+res.target.toFixed(2)+' mm/s</td></tr>'+
+'</table></div>'+
+
+'<div class="sec"><div class="st">ISO 1940-1 Kalite Sınıfı</div>'+
+'<div class="ibox i'+res.iso.cat+'"><b>ISO '+res.iso.cls+'</b>  |  G = '+res.G.toFixed(2)+' mm/s  |  '+res.iso.desc+'</div>'+
+'<table><tr><th>Parametre</th><th>Değer</th></tr>'+
+'<tr><td>G Değeri</td><td style="font-weight:700;color:'+isoColor+';">'+res.G.toFixed(2)+' mm/s → '+res.iso.cls+'</td></tr>'+
+'<tr style="background:#fafafa"><td>Çalışma Frekansı</td><td>'+res.freqHz.toFixed(2)+' Hz ('+res.rpm+' RPM)</td></tr>'+
+bpfRow+
+'</table></div>'+
+
+'<div class="sec"><div class="st">2. Tur Değerlendirmesi</div><div class="sr">'+srTxt+'</div></div>'+
+
+(res.hasReson ? (function(){
+  var rzColor = res.resonZone==='ok'?'#006633':res.resonZone==='bad'?'#cc2200':'#885500';
+  var rzClass = res.resonZone==='ok'?'iok':res.resonZone==='bad'?'ibad':'iwarn';
+  var rzTxt   = res.resonZone==='ok'
+    ? '✓ Alt kritik bölge — Güvenli çalışma'
+    : res.resonZone==='bad'
+      ? '⚠ KRİTİK REZONANS BÖLGESİ — Çalışma devri kritik hıza çok yakın (±%30)!'
+      : '⚡ Üst kritik bölge — Kritik hız geçilmiş, sürekli izleme önerilir';
+  var kRow = (!isNaN(res.kHesap) && res.kHesap > 0)
+    ? '<tr style="background:#fafafa"><td>Sistem Rijitliği'+(res.hasFn?' (geri hesap, f_n\'den)':' (katalog)')+'</td><td>k</td><td>'+res.kHesap.toExponential(3)+'</td><td>N/m</td></tr>'
+    : '';
+  var srcRow = '<tr><td>Veri Kaynağı</td><td>—</td><td><b>'+res.resonSrc+'</b></td><td>—</td></tr>';
+  return '<div class="sec"><div class="st">Rezonans / Kritik Hız Analizi</div>'+
+    '<div class="ibox '+rzClass+'"><b>'+rzTxt+'</b></div>'+
     '<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>'+
-    '<tr><td>Referans Titreşim (Ağırlıksız)</td><td>V₀</td><td>'+res.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
-    '<tr style="background:#fafafa"><td>0° Titreşim (deneme ağırlığı 0°)</td><td>V_A</td><td>'+res.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
-    '<tr><td>120° Titreşim (deneme ağırlığı 120°)</td><td>V_B</td><td>'+res.vB.toFixed(2)+'</td><td>mm/s</td></tr>'+
-    '<tr style="background:#fafafa"><td>240° Titreşim (deneme ağırlığı 240°)</td><td>V_C</td><td>'+res.vC.toFixed(2)+'</td><td>mm/s</td></tr>'+
-    '<tr><td>Deneme Ağırlığı</td><td>W_t</td><td>'+res.wt.toFixed(1)+'</td><td>gram</td></tr>'+
-    '<tr style="background:#fafafa"><td>Fan Kütlesi</td><td>m</td><td>'+res.fanM.toFixed(1)+'</td><td>kg</td></tr>'+
-    '<tr><td>Düzeltme Yarıçapı</td><td>r</td><td>'+res.fanR.toFixed(0)+'</td><td>mm</td></tr>'+
+    srcRow+
+    '<tr style="background:#fafafa"><td>Doğal / Kritik Frekans</td><td>f_n</td><td style="font-weight:700;color:'+rzColor+';">'+res.fCrit.toFixed(2)+'</td><td>Hz</td></tr>'+
+    '<tr><td>Kritik Devir</td><td>n_krit</td><td style="font-weight:700;color:'+rzColor+';">'+res.nCrit.toFixed(0)+'</td><td>RPM</td></tr>'+
+    kRow+
+    (res.hasReson&&res.hasFn&&res.hasStiff?'<tr style="background:#fafafa"><td>Yatak Rijitliği (katalog, referans)</td><td>k_kat</td><td>'+res.stiff.toExponential(3)+'</td><td>N/m</td></tr>':'')+
     '<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>'+res.rpm+'</td><td>RPM</td></tr>'+
-    '<tr><td>Açısal Hız</td><td>ω = 2π·n/60</td><td>'+(res.rpm*2*Math.PI/60).toFixed(3)+'</td><td>rad/s</td></tr>'+
-    (res.bladeCount>0?'<tr style="background:#fafafa"><td>Kanat Sayısı</td><td>z</td><td>'+res.bladeCount+'</td><td>adet</td></tr>':'')+
-    (res.hasStiff?'<tr'+(res.bladeCount>0?'':' style="background:#fafafa"')+'><td>Yatak Rijitliği</td><td>k</td><td>'+res.stiff.toExponential(3)+'</td><td>N/m</td></tr>':'')+
-    '<tr style="background:#fafafa"><td>Dönüş Yönü</td><td>—</td><td><b>'+(res.rotation==='CW'?'Saat Yönü (CW)':'Saat Yönü Tersi (CCW)')+'</b></td><td>—</td></tr>'+
-    '</table></div>'+
+    '<tr><td>Frekans Oranı</td><td>Ω/ω_n = n/n_krit</td><td style="font-weight:700;color:'+rzColor+';">'+res.resonRatio.toFixed(3)+'</td><td>—</td></tr>'+
+    '</table></div>';
+})() : '')+
 
-    '<div class="sec"><div class="st">Ara Hesaplama Değerleri</div>'+
-    '<div class="fbox">'+
-    'dA = VA²−V0² = '+res.vA.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dA.toFixed(4)+' (mm/s)²<br>'+
-    'dB = VB²−V0² = '+res.vB.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dB.toFixed(4)+' (mm/s)²<br>'+
-    'dC = VC²−V0² = '+res.vC.toFixed(2)+'²−'+res.v0.toFixed(2)+'² = '+res.dC.toFixed(4)+' (mm/s)²<br>'+
-    'x  = (2·dA−dB−dC)/3 = '+res.x.toFixed(4)+'<br>'+
-    'y  = (dB−dC)/√3    = '+res.y.toFixed(4)+'<br>'+
-    'θ  = atan2(y,x)     = '+res.thetaDeg.toFixed(2)+'°  →  +180° = '+res.corrAngle.toFixed(2)+'°<br>'+
-    'Wdüz = 2·V0²·Wt / |UV| = 2·'+res.v0.toFixed(2)+'²·'+res.wt.toFixed(1)+' / '+res.unbalMag.toFixed(4)+' = <b>'+res.wCorr.toFixed(1)+' g</b>'+
-    '</div></div>'+
+'<div class="sec"><div class="st">Yerleştirme Talimatı</div>'+
+'<div class="gs"><div class="gn gb">1</div><div>Ekipmanı durdurun — LOTO uygulayın</div></div>'+
+'<div class="gs"><div class="gn gb">2</div><div>0° referansından <b>'+res.corrAngle.toFixed(1)+'°</b> konumunu işaretleyin</div></div>'+
+'<div class="gs"><div class="gn gb">3</div><div>En yakın kanat: <b>'+res.nearLabel+'</b></div></div>'+
+'<div class="gs"><div class="gn gb">4</div><div><b>'+res.wCorr.toFixed(1)+' gram</b> ağırlık takın (r = '+res.fanR+' mm)</div></div>'+
+'<div class="gs"><div class="gn gg">5</div><div>Ekipmanı çalıştırın ve doğrulama ölçümü alın</div></div>'+
+'<div class="gs"><div class="gn gg">6</div><div>Hedef: <b>&lt; '+res.target.toFixed(2)+' mm/s</b> (ISO '+res.iso.cls+')</div></div>'+
+'</div>'+
 
-    '<div class="sec"><div class="st">Hesaplanan Sonuçlar</div>'+
-    '<table><tr><th>Sonuç</th><th>Sembol</th><th>Değer</th></tr>'+
-    '<tr><td>Düzeltme Ağırlığı</td><td>Wdüz</td><td><span class="rb rd">'+res.wCorr.toFixed(1)+' gram</span></td></tr>'+
-    '<tr style="background:#fafafa"><td>Yerleştirme Açısı</td><td>θdüz</td><td><span class="rb bl">'+res.corrAngle.toFixed(1)+'°</span> (0°\'den)</td></tr>'+
-    (res.bladeList.length>0?'<tr><td>En Yakın Kanat</td><td>—</td><td><span class="gr" style="font-weight:700;">'+res.nearLabel+'</span> (fark: '+res.bladeList[0].diff.toFixed(1)+'°)</td></tr>':'')+
-    '<tr style="background:#fafafa"><td>Dengesizlik (U = Wdüz × r)</td><td>U</td><td>'+res.U.toFixed(0)+' g·mm</td></tr>'+
-    '<tr><td>Özgül Dengesizlik</td><td>e</td><td>'+res.e.toFixed(1)+' μm</td></tr>'+
-    '<tr style="background:#fafafa"><td>Hedef Titreşim (V0 × 0,15)</td><td>—</td><td>&lt; '+res.target.toFixed(2)+' mm/s</td></tr>'+
-    '</table></div>'+
+'<button class="pbtn" onclick="window.print()">⬇ PDF OLARAK KAYDET / YAZDIR</button>'+
+'<p class="nop" style="font-size:9pt;color:#999;text-align:center;margin-top:6px;">Yazdır → Hedef: PDF Kaydet</p>'+
+'<div class="ft">Fan Balans Hesap Aracı — Thearle 3-Nokta Yöntemi — v2.3 — '+today+'</div>'+
+'</div></body></html>';
+```
 
-    '<div class="sec"><div class="st">ISO 1940-1 Kalite Sınıfı</div>'+
-    '<div class="ibox i'+res.iso.cat+'"><b>ISO '+res.iso.cls+'</b>  |  G = '+res.G.toFixed(2)+' mm/s  |  '+res.iso.desc+'</div>'+
-    '<table><tr><th>Parametre</th><th>Değer</th></tr>'+
-    '<tr><td>G Değeri</td><td style="font-weight:700;color:'+isoColor+';">'+res.G.toFixed(2)+' mm/s → '+res.iso.cls+'</td></tr>'+
-    '<tr style="background:#fafafa"><td>Çalışma Frekansı</td><td>'+res.freqHz.toFixed(2)+' Hz ('+res.rpm+' RPM)</td></tr>'+
-    bpfRow+
-    '</table></div>'+
-
-    '<div class="sec"><div class="st">2. Tur Değerlendirmesi</div><div class="sr">'+srTxt+'</div></div>'+
-
-    (res.hasStiff ? (function(){
-      var rzColor = res.resonZone==='ok'?'#006633':res.resonZone==='bad'?'#cc2200':'#885500';
-      var rzClass = res.resonZone==='ok'?'iok':res.resonZone==='bad'?'ibad':'iwarn';
-      var rzTxt   = res.resonZone==='ok'
-        ? '✓ Alt kritik bölge — Güvenli çalışma'
-        : res.resonZone==='bad'
-          ? '⚠ KRİTİK REZONANS BÖLGESİ — Çalışma devri kritik hıza çok yakın (±%30)!'
-          : '⚡ Üst kritik bölge — Kritik hız geçilmiş, sürekli izleme önerilir';
-      return '<div class="sec"><div class="st">Rezonans / Kritik Hız Analizi</div>'+
-        '<div class="ibox '+rzClass+'"><b>'+rzTxt+'</b></div>'+
-        '<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th></tr>'+
-        '<tr><td>Yatak Rijitliği</td><td>k</td><td>'+res.stiff.toExponential(3)+' N/m</td></tr>'+
-        '<tr style="background:#fafafa"><td>Kritik Frekans</td><td>f_krit = (1/2π)·√(k/m)</td><td style="font-weight:700;color:'+rzColor+';">'+res.fCrit.toFixed(2)+' Hz</td></tr>'+
-        '<tr><td>Kritik Devir</td><td>n_krit</td><td style="font-weight:700;color:'+rzColor+';">'+res.nCrit.toFixed(0)+' RPM</td></tr>'+
-        '<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>'+res.rpm+' RPM</td></tr>'+
-        '<tr><td>Frekans Oranı</td><td>Ω/ω_n = n/n_krit</td><td style="font-weight:700;color:'+rzColor+';">'+res.resonRatio.toFixed(3)+'</td></tr>'+
-        '</table></div>';
-    })() : '')
-
-    bladeSection+
-
-    '<div class="sec"><div class="st">Yerleştirme Talimatı</div>'+
-    '<div class="gs"><div class="gn gb">1</div><div>Ekipmanı durdurun — LOTO uygulayın</div></div>'+
-    '<div class="gs"><div class="gn gb">2</div><div>0° referansından <b>'+res.corrAngle.toFixed(1)+'°</b> konumunu işaretleyin</div></div>'+
-    '<div class="gs"><div class="gn gb">3</div><div>En yakın kanat: <b>'+res.nearLabel+'</b></div></div>'+
-    '<div class="gs"><div class="gn gb">4</div><div><b>'+res.wCorr.toFixed(1)+' gram</b> ağırlık takın (r = '+res.fanR+' mm)</div></div>'+
-    '<div class="gs"><div class="gn gg">5</div><div>Ekipmanı çalıştırın ve doğrulama ölçümü alın</div></div>'+
-    '<div class="gs"><div class="gn gg">6</div><div>Hedef: <b>&lt; '+res.target.toFixed(2)+' mm/s</b> (ISO '+res.iso.cls+')</div></div>'+
-    '</div>'+
-
-    '<button class="pbtn" onclick="window.print()">⬇ PDF OLARAK KAYDET / YAZDIR</button>'+
-    '<p class="nop" style="font-size:9pt;color:#999;text-align:center;margin-top:6px;">Yazdır → Hedef: PDF Kaydet</p>'+
-    '<div class="ft">Fan Balans Hesap Aracı — Thearle 3-Nokta Yöntemi — v2.2 — '+today+'</div>'+
-    '</div></body></html>';
-
-  var pw = null;
-  try { pw = window.open('', '_blank'); } catch(ignored) {}
-  if (pw && pw.document) {
-    pw.document.write(h);
-    pw.document.close();
-  } else {
-    var old = document.getElementById('_pf');
-    if (old) old.parentNode.removeChild(old);
-    var ifr = document.createElement('iframe');
-    ifr.id = '_pf';
-    ifr.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff;';
-    document.body.appendChild(ifr);
-    ifr.contentDocument.write(h);
-    ifr.contentDocument.close();
-    var cb = document.createElement('button');
-    cb.textContent = '✕ Kapat';
-    cb.style.cssText = 'position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;';
-    cb.onclick = function(){ document.body.removeChild(ifr); document.body.removeChild(cb); };
-    document.body.appendChild(cb);
-  }
+var pw = null;
+try { pw = window.open(’’, ‘_blank’); } catch(ignored) {}
+if (pw && pw.document) {
+pw.document.write(h);
+pw.document.close();
+} else {
+var old = document.getElementById(’_pf’);
+if (old) old.parentNode.removeChild(old);
+var ifr = document.createElement(‘iframe’);
+ifr.id = ‘_pf’;
+ifr.style.cssText = ‘position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff;’;
+document.body.appendChild(ifr);
+ifr.contentDocument.write(h);
+ifr.contentDocument.close();
+var cb = document.createElement(‘button’);
+cb.textContent = ‘✕ Kapat’;
+cb.style.cssText = ‘position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;’;
+cb.onclick = function(){ document.body.removeChild(ifr); document.body.removeChild(cb); };
+document.body.appendChild(cb);
+}
 };
 
 // ============================================================
 // RESET
 // ============================================================
 function doReset() {
-  sessions[activeTab] = newSession(activeTab + 1);
-  for (var i = 0; i < INPUT_IDS.length; i++) {
-    var el = document.getElementById(INPUT_IDS[i]);
-    if (el) el.value = '';
-  }
-  setDir('CW');
-  document.getElementById('resultBox').style.display = 'none';
-  rebuildTabBar();
-  window.scrollTo(0, 0);
+sessions[activeTab] = newSession(activeTab + 1);
+for (var i = 0; i < INPUT_IDS.length; i++) {
+var el = document.getElementById(INPUT_IDS[i]);
+if (el) el.value = ‘’;
+}
+setDir(‘CW’);
+document.getElementById(‘resultBox’).style.display = ‘none’;
+rebuildTabBar();
+window.scrollTo(0, 0);
 }
 
 // ============================================================
 // BUTON BAĞLAMA
 // ============================================================
-document.getElementById('btn').addEventListener('click', doCalculate);
-document.getElementById('btn').addEventListener('touchend', function(e){ e.preventDefault(); doCalculate(); });
-document.getElementById('pdfBtn').addEventListener('click', window.downloadPDF);
-document.getElementById('pdfBtn').addEventListener('touchend', function(e){ e.preventDefault(); window.downloadPDF(); });
-document.getElementById('resetBtn').addEventListener('click', doReset);
-document.getElementById('resetBtn').addEventListener('touchend', function(e){ e.preventDefault(); doReset(); });
+document.getElementById(‘btn’).addEventListener(‘click’, doCalculate);
+document.getElementById(‘btn’).addEventListener(‘touchend’, function(e){ e.preventDefault(); doCalculate(); });
+document.getElementById(‘pdfBtn’).addEventListener(‘click’, window.downloadPDF);
+document.getElementById(‘pdfBtn’).addEventListener(‘touchend’, function(e){ e.preventDefault(); window.downloadPDF(); });
+document.getElementById(‘resetBtn’).addEventListener(‘click’, doReset);
+document.getElementById(‘resetBtn’).addEventListener(‘touchend’, function(e){ e.preventDefault(); doReset(); });
 
 rebuildTabBar();
 </script>
+
 </body>
 </html>
