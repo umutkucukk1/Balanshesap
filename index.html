@@ -202,6 +202,12 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
     </div>
 
     <div class="input-group">
+      <div class="input-label">Yatak Rijitliği (k) <span style="color:#555;font-size:10px;margin-left:4px;">— opsiyonel, rezonans için</span></div>
+      <input id="stiff" type="text" inputmode="decimal" placeholder="örn: 5000000">
+      <div class="input-unit">N/m — yatak + mil rijitliği (bilinmiyorsa boş bırakın)</div>
+    </div>
+
+    <div class="input-group">
       <div class="input-label">Fan Dönüş Yönü</div>
       <div class="dir-selector">
         <button class="dir-btn active" id="dirCW" onclick="setDir('CW')">
@@ -258,9 +264,12 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
         <div class="info-row"><span class="lbl">Hedef titreşim</span><span class="val" id="resTgt">—</span></div>
         <div class="info-row"><span class="lbl">ISO Kalite Sınıfı (G)</span><span class="val" id="resG">—</span></div>
         <div class="info-row"><span class="lbl">Çalışma frekansı</span><span class="val" id="resHz">—</span></div>
+        <div class="info-row" id="resonRow" style="display:none"><span class="lbl">Kritik hız (n_krit)</span><span class="val" id="resNcrit">—</span></div>
+        <div class="info-row" id="resonRatioRow" style="display:none"><span class="lbl">Ω/ω_n oranı</span><span class="val" id="resResonRatio">—</span></div>
       </div>
 
       <div id="isoBanner" class="iso-banner ok">—</div>
+      <div id="resonBanner" class="iso-banner ok" style="display:none">—</div>
       <div id="speedDiv" class="speed-ok">—</div>
       <div id="secondRunDiv" class="second-run">—</div>
 
@@ -335,12 +344,12 @@ var activeTab = 0;
 function newSession(num) {
   return {
     num: num,
-    inputs: { v0:'', vA:'', vB:'', vC:'', wt:'', fanM:'', fanR:'', rpm:'', blades:'', rotation:'CW' },
+    inputs: { v0:'', vA:'', vB:'', vC:'', wt:'', fanM:'', fanR:'', rpm:'', blades:'', stiff:'', rotation:'CW' },
     result: null
   };
 }
 
-var INPUT_IDS = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades'];
+var INPUT_IDS = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','stiff'];
 
 // ============================================================
 // SEKME YÖNETİMİ
@@ -465,6 +474,7 @@ function doCalculate() {
   var fanR = getVal('fanR');
   var rpm  = getVal('rpm');
   var nb   = getVal('blades');
+  var stiff = getVal('stiff'); // N/m — opsiyonel
 
   var names  = ['1. Ölçüm (V0)','2. Ölçüm (VA)','3. Ölçüm (VB)','4. Ölçüm (VC)','Deneme Ağırlığı','Fan Ağırlığı','Fan Yarıçapı','RPM'];
   var values = [v0, vA, vB, vC, wt, fanM, fanR, rpm];
@@ -516,6 +526,23 @@ function doCalculate() {
   var bpf    = bladeCount > 0 ? freqHz * bladeCount : 0;
 
   // -------------------------------------------------------
+  // ADIM 7 — Rezonans / Kritik Hız
+  // k (N/m) girilmişse: f_krit = (1/2π)·√(k/m_kg)
+  // m_kg = fanM (kg), k (N/m) → f_krit (Hz), n_krit (RPM)
+  // Oran: Ω/ω_n = freqHz / f_krit
+  // -------------------------------------------------------
+  var hasStiff = (!isNaN(stiff) && stiff > 0);
+  var fCrit = NaN, nCrit = NaN, resonRatio = NaN, resonZone = '';
+  if (hasStiff) {
+    fCrit      = (1.0 / (2.0 * Math.PI)) * Math.sqrt(stiff / fanM);  // Hz
+    nCrit      = fCrit * 60.0;                                         // RPM
+    resonRatio = freqHz / fCrit;                                       // Ω/ω_n
+    if (resonRatio < 0.7)       resonZone = 'ok';      // alt kritik
+    else if (resonRatio < 1.3)  resonZone = 'bad';     // kritik bölge
+    else                        resonZone = 'warn';    // üst kritik
+  }
+
+  // -------------------------------------------------------
   // ADIM 6 — En yakın kanat listesi
   // -------------------------------------------------------
   var bladeList = [];
@@ -539,7 +566,8 @@ function doCalculate() {
     dA:dA, dB:dB, dC:dC, x:x, y:y, thetaDeg:thetaDeg,
     corrAngle:corrAngle, unbalMag:unbalMag, wCorr:wCorr,
     U:U, e:e, target:target, G:G, freqHz:freqHz, bpf:bpf,
-    iso:iso, bladeList:bladeList, nearLabel:nearLabel
+    iso:iso, bladeList:bladeList, nearLabel:nearLabel,
+    stiff:stiff, hasStiff:hasStiff, fCrit:fCrit, nCrit:nCrit, resonRatio:resonRatio, resonZone:resonZone
   };
 
   saveCurrentInputs();
@@ -576,9 +604,33 @@ function renderResult(res) {
   document.getElementById('fLine7').innerHTML = 'Wdüz = 2·V0²·Wt / |UV| = 2·' + res.v0.toFixed(2) + '²·' + res.wt.toFixed(1) + ' / ' + res.unbalMag.toFixed(4) + ' = <span>' + res.wCorr.toFixed(1) + ' g</span>';
 
   // ISO banner
-  var isoBanner = document.getElementById('isoBanner');
-  isoBanner.className = 'iso-banner ' + res.iso.cat;
+  var isoBanner = document.getElementById('isoBanner');  isoBanner.className = 'iso-banner ' + res.iso.cat;
   isoBanner.textContent = 'ISO 1940-1  |  G = ' + res.G.toFixed(1) + ' mm/s  →  ' + res.iso.cls + '  |  ' + res.iso.desc;
+
+  // Rezonans
+  var resonRow      = document.getElementById('resonRow');
+  var resonRatioRow = document.getElementById('resonRatioRow');
+  var resonBanner   = document.getElementById('resonBanner');
+  if (res.hasStiff) {
+    document.getElementById('resNcrit').textContent      = res.nCrit.toFixed(0) + ' RPM  (' + res.fCrit.toFixed(2) + ' Hz)';
+    document.getElementById('resResonRatio').textContent = res.resonRatio.toFixed(3) + '  (Ω/ω_n)';
+    document.getElementById('resResonRatio').className   = 'val ' + res.resonZone;
+    resonRow.style.display      = '';
+    resonRatioRow.style.display = '';
+    resonBanner.style.display   = '';
+    resonBanner.className = 'iso-banner ' + res.resonZone;
+    if (res.resonZone === 'ok') {
+      resonBanner.textContent = '✓ Rezonans — Alt kritik bölge (Ω/ω_n = ' + res.resonRatio.toFixed(3) + ') — Güvenli çalışma';
+    } else if (res.resonZone === 'bad') {
+      resonBanner.textContent = '⚠ KRİTİK REZONANS BÖLGESİ! Ω/ω_n = ' + res.resonRatio.toFixed(3) + ' — Kritik hıza çok yakın (±%30). Çalışma devrini kontrol edin!';
+    } else {
+      resonBanner.textContent = '⚡ Üst kritik bölge (Ω/ω_n = ' + res.resonRatio.toFixed(3) + ') — Kritik hız geçilmiş, sürekli izleme önerilir';
+    }
+  } else {
+    resonRow.style.display      = 'none';
+    resonRatioRow.style.display = 'none';
+    resonBanner.style.display   = 'none';
+  }
 
   // Kritik devir
   var speedDiv = document.getElementById('speedDiv');
@@ -862,15 +914,17 @@ window.downloadPDF = function() {
 
     '<div class="sec"><div class="st">Giriş Değerleri</div>'+
     '<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>'+
-    '<tr><td>Referans Titreşim (Ağırlıksız)</td><td>V0</td><td>'+res.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
-    '<tr style="background:#fafafa"><td>0° Titreşim</td><td>VA</td><td>'+res.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
-    '<tr><td>120° Titreşim</td><td>VB</td><td>'+res.vB.toFixed(2)+'</td><td>mm/s</td></tr>'+
-    '<tr style="background:#fafafa"><td>240° Titreşim</td><td>VC</td><td>'+res.vC.toFixed(2)+'</td><td>mm/s</td></tr>'+
-    '<tr><td>Deneme Ağırlığı</td><td>Wt</td><td>'+res.wt.toFixed(1)+'</td><td>gram</td></tr>'+
-    '<tr style="background:#fafafa"><td>Fan Ağırlığı</td><td>m</td><td>'+res.fanM.toFixed(1)+'</td><td>kg</td></tr>'+
-    '<tr><td>Fan Yarıçapı</td><td>r</td><td>'+res.fanR.toFixed(0)+'</td><td>mm</td></tr>'+
-    '<tr style="background:#fafafa"><td>Devir</td><td>n</td><td>'+res.rpm+'</td><td>RPM</td></tr>'+
-    (res.bladeCount>0?'<tr><td>Kanat Sayısı</td><td>—</td><td>'+res.bladeCount+'</td><td>adet</td></tr>':'')+
+    '<tr><td>Referans Titreşim (Ağırlıksız)</td><td>V₀</td><td>'+res.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
+    '<tr style="background:#fafafa"><td>0° Titreşim (deneme ağırlığı 0°)</td><td>V_A</td><td>'+res.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
+    '<tr><td>120° Titreşim (deneme ağırlığı 120°)</td><td>V_B</td><td>'+res.vB.toFixed(2)+'</td><td>mm/s</td></tr>'+
+    '<tr style="background:#fafafa"><td>240° Titreşim (deneme ağırlığı 240°)</td><td>V_C</td><td>'+res.vC.toFixed(2)+'</td><td>mm/s</td></tr>'+
+    '<tr><td>Deneme Ağırlığı</td><td>W_t</td><td>'+res.wt.toFixed(1)+'</td><td>gram</td></tr>'+
+    '<tr style="background:#fafafa"><td>Fan Kütlesi</td><td>m</td><td>'+res.fanM.toFixed(1)+'</td><td>kg</td></tr>'+
+    '<tr><td>Düzeltme Yarıçapı</td><td>r</td><td>'+res.fanR.toFixed(0)+'</td><td>mm</td></tr>'+
+    '<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>'+res.rpm+'</td><td>RPM</td></tr>'+
+    '<tr><td>Açısal Hız</td><td>ω = 2π·n/60</td><td>'+(res.rpm*2*Math.PI/60).toFixed(3)+'</td><td>rad/s</td></tr>'+
+    (res.bladeCount>0?'<tr style="background:#fafafa"><td>Kanat Sayısı</td><td>z</td><td>'+res.bladeCount+'</td><td>adet</td></tr>':'')+
+    (res.hasStiff?'<tr'+(res.bladeCount>0?'':' style="background:#fafafa"')+'><td>Yatak Rijitliği</td><td>k</td><td>'+res.stiff.toExponential(3)+'</td><td>N/m</td></tr>':'')+
     '<tr style="background:#fafafa"><td>Dönüş Yönü</td><td>—</td><td><b>'+(res.rotation==='CW'?'Saat Yönü (CW)':'Saat Yönü Tersi (CCW)')+'</b></td><td>—</td></tr>'+
     '</table></div>'+
 
@@ -905,6 +959,25 @@ window.downloadPDF = function() {
 
     '<div class="sec"><div class="st">2. Tur Değerlendirmesi</div><div class="sr">'+srTxt+'</div></div>'+
 
+    (res.hasStiff ? (function(){
+      var rzColor = res.resonZone==='ok'?'#006633':res.resonZone==='bad'?'#cc2200':'#885500';
+      var rzClass = res.resonZone==='ok'?'iok':res.resonZone==='bad'?'ibad':'iwarn';
+      var rzTxt   = res.resonZone==='ok'
+        ? '✓ Alt kritik bölge — Güvenli çalışma'
+        : res.resonZone==='bad'
+          ? '⚠ KRİTİK REZONANS BÖLGESİ — Çalışma devri kritik hıza çok yakın (±%30)!'
+          : '⚡ Üst kritik bölge — Kritik hız geçilmiş, sürekli izleme önerilir';
+      return '<div class="sec"><div class="st">Rezonans / Kritik Hız Analizi</div>'+
+        '<div class="ibox '+rzClass+'"><b>'+rzTxt+'</b></div>'+
+        '<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th></tr>'+
+        '<tr><td>Yatak Rijitliği</td><td>k</td><td>'+res.stiff.toExponential(3)+' N/m</td></tr>'+
+        '<tr style="background:#fafafa"><td>Kritik Frekans</td><td>f_krit = (1/2π)·√(k/m)</td><td style="font-weight:700;color:'+rzColor+';">'+res.fCrit.toFixed(2)+' Hz</td></tr>'+
+        '<tr><td>Kritik Devir</td><td>n_krit</td><td style="font-weight:700;color:'+rzColor+';">'+res.nCrit.toFixed(0)+' RPM</td></tr>'+
+        '<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>'+res.rpm+' RPM</td></tr>'+
+        '<tr><td>Frekans Oranı</td><td>Ω/ω_n = n/n_krit</td><td style="font-weight:700;color:'+rzColor+';">'+res.resonRatio.toFixed(3)+'</td></tr>'+
+        '</table></div>';
+    })() : '')
+
     bladeSection+
 
     '<div class="sec"><div class="st">Yerleştirme Talimatı</div>'+
@@ -918,7 +991,7 @@ window.downloadPDF = function() {
 
     '<button class="pbtn" onclick="window.print()">⬇ PDF OLARAK KAYDET / YAZDIR</button>'+
     '<p class="nop" style="font-size:9pt;color:#999;text-align:center;margin-top:6px;">Yazdır → Hedef: PDF Kaydet</p>'+
-    '<div class="ft">Fan Balans Hesap Aracı — Thearle 3-Nokta Yöntemi — v2.1 — '+today+'</div>'+
+    '<div class="ft">Fan Balans Hesap Aracı — Thearle 3-Nokta Yöntemi — v2.2 — '+today+'</div>'+
     '</div></body></html>';
 
   var pw = null;
