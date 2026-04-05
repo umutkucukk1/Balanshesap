@@ -158,9 +158,9 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
       <div class="input-unit">kg</div>
     </div>
     <div class="input-group">
-      <div class="input-label">Düzeltme Yarıçapı (r)</div>
+      <div class="input-label">Fan Yarıçapı (r)</div>
       <input id="fanR" type="text" inputmode="decimal" placeholder="örn: 1120">
-      <div class="input-unit">mm</div>
+      <div class="input-unit">mm — ağırlığın takılacağı yarıçap</div>
     </div>
     <div class="input-group">
       <div class="input-label">Çalışma Devri (n)</div>
@@ -210,7 +210,7 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
 
   </div>
 
-<button class="calc-button" id="calcBtn">⟶ HESAPLA</button>
+<button class="calc-button" id="calcBtn" onclick="doCalculate()">⟶ HESAPLA</button>
 
   <!-- SONUÇ KUTUSU -->
 
@@ -287,8 +287,8 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
     <div id="guideContent"></div>
   </div>
 
-  <button class="pdf-button" id="pdfBtn">⬇ PDF İndir</button>
-  <button class="reset-btn" id="resetBtn">↺ Bu Çalışmayı Temizle</button>
+  <button class="pdf-button" id="pdfBtn" onclick="downloadPDF()">⬇ PDF İndir</button>
+  <button class="reset-btn" id="resetBtn" onclick="doReset()">↺ Bu Çalışmayı Temizle</button>
 </div>
 ```
 
@@ -410,7 +410,7 @@ function doCalculate() {
   var wt=getVal('wt'), fanM=getVal('fanM'), fanR=getVal('fanR'), rpm=getVal('rpm');
   var nb=getVal('blades'), fn=getVal('fn'), stiff=getVal('stiff');
 
-  var required = ['1. Ölçüm (V₀)','2. Ölçüm (V_A)','3. Ölçüm (V_B)','4. Ölçüm (V_C)','Deneme Ağırlığı','Fan Kütlesi','Düzeltme Yarıçapı','Çalışma Devri'];
+  var required = ['1. Ölçüm (V₀)','2. Ölçüm (V_A)','3. Ölçüm (V_B)','4. Ölçüm (V_C)','Deneme Ağırlığı (W_t)','Fan Kütlesi (m)','Fan Yarıçapı (r)','Çalışma Devri (n)'];
   var vals = [v0,vA,vB,vC,wt,fanM,fanR,rpm];
   var miss=[];
   vals.forEach(function(v,i){ if(isNaN(v)||v<=0) miss.push(required[i]); });
@@ -744,7 +744,7 @@ function downloadPDF() {
 '<tr style="background:#fafafa"><td>240° Titreşim (deneme ağırlığı 240°)</td><td>V_C</td><td>'+res.vC.toFixed(2)+'</td><td>mm/s</td></tr>'+
 '<tr><td>Deneme Ağırlığı</td><td>W_t</td><td>'+res.wt.toFixed(1)+'</td><td>gram</td></tr>'+
 '<tr style="background:#fafafa"><td>Fan Kütlesi</td><td>m</td><td>'+res.fanM.toFixed(1)+'</td><td>kg</td></tr>'+
-'<tr><td>Düzeltme Yarıçapı</td><td>r</td><td>'+res.fanR.toFixed(0)+'</td><td>mm</td></tr>'+
+'<tr><td>Fan Yarıçapı</td><td>r</td><td>'+res.fanR.toFixed(0)+'</td><td>mm</td></tr>'+
 '<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>'+res.rpm+'</td><td>RPM</td></tr>'+
 '<tr><td>Açısal Hız</td><td>ω = 2π·n/60</td><td>'+(res.rpm*2*Math.PI/60).toFixed(3)+'</td><td>rad/s</td></tr>'+
 zRow+fnRow+kInRow+kRefRow+
@@ -829,27 +829,14 @@ window.scrollTo(0,0);
 }
 
 // ============================================================
-// BUTON BAĞLAMA
+// BUTON BAĞLAMA — doğrudan, güvenli yöntem
 // ============================================================
-document.addEventListener(‘DOMContentLoaded’, function(){
-var calcBtn = document.getElementById(‘calcBtn’);
-var pdfBtn  = document.getElementById(‘pdfBtn’);
-var rstBtn  = document.getElementById(‘resetBtn’);
-if(calcBtn){ calcBtn.addEventListener(‘click’, doCalculate); calcBtn.addEventListener(‘touchend’,function(e){e.preventDefault();doCalculate();}); }
-if(pdfBtn) { pdfBtn.addEventListener(‘click’, downloadPDF); pdfBtn.addEventListener(‘touchend’,function(e){e.preventDefault();downloadPDF();}); }
-if(rstBtn) { rstBtn.addEventListener(‘click’, doReset);    rstBtn.addEventListener(‘touchend’,function(e){e.preventDefault();doReset();}); }
-rebuildTabBar();
-});
+window.doCalculate = doCalculate;
+window.downloadPDF = downloadPDF;
+window.doReset     = doReset;
 
-// Inline fallback — bazı tarayıcılarda DOMContentLoaded tetiklenmeyebilir
-(function(){
-if(document.readyState===‘complete’||document.readyState===‘interactive’){
-var b=document.getElementById(‘calcBtn’);
-if(b&&!b._bound){ b._bound=true; b.addEventListener(‘click’,doCalculate); }
 rebuildTabBar();
-}
-})();
 </script>
 
 </body>
-</html>pop
+</html>
