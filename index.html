@@ -1,883 +1,749 @@
 <!DOCTYPE html>
 
-<html lang="tr" style="background:#0d0d0d;color-scheme:dark;">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fan Balans</title>
+<title>Fan Balans v2.5</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:#0d0d0d;color:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;min-height:100vh;}
+body{background:#0d0d0d;color:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;min-height:100vh;}
 .wrap{max-width:620px;margin:0 auto;padding:20px 14px 80px;}
 h1{font-size:26px;font-weight:800;color:#fff;margin-bottom:4px;}
 h1 span{color:#ff5533;}
-.subtitle{font-size:12px;color:#555;margin-bottom:20px;font-family:monospace;}
-.tab-bar{display:flex;margin-bottom:20px;border:1px solid #2a2a2a;border-radius:8px;overflow:hidden;background:#111;}
-.tab-btn{flex:1;padding:12px 6px;font-size:12px;font-family:monospace;font-weight:700;text-transform:uppercase;background:transparent;color:#555;border:none;cursor:pointer;}
-.tab-btn.active{background:#ff5533;color:#fff;}
-.tab-btn.has-result{color:#4488ff;}
-.tab-btn.has-result.active{background:#ff5533;color:#fff;}
-.tab-dot{width:6px;height:6px;border-radius:50%;background:#00cc66;display:inline-block;margin-left:4px;vertical-align:middle;}
-.tab-dot.hidden{display:none;}
-.tab-add{flex:0 0 44px;font-size:20px;color:#444;background:transparent;border:none;cursor:pointer;}
+.sub{font-size:12px;color:#555;margin-bottom:20px;font-family:monospace;}
+/* SEKME */
+.tabs{display:flex;margin-bottom:20px;border:1px solid #2a2a2a;border-radius:8px;overflow:hidden;background:#111;}
+.tbtn{flex:1;padding:12px 4px;font-size:11px;font-family:monospace;font-weight:700;text-transform:uppercase;background:transparent;color:#555;border:none;cursor:pointer;}
+.tbtn.act{background:#ff5533;color:#fff;}
+.tbtn.done{color:#4488ff;}
+.tbtn.done.act{background:#ff5533;color:#fff;}
+.tadd{flex:0 0 40px;font-size:20px;color:#444;background:transparent;border:none;cursor:pointer;}
+/* KART */
 .card{background:#141414;border:1px solid #2a2a2a;border-left:4px solid #4488ff;border-radius:4px;padding:18px 14px;margin-bottom:14px;}
-.card-label{font-size:11px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:monospace;}
-.card-title{font-size:19px;font-weight:700;color:#fff;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid #2a2a2a;}
-.f2-badge{display:inline-block;background:#1a2a4a;color:#4488ff;border:1px solid #4488ff;font-size:11px;font-family:monospace;padding:2px 7px;margin-left:8px;vertical-align:middle;border-radius:2px;}
-.input-group{margin-bottom:16px;}
-.input-label{display:flex;align-items:center;gap:8px;font-size:12px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:6px;}
-.color-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-input{width:100%;height:54px;padding:0 14px;font-size:21px;font-family:monospace;font-weight:500;color:#fff;background:#0a0a0a;border:2px solid #444;border-radius:6px;outline:none;-webkit-appearance:none;display:block;-webkit-text-fill-color:#fff;box-shadow:inset 0 0 0 9999px #0a0a0a;caret-color:#4488ff;}
-input:focus{border-color:#4488ff;}
-input::placeholder{color:#444;-webkit-text-fill-color:#444;}
-.input-unit{font-size:11px;color:#555;font-family:monospace;margin-top:3px;}
+.clbl{font-size:11px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-family:monospace;}
+.ctit{font-size:19px;font-weight:700;color:#fff;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid #2a2a2a;}
+.badge{display:inline-block;background:#1a2a4a;color:#4488ff;border:1px solid #4488ff;font-size:11px;font-family:monospace;padding:2px 7px;margin-left:8px;vertical-align:middle;border-radius:2px;}
+/* INPUT */
+.ig{margin-bottom:16px;}
+.ilbl{display:flex;align-items:center;gap:8px;font-size:12px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:6px;}
+.cdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+input[type=text]{width:100%;height:54px;padding:0 14px;font-size:21px;font-family:monospace;font-weight:500;color:#fff;background:#0a0a0a;border:2px solid #444;border-radius:6px;outline:none;-webkit-appearance:none;display:block;-webkit-text-fill-color:#fff;box-shadow:inset 0 0 0 9999px #0a0a0a;caret-color:#4488ff;}
+input[type=text]:focus{border-color:#4488ff;}
+input[type=text]::placeholder{color:#444;-webkit-text-fill-color:#444;}
+.iunit{font-size:11px;color:#555;font-family:monospace;margin-top:3px;}
+.inote{font-size:11px;color:#664400;font-family:monospace;margin-top:5px;padding:6px 10px;background:#1a1200;border-left:3px solid #664400;border-radius:0 3px 3px 0;}
 .hint{background:#1a1500;border-left:3px solid #ffaa00;padding:11px 13px;font-size:13px;color:#aaa;line-height:1.6;margin-top:4px;border-radius:0 4px 4px 0;}
 .hint strong{color:#eee;}
-.calc-button{display:block;width:100%;height:62px;margin-top:14px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:19px;font-weight:800;letter-spacing:3px;text-transform:uppercase;cursor:pointer;-webkit-text-fill-color:#fff;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;}
-.pdf-button{display:block;width:100%;height:52px;margin-top:10px;background:#1a3a1a;color:#00cc66;border:1.5px solid #00cc66;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
-.reset-btn{display:block;width:100%;height:50px;margin-top:10px;background:transparent;color:#555;border:1px solid #2a2a2a;border-radius:6px;font-size:13px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
-.result-box{display:none;margin-top:18px;}
-.result-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.result-card{border-radius:6px;padding:14px;text-align:center;}
-.result-card.blue{background:#2244aa;}
-.result-card.dark{background:#1a1a1a;border:1px solid #2a2a2a;}
-.rc-label{font-size:10px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:5px;}
-.rc-val{font-size:30px;font-weight:800;color:#fff;line-height:1;}
-.rc-unit{font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;}
-.info-rows{margin-bottom:14px;}
-.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;margin-bottom:5px;font-family:monospace;}
-.info-row .lbl{font-size:12px;color:#777;}
-.info-row .val{font-size:13px;color:#eee;font-weight:600;}
-.val.ok{color:#00cc66;}.val.warn{color:#ffaa00;}.val.bad{color:#ff5533;}
-.iso-banner{padding:11px 13px;border-radius:4px;margin-bottom:14px;font-family:monospace;font-size:12px;line-height:1.6;}
-.iso-banner.ok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;}
-.iso-banner.warn{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;}
-.iso-banner.bad{background:rgba(255,85,51,0.1);border:1.5px solid #ff5533;color:#ff5533;}
-.speed-warn{background:rgba(255,85,51,0.08);border:1.5px solid #ff5533;color:#ff5533;padding:11px 13px;border-radius:4px;margin-bottom:14px;font-size:12px;font-family:monospace;line-height:1.6;}
-.speed-ok{background:rgba(0,204,102,0.08);border:1.5px solid #00cc66;color:#00cc66;padding:11px 13px;border-radius:4px;margin-bottom:14px;font-size:12px;font-family:monospace;line-height:1.6;}
-.second-run{background:#181818;border:1px solid #2a2a2a;border-left:4px solid #ffaa00;padding:13px 14px;border-radius:0 4px 4px 0;margin-bottom:14px;font-size:13px;color:#bbb;line-height:1.7;}
-.second-run strong{color:#ffaa00;}
-.status-ok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;padding:13px 14px;border-radius:4px;font-size:14px;margin-bottom:14px;}
-.status-warn{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;padding:13px 14px;border-radius:4px;font-size:14px;margin-bottom:14px;}
-.blade-table{width:100%;border-collapse:collapse;margin-bottom:14px;}
-.blade-table th{background:#1a1a1a;color:#555;font-size:10px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;text-align:left;border:1px solid #2a2a2a;}
-.blade-table td{padding:9px 10px;font-size:13px;font-family:monospace;color:#bbb;border:1px solid #2a2a2a;}
-.blade-table tr.best td{background:#1a2a1a;color:#00cc66;font-weight:700;}
+/* BUTONLAR */
+.cbtn{display:block;width:100%;height:62px;margin-top:14px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:19px;font-weight:800;letter-spacing:3px;text-transform:uppercase;cursor:pointer;}
+.pbtn{display:block;width:100%;height:52px;margin-top:10px;background:#1a3a1a;color:#00cc66;border:1.5px solid #00cc66;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+.rbtn{display:block;width:100%;height:50px;margin-top:10px;background:transparent;color:#555;border:1px solid #2a2a2a;border-radius:6px;font-size:13px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+/* SONUÇ */
+.resbox{display:none;margin-top:18px;}
+.rescards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.rescard{border-radius:6px;padding:14px;text-align:center;}
+.rescard.bl{background:#2244aa;}
+.rescard.dk{background:#1a1a1a;border:1px solid #2a2a2a;}
+.rclbl{font-size:10px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:5px;}
+.rcval{font-size:30px;font-weight:800;color:#fff;line-height:1;}
+.rcunit{font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;}
+.irows{margin-bottom:14px;}
+.irow{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;margin-bottom:5px;font-family:monospace;}
+.irow .l{font-size:12px;color:#777;}
+.irow .v{font-size:13px;color:#eee;font-weight:600;}
+.v.ok{color:#00cc66;}.v.wa{color:#ffaa00;}.v.ba{color:#ff5533;}
+.ban{padding:11px 13px;border-radius:4px;margin-bottom:14px;font-family:monospace;font-size:12px;line-height:1.6;}
+.ban.ok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;}
+.ban.wa{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;}
+.ban.ba{background:rgba(255,85,51,0.1);border:1.5px solid #ff5533;color:#ff5533;}
+.spok{background:rgba(0,204,102,0.08);border:1.5px solid #00cc66;color:#00cc66;padding:11px 13px;border-radius:4px;margin-bottom:14px;font-size:12px;font-family:monospace;}
+.spwa{background:rgba(255,85,51,0.08);border:1.5px solid #ff5533;color:#ff5533;padding:11px 13px;border-radius:4px;margin-bottom:14px;font-size:12px;font-family:monospace;}
+.sr2{background:#181818;border:1px solid #2a2a2a;border-left:4px solid #ffaa00;padding:13px 14px;border-radius:0 4px 4px 0;margin-bottom:14px;font-size:13px;color:#bbb;line-height:1.7;}
+.sr2 strong{color:#ffaa00;}
+.sok{background:rgba(0,204,102,0.1);border:1.5px solid #00cc66;color:#00cc66;padding:13px 14px;border-radius:4px;font-size:14px;margin-bottom:14px;}
+.swa{background:rgba(255,170,0,0.1);border:1.5px solid #ffaa00;color:#ffaa00;padding:13px 14px;border-radius:4px;font-size:14px;margin-bottom:14px;}
+.btab{width:100%;border-collapse:collapse;margin-bottom:14px;}
+.btab th{background:#1a1a1a;color:#555;font-size:10px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;padding:7px 10px;text-align:left;border:1px solid #2a2a2a;}
+.btab td{padding:9px 10px;font-size:13px;font-family:monospace;color:#bbb;border:1px solid #2a2a2a;}
+.btab tr.best td{background:#1a2a1a;color:#00cc66;font-weight:700;}
 .guide{background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:14px;margin-bottom:14px;}
-.guide-section-title{font-size:11px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:#4488ff;margin-bottom:9px;margin-top:12px;}
-.guide-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;font-size:15px;color:#ccc;line-height:1.5;}
-.guide-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px;}
-.guide-num.blue{background:#4488ff;}.guide-num.green{background:#00cc66;}
-.highlight-blue{color:#4488ff;font-weight:700;}.highlight-green{color:#00cc66;font-weight:700;}
-.dial-wrap{display:flex;flex-direction:column;align-items:center;gap:7px;margin:14px 0;}
-.dial-label{font-size:11px;font-family:monospace;color:#4488ff;letter-spacing:1px;text-transform:uppercase;}
-.section-divider{font-size:10px;font-family:monospace;color:#333;letter-spacing:2px;text-transform:uppercase;margin:18px 0 7px;padding-bottom:5px;border-bottom:1px solid #1a1a1a;}
-.steps-box{background:#1a1a1a;border:1px solid #2a2a2a;border-left:4px solid #4488ff;padding:14px;margin-bottom:20px;border-radius:4px;}
-.steps-box h2{font-size:10px;color:#444;letter-spacing:2px;text-transform:uppercase;margin-bottom:11px;}
-.step-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;font-size:14px;color:#bbb;}
-.step-dot{width:21px;height:21px;background:#4488ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px;}
-.step-dot.green{background:#00cc66;}
+.gtit{font-size:11px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;color:#4488ff;margin-bottom:9px;margin-top:12px;}
+.grow{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;font-size:15px;color:#ccc;line-height:1.5;}
+.gnum{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px;}
+.gnum.b{background:#4488ff;}.gnum.g{background:#00cc66;}
+.hb{color:#4488ff;font-weight:700;}.hg{color:#00cc66;font-weight:700;}
+.dialwrap{display:flex;flex-direction:column;align-items:center;gap:7px;margin:14px 0;position:relative;}
+.diallbl{font-size:11px;font-family:monospace;color:#4488ff;letter-spacing:1px;text-transform:uppercase;}
+.sdiv{font-size:10px;font-family:monospace;color:#333;letter-spacing:2px;text-transform:uppercase;margin:18px 0 7px;padding-bottom:5px;border-bottom:1px solid #1a1a1a;}
+/* STEPS */
+.steps{background:#1a1a1a;border:1px solid #2a2a2a;border-left:4px solid #4488ff;padding:14px;margin-bottom:20px;border-radius:4px;}
+.steps h2{font-size:10px;color:#444;letter-spacing:2px;text-transform:uppercase;margin-bottom:11px;}
+.srow{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;font-size:14px;color:#bbb;}
+.sdot{width:21px;height:21px;background:#4488ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px;}
+.sdot.g{background:#00cc66;}
+/* FORMÜL */
 .fbox{background:#0a0f1a;border:1px solid #1a2a4a;border-left:4px solid #4488ff;border-radius:4px;padding:12px 14px;margin-bottom:14px;font-family:monospace;font-size:11px;color:#6699cc;line-height:2;}
-.fbox-title{font-size:10px;color:#2255aa;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
-.fbox span{color:#88bbff;font-weight:700;}
-.reson-block{background:#0d1a0d;border:1px solid #1a3a1a;border-left:4px solid #00cc66;border-radius:4px;padding:14px;margin-bottom:16px;}
-.reson-block-title{font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#00cc66;margin-bottom:12px;}
-.reson-sep{font-size:11px;font-family:monospace;color:#333;text-align:center;margin:8px 0;}
-.dir-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
-.dir-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px;background:#111;border:2px solid #333;border-radius:8px;cursor:pointer;gap:3px;}
-.dir-btn.active{border-color:#ff5533;background:#1a0f0a;}
-.dir-icon{font-size:26px;color:#555;line-height:1;}
-.dir-btn.active .dir-icon{color:#ff5533;}
-.dir-text{font-size:12px;font-family:monospace;font-weight:700;color:#666;}
-.dir-btn.active .dir-text{color:#ff5533;}
-.dir-sub{font-size:10px;font-family:monospace;color:#444;}
-.dir-btn.active .dir-sub{color:#cc4422;}
+.fbox .ft{font-size:10px;color:#2255aa;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.fbox em{color:#88bbff;font-weight:700;font-style:normal;}
+/* REZONANS */
+.rblock{background:#0d1a0d;border:1px solid #1a3a1a;border-left:4px solid #00cc66;border-radius:4px;padding:14px;margin-bottom:16px;}
+.rbtit{font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#00cc66;margin-bottom:12px;}
+.rsep{font-size:11px;font-family:monospace;color:#333;text-align:center;margin:8px 0;}
+/* DÖNÜş YÖNÜ */
+.dirsel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.dbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px;background:#111;border:2px solid #333;border-radius:8px;cursor:pointer;gap:3px;-webkit-appearance:none;}
+.dbtn.act{border-color:#ff5533;background:#1a0f0a;}
+.dico{font-size:26px;color:#555;line-height:1;}
+.dbtn.act .dico{color:#ff5533;}
+.dtxt{font-size:12px;font-family:monospace;font-weight:700;color:#666;}
+.dbtn.act .dtxt{color:#ff5533;}
+.dsub{font-size:10px;font-family:monospace;color:#444;}
+.dbtn.act .dsub{color:#cc4422;}
 footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:11px;font-family:monospace;color:#333;}
 </style>
 </head>
 <body>
 <div class="wrap">
-
 <h1>Tek Düzlem <span>Fan Balans</span></h1>
-<div class="subtitle">// Fan Tarafı (F2) — Thearle 3 Nokta Yöntemi — v2.4</div>
+<div class="sub">// Fan Tarafı (F2) — Thearle 3 Nokta Yöntemi — v2.5</div>
 
-<div class="tab-bar" id="tabBar"></div>
+<div class="tabs" id="tabBar"></div>
 
-<div class="steps-box">
+<div class="steps">
   <h2>// Uygulama Sırası</h2>
-  <div class="step-row"><div class="step-dot">1</div><div>Ağırlıksız 1. ölçümü al (V₀)</div></div>
-  <div class="step-row"><div class="step-dot">2</div><div>0° → 120° → 240° konumlarında 3 tur ölçüm al</div></div>
-  <div class="step-row"><div class="step-dot green">✓</div><div>Değerleri gir → Hesapla → En yakın kanada ağırlığı tak</div></div>
+  <div class="srow"><div class="sdot">1</div><div>Ağırlıksız 1. ölçümü al (V₀)</div></div>
+  <div class="srow"><div class="sdot">2</div><div>0° → 120° → 240° konumlarında 3 tur ölçüm al</div></div>
+  <div class="srow"><div class="sdot g">✓</div><div>Değerleri gir → Hesapla → En yakın kanada ağırlığı tak</div></div>
 </div>
 
 <div class="card">
-  <div class="card-label">Fan Tarafı Ölçümleri</div>
-  <div class="card-title">4 Tur Titreşim Ölçümü <span class="f2-badge">F2</span></div>
-  <div class="input-group">
-    <div class="input-label"><span class="color-dot" style="background:#888"></span>1. Ölçüm — Ağırlıksız (V₀)</div>
-    <input id="v0" type="text" inputmode="decimal" placeholder="örn: 25.30">
-    <div class="input-unit">mm/s — 0 to peak — 1X bileşeni</div>
+  <div class="clbl">Fan Tarafı Ölçümleri</div>
+  <div class="ctit">4 Tur Titreşim Ölçümü <span class="badge">F2</span></div>
+  <div class="ig">
+    <div class="ilbl"><span class="cdot" style="background:#888"></span>1. Ölçüm — Ağırlıksız (V₀)</div>
+    <input type="text" id="v0" inputmode="decimal" placeholder="örn: 25.30">
+    <div class="iunit">mm/s — 0 to peak — 1X bileşeni</div>
   </div>
-  <div class="input-group">
-    <div class="input-label"><span class="color-dot" style="background:#ff5533"></span>2. Ölçüm — Deneme ağırlığı 0° (V_A)</div>
-    <input id="vA" type="text" inputmode="decimal" placeholder="örn: 14.50">
-    <div class="input-unit">mm/s — 0 to peak</div>
+  <div class="ig">
+    <div class="ilbl"><span class="cdot" style="background:#ff5533"></span>2. Ölçüm — Deneme ağırlığı 0° (V_A)</div>
+    <input type="text" id="vA" inputmode="decimal" placeholder="örn: 14.50">
+    <div class="iunit">mm/s — 0 to peak</div>
   </div>
-  <div class="input-group">
-    <div class="input-label"><span class="color-dot" style="background:#ffaa00"></span>3. Ölçüm — Deneme ağırlığı 120° (V_B)</div>
-    <input id="vB" type="text" inputmode="decimal" placeholder="örn: 8.20">
-    <div class="input-unit">mm/s — 0 to peak</div>
+  <div class="ig">
+    <div class="ilbl"><span class="cdot" style="background:#ffaa00"></span>3. Ölçüm — Deneme ağırlığı 120° (V_B)</div>
+    <input type="text" id="vB" inputmode="decimal" placeholder="örn: 8.20">
+    <div class="iunit">mm/s — 0 to peak</div>
   </div>
-  <div class="input-group">
-    <div class="input-label"><span class="color-dot" style="background:#4488ff"></span>4. Ölçüm — Deneme ağırlığı 240° (V_C)</div>
-    <input id="vC" type="text" inputmode="decimal" placeholder="örn: 30.10">
-    <div class="input-unit">mm/s — 0 to peak</div>
+  <div class="ig">
+    <div class="ilbl"><span class="cdot" style="background:#4488ff"></span>4. Ölçüm — Deneme ağırlığı 240° (V_C)</div>
+    <input type="text" id="vC" inputmode="decimal" placeholder="örn: 30.10">
+    <div class="iunit">mm/s — 0 to peak</div>
   </div>
   <div class="hint"><strong>Ölçüm noktası:</strong> Fan yatak gövdesinden radyal yönde. Her turda deneme ağırlığını tamamen söküp sonraki konuma takın.</div>
 </div>
 
 <div class="card">
-  <div class="card-label">Deneme Ağırlığı &amp; Ekipman</div>
-  <div class="card-title">Fan Bilgileri <span class="f2-badge">F2</span></div>
-  <div class="input-group">
-    <div class="input-label">Deneme Ağırlığı (W_t)</div>
-    <input id="wt" type="text" inputmode="decimal" placeholder="örn: 105.3">
-    <div class="input-unit">gram</div>
+  <div class="clbl">Deneme Ağırlığı &amp; Ekipman</div>
+  <div class="ctit">Fan Bilgileri <span class="badge">F2</span></div>
+  <div class="ig">
+    <div class="ilbl">Deneme Ağırlığı (W_t)</div>
+    <input type="text" id="wt" inputmode="decimal" placeholder="örn: 105.3">
+    <div class="iunit">gram</div>
   </div>
-  <div class="input-group">
-    <div class="input-label">Fan Kütlesi (m)</div>
-    <input id="fanM" type="text" inputmode="decimal" placeholder="örn: 450">
-    <div class="input-unit">kg</div>
+  <div class="ig">
+    <div class="ilbl">Fan Kütlesi (m)</div>
+    <input type="text" id="fanM" inputmode="decimal" placeholder="örn: 450">
+    <div class="iunit">kg</div>
   </div>
-  <div class="input-group">
-    <div class="input-label">Fan Yarıçapı (r)</div>
-    <input id="fanR" type="text" inputmode="decimal" placeholder="örn: 1120">
-    <div class="input-unit">mm — ağırlığın takılacağı yarıçap</div>
+  <div class="ig">
+    <div class="ilbl">Fan Yarıçapı (r)</div>
+    <input type="text" id="fanR" inputmode="decimal" placeholder="örn: 1120">
+    <div class="iunit">mm — ağırlığın takılacağı yarıçap</div>
   </div>
-  <div class="input-group">
-    <div class="input-label">Çalışma Devri (n)</div>
-    <input id="rpm" type="text" inputmode="numeric" placeholder="örn: 1200">
-    <div class="input-unit">RPM</div>
+  <div class="ig">
+    <div class="ilbl">Çalışma Devri (n)</div>
+    <input type="text" id="rpm" inputmode="numeric" placeholder="örn: 1200">
+    <div class="iunit">RPM</div>
   </div>
-  <div class="input-group">
-    <div class="input-label">Kanat Sayısı (z)</div>
-    <input id="blades" type="text" inputmode="numeric" placeholder="örn: 12">
-    <div class="input-unit">adet — opsiyonel, en yakın kanat tespiti için</div>
-  </div>
-
-  <div class="reson-block">
-    <div class="reson-block-title">// Rezonans Analizi — Opsiyonel</div>
-    <div class="input-group" style="margin-bottom:10px;">
-      <div class="input-label" style="color:#00cc66;">Doğal Frekans (f_n) — VibXpert II darbe testi</div>
-      <input id="fn" type="text" inputmode="decimal" placeholder="örn: 18.5">
-      <div class="input-unit">Hz — darbe testi spektrumundan okunan tepe frekansı (öncelikli)</div>
-    </div>
-    <div class="reson-sep">— veya —</div>
-    <div class="input-group" style="margin-bottom:0;">
-      <div class="input-label" style="color:#556644;">Yatak Rijitliği (k) — Rulman kataloğu (SKF/FAG/NSK)</div>
-      <input id="stiff" type="text" inputmode="decimal" placeholder="örn: 5000000">
-      <div class="input-unit">N/m — f_n girilmişse kullanılmaz</div>
-    </div>
+  <div class="ig">
+    <div class="ilbl">Kanat Sayısı (z)</div>
+    <input type="text" id="blades" inputmode="numeric" placeholder="örn: 12">
+    <div class="iunit">adet — opsiyonel, en yakın kanat tespiti için</div>
   </div>
 
-  <div class="input-group">
-    <div class="input-label">Fan Dönüş Yönü</div>
-    <div class="dir-selector">
-      <button class="dir-btn active" id="dirCW" onclick="setDir('CW')">
-        <span class="dir-icon">↻</span><span class="dir-text">Saat Yönü</span><span class="dir-sub">CW</span>
+  <!-- REZONANS -->
+
+  <div class="rblock">
+    <div class="rbtit">// Rezonans Analizi — Opsiyonel</div>
+    <div class="ig" style="margin-bottom:10px;">
+      <div class="ilbl" style="color:#00cc66;">Doğal Frekans (f_n) — VibXpert II darbe testi</div>
+      <input type="text" id="fn" inputmode="decimal" placeholder="örn: 18.5">
+      <div class="iunit">Hz — darbe testi spektrumundan okunan tepe frekansı (öncelikli)</div>
+    </div>
+    <div class="rsep">— veya —</div>
+    <div class="ig" style="margin-bottom:6px;">
+      <div class="ilbl" style="color:#556644;">Yay Sabiti — Sertlik (Rijitlik / k) — Rulman kataloğu</div>
+      <input type="text" id="stiff" inputmode="decimal" placeholder="örn: 5000000">
+      <div class="iunit">N/m — f_n girilmişse kullanılmaz</div>
+      <div class="inote">
+        📐 SKF kataloğu: productselect.skf.com → Full bearing performance → Stiffness (N/μm × 10⁶ = N/m)
+      </div>
+    </div>
+  </div>
+
+  <!-- DÖNÜŞ YÖNÜ -->
+
+  <div class="ig">
+    <div class="ilbl">Fan Dönüş Yönü</div>
+    <div class="dirsel">
+      <button type="button" class="dbtn act" id="dirCW" onclick="APP.setDir('CW')">
+        <span class="dico">↻</span><span class="dtxt">Saat Yönü</span><span class="dsub">CW</span>
       </button>
-      <button class="dir-btn" id="dirCCW" onclick="setDir('CCW')">
-        <span class="dir-icon">↺</span><span class="dir-text">Saat Yönü Tersi</span><span class="dir-sub">CCW</span>
+      <button type="button" class="dbtn" id="dirCCW" onclick="APP.setDir('CCW')">
+        <span class="dico">↺</span><span class="dtxt">Saat Yönü Tersi</span><span class="dsub">CCW</span>
       </button>
     </div>
-    <div class="input-unit">Açılar dönüş yönünün tersine işaretlenir</div>
+    <div class="iunit">Açılar dönüş yönünün tersine işaretlenir</div>
   </div>
 </div>
 
-<button class="calc-button" onclick="doCalculate()">⟶ HESAPLA</button>
+<button type="button" class="cbtn" onclick="APP.calc()">⟶ HESAPLA</button>
 
-<div class="result-box" id="resultBox">
+<!-- SONUÇ -->
+
+<div class="resbox" id="resultBox">
   <div class="card" style="border-left-color:#4488ff;">
-    <div class="card-label">Sonuç</div>
-    <div class="card-title">Düzeltme Ağırlığı &amp; Konum</div>
-    <div class="result-cards">
-      <div class="result-card blue">
-        <div class="rc-label">Düzeltme Ağırlığı</div>
-        <div class="rc-val" id="resW">—</div>
-        <div class="rc-unit">gram</div>
-      </div>
-      <div class="result-card dark">
-        <div class="rc-label">Konum</div>
-        <div class="rc-val" id="resA">—</div>
-        <div class="rc-unit">derece (0°'den)</div>
-      </div>
+    <div class="clbl">Sonuç</div>
+    <div class="ctit">Düzeltme Ağırlığı &amp; Konum</div>
+    <div class="rescards">
+      <div class="rescard bl"><div class="rclbl">Düzeltme Ağırlığı</div><div class="rcval" id="rW">—</div><div class="rcunit">gram</div></div>
+      <div class="rescard dk"><div class="rclbl">Konum</div><div class="rcval" id="rA">—</div><div class="rcunit">derece (0°'den)</div></div>
     </div>
+    <div class="fbox">
+      <div class="ft">// Ara Hesaplama Değerleri</div>
+      <div id="f1"></div><div id="f2"></div><div id="f3"></div>
+      <div id="f4"></div><div id="f5"></div><div id="f6"></div><div id="f7"></div>
+    </div>
+    <div class="irows">
+      <div class="irow"><span class="l">Dengesizlik (U = W_düz × r)</span><span class="v" id="rU">—</span></div>
+      <div class="irow"><span class="l">Özgül dengesizlik (e = U / m)</span><span class="v" id="rE">—</span></div>
+      <div class="irow"><span class="l">Hedef titreşim (V₀ × 0.15)</span><span class="v" id="rT">—</span></div>
+      <div class="irow"><span class="l">ISO Kalite Sınıfı (G)</span><span class="v" id="rG">—</span></div>
+      <div class="irow"><span class="l">Çalışma frekansı (f = n/60)</span><span class="v" id="rHz">—</span></div>
+      <div class="irow" id="rrRow" style="display:none"><span class="l">Kritik devir (n_krit)</span><span class="v" id="rNc">—</span></div>
+      <div class="irow" id="rrRow2" style="display:none"><span class="l">Frekans oranı (Ω/ω_n)</span><span class="v" id="rRR">—</span></div>
+    </div>
+    <div id="isoBan" class="ban ok">—</div>
+    <div id="resonBan" class="ban ok" style="display:none">—</div>
+    <div id="spdDiv" class="spok">—</div>
+    <div id="sr2Div" class="sr2">—</div>
 
 ```
-<div class="fbox">
-  <div class="fbox-title">// Ara Hesaplama Değerleri</div>
-  <div id="fLine1"></div>
-  <div id="fLine2"></div>
-  <div id="fLine3"></div>
-  <div id="fLine4"></div>
-  <div id="fLine5"></div>
-  <div id="fLine6"></div>
-  <div id="fLine7"></div>
-</div>
-
-<div class="info-rows">
-  <div class="info-row"><span class="lbl">Dengesizlik (U = W_düz × r)</span><span class="val" id="resU">—</span></div>
-  <div class="info-row"><span class="lbl">Özgül dengesizlik (e = U / m)</span><span class="val" id="resE">—</span></div>
-  <div class="info-row"><span class="lbl">Hedef titreşim (V₀ × 0.15)</span><span class="val" id="resTgt">—</span></div>
-  <div class="info-row"><span class="lbl">ISO Kalite Sınıfı (G)</span><span class="val" id="resG">—</span></div>
-  <div class="info-row"><span class="lbl">Çalışma frekansı (f = n/60)</span><span class="val" id="resHz">—</span></div>
-  <div class="info-row" id="resonRow" style="display:none"><span class="lbl">Kritik devir (n_krit)</span><span class="val" id="resNcrit">—</span></div>
-  <div class="info-row" id="resonRatioRow" style="display:none"><span class="lbl">Frekans oranı (Ω/ω_n)</span><span class="val" id="resResonRatio">—</span></div>
-</div>
-
-<div id="isoBanner" class="iso-banner ok">—</div>
-<div id="resonBanner" class="iso-banner ok" style="display:none">—</div>
-<div id="speedDiv" class="speed-ok">—</div>
-<div id="secondRunDiv" class="second-run">—</div>
-
-<div class="dial-wrap">
-  <svg width="220" height="236" viewBox="-10 -20 220 236">
+<div class="dialwrap" id="dialWrap">
+  <svg id="dialSvg" width="220" height="236" viewBox="-10 -20 220 236">
     <circle cx="100" cy="100" r="90" fill="#111" stroke="#222" stroke-width="1.5"/>
-    <g id="dialTicks"></g>
+    <g id="dTicks"></g>
     <circle cx="100" cy="100" r="70" fill="none" stroke="#1a1a1a" stroke-width="1"/>
     <circle cx="100" cy="100" r="45" fill="none" stroke="#1a1a1a" stroke-width="1"/>
-    <g id="bladeMarkers"></g>
+    <g id="bMarkers"></g>
     <circle cx="100" cy="12" r="5" fill="#ff5533"/>
     <text x="100" y="-8" text-anchor="middle" fill="#ff5533" font-size="12" font-family="monospace" font-weight="bold">0°</text>
     <circle cx="100" cy="100" r="8" fill="#333"/>
-    <line id="dialArrow" x1="100" y1="100" x2="100" y2="22" stroke="#4488ff" stroke-width="3" stroke-linecap="round" style="display:none"/>
-    <circle id="dialDot" cx="100" cy="18" r="7" fill="#4488ff" style="display:none"/>
+    <line id="dArrow" x1="100" y1="100" x2="100" y2="22" stroke="#4488ff" stroke-width="3" stroke-linecap="round" style="display:none"/>
+    <circle id="dDot" cx="100" cy="18" r="7" fill="#4488ff" style="display:none"/>
   </svg>
-  <div class="dial-label" id="dialFooter">F2 &nbsp;|&nbsp; <span style="color:#555">● Kanat konumları</span></div>
+  <div class="diallbl" id="dFooter">F2 &nbsp;|&nbsp; <span style="color:#555">● Kanat konumları</span></div>
 </div>
 
-<div class="section-divider">// En Yakın Kanat Analizi</div>
-<table class="blade-table">
-  <thead><tr><th>Kanat No</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead>
-  <tbody id="bladeTableBody"></tbody>
-</table>
+<div class="sdiv">// En Yakın Kanat Analizi</div>
+<table class="btab"><thead><tr><th>Kanat No</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead><tbody id="bTBody"></tbody></table>
 
-<div id="statusDiv" class="status-ok">—</div>
-<div class="guide"><div id="guideContent"></div></div>
+<div id="statDiv" class="sok">—</div>
+<div class="guide"><div id="guideDiv"></div></div>
 
-<button class="pdf-button" onclick="downloadPDF()">⬇ PDF İndir</button>
-<button class="reset-btn" onclick="doReset()">↺ Bu Çalışmayı Temizle</button>
+<button type="button" class="pbtn" onclick="APP.pdf()">⬇ PDF İndir</button>
+<button type="button" class="rbtn" onclick="APP.reset()">↺ Bu Çalışmayı Temizle</button>
 ```
 
   </div>
 </div>
 
-<footer>Fan Balans — Thearle 3 Nokta — v2.4</footer>
+<footer>Fan Balans — Thearle 3 Nokta — v2.5</footer>
 </div>
 
 <script>
-// ============================================================
-// TÜM FONKSİYONLAR ÖNCE TANIMLA, SONRA ÇAĞIR
-// ============================================================
+var APP = (function() {
 
-var currentRotation = 'CW';
-var MAX_TABS = 5;
-var activeTab = 0;
-var sessions = [];
-var INPUT_IDS = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff'];
+  // --- STATE ---
+  var rot = 'CW';
+  var MAX = 5;
+  var active = 0;
+  var sessions = [];
+  var IDS = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff'];
 
-// --- Yardımcılar ---
-
-function newSession(num) {
-  return {
-    num: num,
-    inputs: {v0:'',vA:'',vB:'',vC:'',wt:'',fanM:'',fanR:'',rpm:'',blades:'',fn:'',stiff:'',rotation:'CW'},
-    result: null
-  };
-}
-
-function gv(id) {
-  var el = document.getElementById(id);
-  if (!el) return NaN;
-  var s = el.value.replace(',', '.').trim();
-  return s === '' ? NaN : parseFloat(s);
-}
-
-function isoG(G) {
-  if (G < 1)   return {cls:'G1',   desc:'Hassas — Türbin seviyesi',         cat:'ok'};
-  if (G < 2.5) return {cls:'G2.5', desc:'İyi — Elektrik motoru seviyesi',   cat:'ok'};
-  if (G < 6.3) return {cls:'G6.3', desc:'Normal — Endüstriyel fan için kabul edilebilir', cat:'ok'};
-  if (G < 16)  return {cls:'G16',  desc:'Kaba — İyileştirme önerilir',      cat:'warn'};
-  if (G < 40)  return {cls:'G40',  desc:'Çok kaba — Ek balans turu gerekli',cat:'warn'};
-  return        {cls:'G40+', desc:'Kritik dengesizlik — Acil müdahale',     cat:'bad'};
-}
-
-// --- Dönüş yönü ---
-
-function setDir(dir) {
-  currentRotation = dir;
-  var cw  = document.getElementById('dirCW');
-  var ccw = document.getElementById('dirCCW');
-  if (cw)  cw.className  = dir === 'CW'  ? 'dir-btn active' : 'dir-btn';
-  if (ccw) ccw.className = dir === 'CCW' ? 'dir-btn active' : 'dir-btn';
-}
-
-// --- Sekme ---
-
-function saveInputs() {
-  var s = sessions[activeTab];
-  for (var i = 0; i < INPUT_IDS.length; i++) {
-    var el = document.getElementById(INPUT_IDS[i]);
-    if (el) s.inputs[INPUT_IDS[i]] = el.value;
+  function mkSess(n) {
+    return { n:n, inp:{v0:'',vA:'',vB:'',vC:'',wt:'',fanM:'',fanR:'',rpm:'',blades:'',fn:'',stiff:'',rot:'CW'}, res:null };
   }
-  s.inputs.rotation = currentRotation;
-}
 
-function loadInputs(idx) {
-  var s = sessions[idx];
-  for (var i = 0; i < INPUT_IDS.length; i++) {
-    var el = document.getElementById(INPUT_IDS[i]);
-    if (el) el.value = s.inputs[INPUT_IDS[i]] || '';
+  function gv(id) {
+    var el = document.getElementById(id);
+    if (!el) return NaN;
+    var s = el.value.replace(',','.').trim();
+    return s === '' ? NaN : parseFloat(s);
   }
-  setDir(s.inputs.rotation || 'CW');
-  if (s.result) {
-    renderResult(s.result);
+
+  function isoG(G) {
+    if (G < 1)   return {c:'G1',   d:'Hassas — Türbin seviyesi',        q:'ok'};
+    if (G < 2.5) return {c:'G2.5', d:'İyi — Elektrik motoru seviyesi',  q:'ok'};
+    if (G < 6.3) return {c:'G6.3', d:'Normal — Endüstriyel fan kabul',  q:'ok'};
+    if (G < 16)  return {c:'G16',  d:'Kaba — İyileştirme önerilir',     q:'wa'};
+    if (G < 40)  return {c:'G40',  d:'Çok kaba — Ek balans gerekli',    q:'wa'};
+    return        {c:'G40+', d:'Kritik — Acil müdahale gerekli',        q:'ba'};
+  }
+
+  // --- SEKME ---
+  function saveInp() {
+    var s = sessions[active];
+    for (var i = 0; i < IDS.length; i++) {
+      var el = document.getElementById(IDS[i]);
+      if (el) s.inp[IDS[i]] = el.value;
+    }
+    s.inp.rot = rot;
+  }
+
+  function loadInp(idx) {
+    var s = sessions[idx];
+    for (var i = 0; i < IDS.length; i++) {
+      var el = document.getElementById(IDS[i]);
+      if (el) el.value = s.inp[IDS[i]] || '';
+    }
+    setDir(s.inp.rot || 'CW');
+    var rb = document.getElementById('resultBox');
+    if (s.res) { render(s.res); rb.style.display = 'block'; }
+    else rb.style.display = 'none';
+  }
+
+  function buildTabs() {
+    var bar = document.getElementById('tabBar');
+    bar.innerHTML = '';
+    for (var i = 0; i < sessions.length; i++) {
+      (function(idx) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        var c = 'tbtn';
+        if (sessions[idx].res) c += ' done';
+        if (idx === active) c += ' act';
+        b.className = c;
+        b.innerHTML = (idx+1) + '. Çalışma';
+        b.onclick = function() { switchTab(idx); };
+        bar.appendChild(b);
+      })(i);
+    }
+    if (sessions.length < MAX) {
+      var a = document.createElement('button');
+      a.type = 'button'; a.className = 'tadd'; a.textContent = '＋'; a.title = 'Yeni çalışma';
+      a.onclick = addTab;
+      bar.appendChild(a);
+    }
+  }
+
+  function switchTab(idx) {
+    saveInp();
+    active = idx;
+    buildTabs();
+    loadInp(idx);
+    window.scrollTo(0, 0);
+  }
+
+  function addTab() {
+    if (sessions.length >= MAX) { alert('En fazla ' + MAX + ' çalışma açılabilir.'); return; }
+    saveInp();
+    sessions.push(mkSess(sessions.length + 1));
+    buildTabs();
+    switchTab(sessions.length - 1);
+  }
+
+  // --- DÖNÜş YÖNÜ ---
+  function setDir(d) {
+    rot = d;
+    var cw  = document.getElementById('dirCW');
+    var ccw = document.getElementById('dirCCW');
+    if (cw)  cw.className  = d === 'CW'  ? 'dbtn act' : 'dbtn';
+    if (ccw) ccw.className = d === 'CCW' ? 'dbtn act' : 'dbtn';
+  }
+
+  // --- KADRAN TİKLERİ ---
+  function drawTicks() {
+    var g = document.getElementById('dTicks');
+    if (!g) return;
+    for (var i = 0; i < 36; i++) {
+      var r = (i*10-90)*Math.PI/180, mj = (i%3===0);
+      var ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('x1', 100+90*Math.cos(r)); ln.setAttribute('y1', 100+90*Math.sin(r));
+      ln.setAttribute('x2', 100+(mj?80:85)*Math.cos(r)); ln.setAttribute('y2', 100+(mj?80:85)*Math.sin(r));
+      ln.setAttribute('stroke', mj?'#444':'#222'); ln.setAttribute('stroke-width', mj?'1.5':'0.8');
+      g.appendChild(ln);
+    }
+  }
+
+  // --- HESAPLA ---
+  function calc() {
+    var v0=gv('v0'), vA=gv('vA'), vB=gv('vB'), vC=gv('vC');
+    var wt=gv('wt'), fm=gv('fanM'), fr=gv('fanR'), rpm=gv('rpm');
+    var nb=gv('blades'), fn=gv('fn'), k=gv('stiff');
+
+    var lbls = ['V₀','V_A','V_B','V_C','W_t','m','r','n'];
+    var vals = [v0,vA,vB,vC,wt,fm,fr,rpm];
+    var miss = [];
+    for (var i=0;i<vals.length;i++) if (isNaN(vals[i])||vals[i]<=0) miss.push(lbls[i]);
+    if (miss.length) { alert('Eksik/geçersiz alan:\n'+miss.join('\n')); return; }
+
+    var z = (!isNaN(nb)&&nb>=2) ? Math.round(nb) : 0;
+
+    var dA=vA*vA-v0*v0, dB=vB*vB-v0*v0, dC=vC*vC-v0*v0;
+    var x=(2*dA-dB-dC)/3.0, y=(dB-dC)/Math.sqrt(3.0);
+    var tDeg=Math.atan2(y,x)*180.0/Math.PI;
+    if (tDeg<0) tDeg+=360.0;
+    var ang=(tDeg+180.0)%360.0;
+    var uMag=Math.sqrt(x*x+y*y); if(uMag<0.0001) uMag=0.0001;
+    var wc=(2.0*v0*v0*wt)/uMag;
+
+    var U=wc*fr, e=U/fm, tgt=v0*0.15;
+    var om=rpm*2.0*Math.PI/60.0, G=(e/1000.0)*om;
+    var fHz=rpm/60.0, iso=isoG(G), bpf=z>0?fHz*z:0;
+
+    var hasFn=(!isNaN(fn)&&fn>0), hasK=(!isNaN(k)&&k>0), hasR=hasFn||hasK;
+    var fCrit=NaN, nCrit=NaN, kCalc=NaN, rRat=NaN, rZone='', rSrc='';
+    if (hasFn) { fCrit=fn; nCrit=fn*60; kCalc=fm*Math.pow(2*Math.PI*fn,2); rSrc='Darbe testi (VibXpert II)'; }
+    else if (hasK) { fCrit=(1/(2*Math.PI))*Math.sqrt(k/fm); nCrit=fCrit*60; kCalc=k; rSrc='Rulman kataloğu (k)'; }
+    if (hasR) { rRat=fHz/fCrit; rZone=rRat<0.7?'ok':(rRat<1.3?'ba':'wa'); }
+
+    var bList=[];
+    if (z>0) {
+      var st=360.0/z;
+      for (var b=0;b<z;b++) { var bd=b*st, df=Math.abs(((ang-bd+540)%360)-180); bList.push({n:b+1,d:bd,f:df}); }
+      bList.sort(function(a,b){return a.f-b.f;});
+    }
+    var nLbl=bList.length>0?'Kanat '+bList[0].n+' ('+bList[0].d.toFixed(1)+'°)':'—';
+
+    var res={
+      rot:rot, v0:v0,vA:vA,vB:vB,vC:vC,wt:wt,fm:fm,fr:fr,rpm:rpm,z:z,
+      dA:dA,dB:dB,dC:dC,x:x,y:y,tDeg:tDeg,ang:ang,uMag:uMag,wc:wc,
+      U:U,e:e,tgt:tgt,G:G,fHz:fHz,om:om,bpf:bpf,iso:iso,
+      bList:bList,nLbl:nLbl,fn:fn,k:k,hasFn:hasFn,hasK:hasK,hasR:hasR,
+      fCrit:fCrit,nCrit:nCrit,kCalc:kCalc,rRat:rRat,rZone:rZone,rSrc:rSrc
+    };
+
+    saveInp();
+    sessions[active].res = res;
+    buildTabs();
+    render(res);
     document.getElementById('resultBox').style.display = 'block';
-  } else {
-    document.getElementById('resultBox').style.display = 'none';
-  }
-}
-
-function switchTab(idx) {
-  saveInputs();
-  activeTab = idx;
-  buildTabs();
-  loadInputs(idx);
-  window.scrollTo(0, 0);
-}
-
-function addTab() {
-  if (sessions.length >= MAX_TABS) { alert('En fazla ' + MAX_TABS + ' çalışma açılabilir.'); return; }
-  saveInputs();
-  sessions.push(newSession(sessions.length + 1));
-  buildTabs();
-  switchTab(sessions.length - 1);
-}
-
-function buildTabs() {
-  var bar = document.getElementById('tabBar');
-  bar.innerHTML = '';
-  for (var i = 0; i < sessions.length; i++) {
-    var btn = document.createElement('button');
-    var cls = 'tab-btn';
-    if (sessions[i].result) cls += ' has-result';
-    if (i === activeTab) cls += ' active';
-    btn.className = cls;
-    btn.innerHTML = (i + 1) + '. Çalışma <span class="tab-dot' + (sessions[i].result ? '' : ' hidden') + '"></span>';
-    (function(n) { btn.onclick = function() { switchTab(n); }; })(i);
-    bar.appendChild(btn);
-  }
-  if (sessions.length < MAX_TABS) {
-    var add = document.createElement('button');
-    add.className = 'tab-add';
-    add.textContent = '＋';
-    add.title = 'Yeni çalışma ekle';
-    add.onclick = addTab;
-    bar.appendChild(add);
-  }
-}
-
-// --- Kadran tikleri ---
-
-(function() {
-  var g = document.getElementById('dialTicks');
-  if (!g) return;
-  for (var i = 0; i < 36; i++) {
-    var rad = (i * 10 - 90) * Math.PI / 180;
-    var major = (i % 3 === 0);
-    var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    ln.setAttribute('x1', 100 + 90 * Math.cos(rad));
-    ln.setAttribute('y1', 100 + 90 * Math.sin(rad));
-    ln.setAttribute('x2', 100 + (major ? 80 : 85) * Math.cos(rad));
-    ln.setAttribute('y2', 100 + (major ? 80 : 85) * Math.sin(rad));
-    ln.setAttribute('stroke', major ? '#444' : '#222');
-    ln.setAttribute('stroke-width', major ? '1.5' : '0.8');
-    g.appendChild(ln);
-  }
-})();
-
-// --- HESAPLAMA ---
-
-function doCalculate() {
-  var v0   = gv('v0');
-  var vA   = gv('vA');
-  var vB   = gv('vB');
-  var vC   = gv('vC');
-  var wt   = gv('wt');
-  var fanM = gv('fanM');
-  var fanR = gv('fanR');
-  var rpm  = gv('rpm');
-  var nb   = gv('blades');
-  var fn   = gv('fn');
-  var k    = gv('stiff');
-
-  var labels = ['V₀','V_A','V_B','V_C','W_t','m (Fan kütlesi)','r (Fan yarıçapı)','n (Devir)'];
-  var vals   = [v0, vA, vB, vC, wt, fanM, fanR, rpm];
-  var miss = [];
-  for (var i = 0; i < vals.length; i++) {
-    if (isNaN(vals[i]) || vals[i] <= 0) miss.push(labels[i]);
-  }
-  if (miss.length > 0) { alert('Eksik veya geçersiz:\n' + miss.join('\n')); return; }
-
-  var z = (!isNaN(nb) && nb >= 2) ? Math.round(nb) : 0;
-
-  // Thearle
-  var dA = vA*vA - v0*v0;
-  var dB = vB*vB - v0*v0;
-  var dC = vC*vC - v0*v0;
-  var x  = (2*dA - dB - dC) / 3.0;
-  var y  = (dB - dC) / Math.sqrt(3.0);
-
-  var tDeg = Math.atan2(y, x) * 180.0 / Math.PI;
-  if (tDeg < 0) tDeg += 360.0;
-  var corrAngle = (tDeg + 180.0) % 360.0;
-
-  var uMag = Math.sqrt(x*x + y*y);
-  if (uMag < 0.0001) uMag = 0.0001;
-  var wCorr = (2.0 * v0 * v0 * wt) / uMag;
-
-  var U      = wCorr * fanR;
-  var e      = U / fanM;
-  var target = v0 * 0.15;
-  var omega  = rpm * 2.0 * Math.PI / 60.0;
-  var G      = (e / 1000.0) * omega;
-  var fHz    = rpm / 60.0;
-  var iso    = isoG(G);
-  var bpf    = z > 0 ? fHz * z : 0;
-
-  // Rezonans
-  var hasFn = (!isNaN(fn) && fn > 0);
-  var hasK  = (!isNaN(k)  && k  > 0);
-  var hasR  = hasFn || hasK;
-  var fCrit = NaN, nCrit = NaN, kCalc = NaN, rRatio = NaN, rZone = '', rSrc = '';
-  if (hasFn) {
-    fCrit = fn; nCrit = fn * 60.0;
-    kCalc = fanM * Math.pow(2.0 * Math.PI * fn, 2);
-    rSrc  = 'Darbe testi (VibXpert II)';
-  } else if (hasK) {
-    fCrit = (1.0 / (2.0 * Math.PI)) * Math.sqrt(k / fanM);
-    nCrit = fCrit * 60.0; kCalc = k;
-    rSrc  = 'Rulman kataloğu (k)';
-  }
-  if (hasR) {
-    rRatio = fHz / fCrit;
-    rZone  = rRatio < 0.7 ? 'ok' : (rRatio < 1.3 ? 'bad' : 'warn');
+    document.getElementById('resultBox').scrollIntoView({behavior:'smooth',block:'start'});
   }
 
-  // Kanatlar
-  var bladeList = [];
-  if (z > 0) {
-    var step = 360.0 / z;
-    for (var b = 0; b < z; b++) {
-      var bDeg = b * step;
-      var diff = Math.abs(((corrAngle - bDeg + 540.0) % 360.0) - 180.0);
-      bladeList.push({num: b+1, deg: bDeg, diff: diff});
+  // --- RENDER ---
+  function render(r) {
+    document.getElementById('rW').textContent  = r.wc.toFixed(1);
+    document.getElementById('rA').textContent  = r.ang.toFixed(1)+'°';
+    document.getElementById('rU').textContent  = r.U.toFixed(0)+' g·mm';
+    document.getElementById('rE').textContent  = r.e.toFixed(1)+' μm';
+    document.getElementById('rT').textContent  = '< '+r.tgt.toFixed(2)+' mm/s';
+    document.getElementById('rG').textContent  = 'G '+r.G.toFixed(1);
+    document.getElementById('rHz').textContent = r.fHz.toFixed(2)+' Hz  ('+r.rpm+' RPM)';
+    document.getElementById('rE').className = 'v '+(r.e<150?'ok':r.e<400?'wa':'ba');
+    document.getElementById('rG').className = 'v '+(r.G<6.3?'ok':r.G<16?'wa':'ba');
+
+    document.getElementById('f1').innerHTML='dA = V_A²−V₀² = '+r.vA.toFixed(2)+'²−'+r.v0.toFixed(2)+'² = <em>'+r.dA.toFixed(4)+'</em>';
+    document.getElementById('f2').innerHTML='dB = V_B²−V₀² = '+r.vB.toFixed(2)+'²−'+r.v0.toFixed(2)+'² = <em>'+r.dB.toFixed(4)+'</em>';
+    document.getElementById('f3').innerHTML='dC = V_C²−V₀² = '+r.vC.toFixed(2)+'²−'+r.v0.toFixed(2)+'² = <em>'+r.dC.toFixed(4)+'</em>';
+    document.getElementById('f4').innerHTML='x  = (2·dA−dB−dC)/3 = <em>'+r.x.toFixed(4)+'</em>';
+    document.getElementById('f5').innerHTML='y  = (dB−dC)/√3    = <em>'+r.y.toFixed(4)+'</em>';
+    document.getElementById('f6').innerHTML='θ  = atan2(y,x)     = <em>'+r.tDeg.toFixed(2)+'°</em>  →  +180° = '+r.ang.toFixed(2)+'°';
+    document.getElementById('f7').innerHTML='W_düz = 2·V₀²·W_t / √(x²+y²) = <em>'+r.wc.toFixed(1)+' g</em>';
+
+    var ib=document.getElementById('isoBan');
+    ib.className='ban '+r.iso.q;
+    ib.textContent='ISO 1940-1  |  G = '+r.G.toFixed(1)+' mm/s  →  '+r.iso.c+'  |  '+r.iso.d;
+
+    var rb=document.getElementById('resonBan');
+    var rr=document.getElementById('rrRow'), rr2=document.getElementById('rrRow2');
+    if (r.hasR) {
+      document.getElementById('rNc').textContent=r.nCrit.toFixed(0)+' RPM  ('+r.fCrit.toFixed(2)+' Hz)';
+      document.getElementById('rRR').textContent=r.rRat.toFixed(3)+'  (Ω/ω_n)';
+      document.getElementById('rRR').className='v '+r.rZone;
+      rr.style.display=rr2.style.display=rb.style.display='';
+      rb.className='ban '+r.rZone;
+      var st2=' <span style="font-size:10px;opacity:0.7;">['+r.rSrc+']</span>';
+      if (r.rZone==='ok')      rb.innerHTML='✓ Alt kritik bölge — Ω/ω_n = '+r.rRat.toFixed(3)+' — Güvenli çalışma'+st2;
+      else if (r.rZone==='ba') rb.innerHTML='⚠ KRİTİK REZONANS! Ω/ω_n = '+r.rRat.toFixed(3)+' — Kritik hıza çok yakın!'+st2;
+      else                     rb.innerHTML='⚡ Üst kritik — Ω/ω_n = '+r.rRat.toFixed(3)+' — İzleme önerilir'+st2;
+    } else { rr.style.display=rr2.style.display=rb.style.display='none'; }
+
+    var sd=document.getElementById('spdDiv');
+    if (r.rpm<200) { sd.className='spwa'; sd.textContent='⚠ Devir çok düşük ('+r.rpm+' RPM) — 3-nokta yöntemi hassasiyet kaybeder.'; }
+    else if (r.rpm>4000) { sd.className='spwa'; sd.textContent='⚠ Yüksek devir ('+r.rpm+' RPM). Spektrum analizi önerilir.'; }
+    else { sd.className='spok'; sd.textContent='✓ Çalışma frekansı: '+r.fHz.toFixed(2)+' Hz'+(r.bpf>0?'  |  BPF: '+r.bpf.toFixed(1)+' Hz':''); }
+
+    var sr=document.getElementById('sr2Div');
+    if (r.e>200||r.G>10) sr.innerHTML='<strong>⚠ 2. Tur Gerekebilir:</strong> Tahmini kalan: <strong>'+(r.v0*0.20).toFixed(2)+' mm/s</strong>. Yeni sekme açıp 2. tur yapın.';
+    else sr.innerHTML='✓ Dengesizlik makul — tek turda hedefe ulaşma olasılığı yüksek.';
+
+    // Kadran
+    var svgDeg=r.rot==='CW'?(-r.ang-90):(r.ang-90);
+    var rad=svgDeg*Math.PI/180;
+    var ax=100+78*Math.cos(rad), ay=100+78*Math.sin(rad);
+    var da=document.getElementById('dArrow'), dd=document.getElementById('dDot');
+    da.setAttribute('x2',ax); da.setAttribute('y2',ay); da.style.display='';
+    dd.setAttribute('cx',100+82*Math.cos(rad)); dd.setAttribute('cy',100+82*Math.sin(rad)); dd.style.display='';
+
+    var old=document.getElementById('angLbl'); if(old) old.parentNode.removeChild(old);
+    var dw=document.getElementById('dialWrap');
+    var se=document.getElementById('dialSvg');
+    var sw=se?se.getBoundingClientRect().width:220, sh=se?se.getBoundingClientRect().height:236;
+    if(sw<10){sw=220;sh=236;}
+    var px=(100+88*Math.cos(rad)+10)*(sw/220), py=(100+88*Math.sin(rad)+20)*(sh/236);
+    var al=document.createElement('div'); al.id='angLbl'; al.textContent=r.ang.toFixed(1)+'°';
+    al.style.cssText='position:absolute;left:'+px.toFixed(0)+'px;top:'+py.toFixed(0)+'px;transform:translate(-50%,-50%);background:#050d1a;border:1.5px solid #3377cc;border-radius:5px;padding:3px 8px;font-size:13px;font-weight:bold;font-family:monospace;color:#66aaff;pointer-events:none;white-space:nowrap;z-index:10;';
+    dw.appendChild(al);
+
+    // Kanat işaretleri
+    var bm=document.getElementById('bMarkers'); bm.innerHTML='';
+    if (r.z>0) {
+      var bst=360.0/r.z;
+      for (var b=0;b<r.z;b++) {
+        var bsvg=r.rot==='CW'?(-(b*bst)-90):(b*bst-90);
+        var brd=bsvg*Math.PI/180;
+        var ci=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        ci.setAttribute('cx',(100+70*Math.cos(brd)).toFixed(1)); ci.setAttribute('cy',(100+70*Math.sin(brd)).toFixed(1));
+        ci.setAttribute('r','4'); ci.setAttribute('fill','#555'); bm.appendChild(ci);
+      }
+      if (r.bList.length>0) {
+        var bk=r.bList[0], bksvg=r.rot==='CW'?(-((bk.n-1)*bst)-90):((bk.n-1)*bst-90);
+        var bkrd=bksvg*Math.PI/180;
+        var bc=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        bc.setAttribute('cx',(100+70*Math.cos(bkrd)).toFixed(1)); bc.setAttribute('cy',(100+70*Math.sin(bkrd)).toFixed(1));
+        bc.setAttribute('r','9'); bc.setAttribute('fill','#00cc66'); bc.setAttribute('stroke','#004400'); bc.setAttribute('stroke-width','2'); bm.appendChild(bc);
+        var bt=document.createElementNS('http://www.w3.org/2000/svg','text');
+        bt.setAttribute('x',(100+70*Math.cos(bkrd)).toFixed(1)); bt.setAttribute('y',(100+70*Math.sin(bkrd)+4).toFixed(1));
+        bt.setAttribute('text-anchor','middle'); bt.setAttribute('fill','#001a00'); bt.setAttribute('font-size','8'); bt.setAttribute('font-family','monospace'); bt.setAttribute('font-weight','bold');
+        bt.textContent='K'+bk.n; bm.appendChild(bt);
+      }
     }
-    bladeList.sort(function(a, b) { return a.diff - b.diff; });
-  }
-  var nearLabel = bladeList.length > 0
-    ? 'Kanat ' + bladeList[0].num + ' (' + bladeList[0].deg.toFixed(1) + '°)'
-    : '—';
 
-  var res = {
-    rot: currentRotation,
-    v0:v0, vA:vA, vB:vB, vC:vC, wt:wt, fanM:fanM, fanR:fanR, rpm:rpm, z:z,
-    dA:dA, dB:dB, dC:dC, x:x, y:y, tDeg:tDeg,
-    corrAngle:corrAngle, uMag:uMag, wCorr:wCorr,
-    U:U, e:e, target:target, G:G, fHz:fHz, omega:omega, bpf:bpf, iso:iso,
-    bladeList:bladeList, nearLabel:nearLabel,
-    fn:fn, stiff:k, hasFn:hasFn, hasK:hasK, hasR:hasR,
-    fCrit:fCrit, nCrit:nCrit, kCalc:kCalc, rRatio:rRatio, rZone:rZone, rSrc:rSrc
-  };
-
-  saveInputs();
-  sessions[activeTab].result = res;
-  buildTabs();
-  renderResult(res);
-  document.getElementById('resultBox').style.display = 'block';
-  document.getElementById('resultBox').scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-// --- RENDER ---
-
-function renderResult(res) {
-  document.getElementById('resW').textContent   = res.wCorr.toFixed(1);
-  document.getElementById('resA').textContent   = res.corrAngle.toFixed(1) + '°';
-  document.getElementById('resU').textContent   = res.U.toFixed(0) + ' g·mm';
-  document.getElementById('resE').textContent   = res.e.toFixed(1) + ' μm';
-  document.getElementById('resTgt').textContent = '< ' + res.target.toFixed(2) + ' mm/s';
-  document.getElementById('resG').textContent   = 'G ' + res.G.toFixed(1);
-  document.getElementById('resHz').textContent  = res.fHz.toFixed(2) + ' Hz  (' + res.rpm + ' RPM)';
-  document.getElementById('resE').className = 'val ' + (res.e < 150 ? 'ok' : res.e < 400 ? 'warn' : 'bad');
-  document.getElementById('resG').className = 'val ' + (res.G < 6.3 ? 'ok' : res.G < 16 ? 'warn' : 'bad');
-
-  // Ara değerler
-  document.getElementById('fLine1').innerHTML = 'dA = V_A²−V₀² = ' + res.vA.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = <span>' + res.dA.toFixed(4) + '</span>';
-  document.getElementById('fLine2').innerHTML = 'dB = V_B²−V₀² = ' + res.vB.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = <span>' + res.dB.toFixed(4) + '</span>';
-  document.getElementById('fLine3').innerHTML = 'dC = V_C²−V₀² = ' + res.vC.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = <span>' + res.dC.toFixed(4) + '</span>';
-  document.getElementById('fLine4').innerHTML = 'x  = (2·dA−dB−dC)/3 = <span>' + res.x.toFixed(4) + '</span>';
-  document.getElementById('fLine5').innerHTML = 'y  = (dB−dC)/√3    = <span>' + res.y.toFixed(4) + '</span>';
-  document.getElementById('fLine6').innerHTML = 'θ  = atan2(y,x)     = <span>' + res.tDeg.toFixed(2) + '°</span>  →  +180° = ' + res.corrAngle.toFixed(2) + '°';
-  document.getElementById('fLine7').innerHTML = 'W_düz = 2·V₀²·W_t / √(x²+y²) = <span>' + res.wCorr.toFixed(1) + ' g</span>';
-
-  // ISO
-  var ib = document.getElementById('isoBanner');
-  ib.className = 'iso-banner ' + res.iso.cat;
-  ib.textContent = 'ISO 1940-1  |  G = ' + res.G.toFixed(1) + ' mm/s  →  ' + res.iso.cls + '  |  ' + res.iso.desc;
-
-  // Rezonans
-  var rRow = document.getElementById('resonRow');
-  var rRRow = document.getElementById('resonRatioRow');
-  var rBan = document.getElementById('resonBanner');
-  if (res.hasR) {
-    document.getElementById('resNcrit').textContent      = res.nCrit.toFixed(0) + ' RPM  (' + res.fCrit.toFixed(2) + ' Hz)';
-    document.getElementById('resResonRatio').textContent = res.rRatio.toFixed(3) + '  (Ω/ω_n)';
-    document.getElementById('resResonRatio').className   = 'val ' + res.rZone;
-    rRow.style.display = rRRow.style.display = rBan.style.display = '';
-    rBan.className = 'iso-banner ' + res.rZone;
-    var st = ' <span style="font-size:10px;opacity:0.7;">[' + res.rSrc + ']</span>';
-    if (res.rZone === 'ok')       rBan.innerHTML = '✓ Alt kritik bölge — Ω/ω_n = ' + res.rRatio.toFixed(3) + ' — Güvenli çalışma' + st;
-    else if (res.rZone === 'bad') rBan.innerHTML = '⚠ KRİTİK REZONANS! Ω/ω_n = ' + res.rRatio.toFixed(3) + ' — Kritik hıza çok yakın (±%30)!' + st;
-    else                          rBan.innerHTML = '⚡ Üst kritik bölge — Ω/ω_n = ' + res.rRatio.toFixed(3) + ' — Sürekli izleme önerilir' + st;
-  } else {
-    rRow.style.display = rRRow.style.display = rBan.style.display = 'none';
-  }
-
-  // Devir uyarısı
-  var sd = document.getElementById('speedDiv');
-  if (res.rpm < 200) { sd.className = 'speed-warn'; sd.textContent = '⚠ Devir çok düşük (' + res.rpm + ' RPM) — 3-nokta yöntemi hassasiyet kaybeder.'; }
-  else if (res.rpm > 4000) { sd.className = 'speed-warn'; sd.textContent = '⚠ Yüksek devir (' + res.rpm + ' RPM). Spektrum analizi önerilir.'; }
-  else { sd.className = 'speed-ok'; sd.textContent = '✓ Çalışma frekansı: ' + res.fHz.toFixed(2) + ' Hz' + (res.bpf > 0 ? '  |  BPF: ' + res.bpf.toFixed(1) + ' Hz' : ''); }
-
-  // 2. tur
-  var sr = document.getElementById('secondRunDiv');
-  if (res.e > 200 || res.G > 10) sr.innerHTML = '<strong>⚠ 2. Tur Gerekebilir:</strong> Tahmini kalan: <strong>' + (res.v0 * 0.20).toFixed(2) + ' mm/s</strong>. Hedef (' + res.target.toFixed(2) + ' mm/s) tutmadıysa yeni sekme açıp 2. tur yapın.';
-  else sr.innerHTML = '✓ Dengesizlik makul — tek turda hedefe ulaşma olasılığı yüksek.';
-
-  // Kadran oku
-  var svgDeg = res.rot === 'CW' ? (-res.corrAngle - 90.0) : (res.corrAngle - 90.0);
-  var rad = svgDeg * Math.PI / 180.0;
-  var ax = 100 + 78 * Math.cos(rad), ay = 100 + 78 * Math.sin(rad);
-  var da = document.getElementById('dialArrow');
-  var dd = document.getElementById('dialDot');
-  da.setAttribute('x2', ax); da.setAttribute('y2', ay); da.style.display = '';
-  dd.setAttribute('cx', 100 + 82 * Math.cos(rad)); dd.setAttribute('cy', 100 + 82 * Math.sin(rad)); dd.style.display = '';
-
-  // Açı etiketi
-  var old = document.getElementById('dialAngleDiv'); if (old) old.parentNode.removeChild(old);
-  var dw = document.querySelector('.dial-wrap');
-  if (dw) {
-    var se = document.querySelector('#resultBox svg');
-    var sw = se ? se.getBoundingClientRect().width  : 220;
-    var sh = se ? se.getBoundingClientRect().height : 236;
-    if (sw < 10) { sw = 220; sh = 236; }
-    var px = (100 + 88 * Math.cos(rad) + 10) * (sw / 220);
-    var py = (100 + 88 * Math.sin(rad) + 20) * (sh / 236);
-    var ad = document.createElement('div');
-    ad.id = 'dialAngleDiv'; ad.textContent = res.corrAngle.toFixed(1) + '°';
-    ad.style.cssText = 'position:absolute;left:' + px.toFixed(0) + 'px;top:' + py.toFixed(0) + 'px;transform:translate(-50%,-50%);background:#050d1a;border:1.5px solid #3377cc;border-radius:5px;padding:3px 8px;font-size:13px;font-weight:bold;font-family:monospace;color:#66aaff;pointer-events:none;white-space:nowrap;z-index:10;';
-    dw.style.position = 'relative'; dw.appendChild(ad);
-  }
-
-  // Kanat işaretleri
-  var bm = document.getElementById('bladeMarkers'); bm.innerHTML = '';
-  if (res.z > 0) {
-    var bStep = 360.0 / res.z;
-    for (var b = 0; b < res.z; b++) {
-      var bSvg = res.rot === 'CW' ? (-(b * bStep) - 90.0) : (b * bStep - 90.0);
-      var bRad = bSvg * Math.PI / 180.0;
-      var ci = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      ci.setAttribute('cx', (100 + 70 * Math.cos(bRad)).toFixed(1));
-      ci.setAttribute('cy', (100 + 70 * Math.sin(bRad)).toFixed(1));
-      ci.setAttribute('r', '4'); ci.setAttribute('fill', '#555'); bm.appendChild(ci);
+    // Dönüş oku
+    var ea=document.getElementById('rotArrow'); if(ea) ea.parentNode.removeChild(ea);
+    var svEl=document.getElementById('dialSvg');
+    if (svEl) {
+      var rg=document.createElementNS('http://www.w3.org/2000/svg','g'); rg.setAttribute('id','rotArrow');
+      var rr3=98;
+      var col=r.rot==='CW'?'#ff5533':'#4488ff';
+      var lbl=r.rot==='CW'?'CCW ↺':'CW ↻';
+      var lx=r.rot==='CW'?'170':'30';
+      var as=r.rot==='CW'?(-50-90)*Math.PI/180:(50-90)*Math.PI/180;
+      var ae=r.rot==='CW'?(50-90)*Math.PI/180:(-50-90)*Math.PI/180;
+      var sw2=r.rot==='CW'?1:0;
+      var p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d','M '+(100+rr3*Math.cos(as))+' '+(100+rr3*Math.sin(as))+' A '+rr3+' '+rr3+' 0 0 '+sw2+' '+(100+rr3*Math.cos(ae))+' '+(100+rr3*Math.sin(ae)));
+      p.setAttribute('fill','none'); p.setAttribute('stroke',col); p.setAttribute('stroke-width','2.5'); p.setAttribute('stroke-linecap','round');
+      var ha=r.rot==='CW'?ae+0.35:ae-0.35, hx=100+rr3*Math.cos(ae), hy=100+rr3*Math.sin(ae);
+      var ah=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+      ah.setAttribute('points',(hx-7*Math.cos(ha-0.4))+','+(hy-7*Math.sin(ha-0.4))+' '+hx+','+hy+' '+(hx-7*Math.cos(ha+0.4))+','+(hy-7*Math.sin(ha+0.4)));
+      ah.setAttribute('fill','none'); ah.setAttribute('stroke',col); ah.setAttribute('stroke-width','2.5'); ah.setAttribute('stroke-linecap','round');
+      var lt=document.createElementNS('http://www.w3.org/2000/svg','text');
+      lt.setAttribute('x',lx); lt.setAttribute('y','52'); lt.setAttribute('text-anchor','middle');
+      lt.setAttribute('fill',col); lt.setAttribute('font-size','10'); lt.setAttribute('font-family','monospace'); lt.setAttribute('font-weight','bold'); lt.textContent=lbl;
+      rg.appendChild(p); rg.appendChild(ah); rg.appendChild(lt); svEl.appendChild(rg);
     }
-    if (res.bladeList.length > 0) {
-      var bk = res.bladeList[0];
-      var bkSvg = res.rot === 'CW' ? (-((bk.num - 1) * bStep) - 90.0) : ((bk.num - 1) * bStep - 90.0);
-      var bkRad = bkSvg * Math.PI / 180.0;
-      var bc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      bc.setAttribute('cx', (100 + 70 * Math.cos(bkRad)).toFixed(1));
-      bc.setAttribute('cy', (100 + 70 * Math.sin(bkRad)).toFixed(1));
-      bc.setAttribute('r', '9'); bc.setAttribute('fill', '#00cc66');
-      bc.setAttribute('stroke', '#004400'); bc.setAttribute('stroke-width', '2'); bm.appendChild(bc);
-      var bl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      bl.setAttribute('x', (100 + 70 * Math.cos(bkRad)).toFixed(1));
-      bl.setAttribute('y', (100 + 70 * Math.sin(bkRad) + 4).toFixed(1));
-      bl.setAttribute('text-anchor', 'middle'); bl.setAttribute('fill', '#001a00');
-      bl.setAttribute('font-size', '8'); bl.setAttribute('font-family', 'monospace'); bl.setAttribute('font-weight', 'bold');
-      bl.textContent = 'K' + bk.num; bm.appendChild(bl);
-    }
+
+    // Kanat tablosu
+    var tb=document.getElementById('bTBody'); tb.innerHTML='';
+    if (r.bList.length>0) {
+      var t3=r.bList.slice(0,Math.min(3,r.bList.length));
+      for (var t=0;t<t3.length;t++) {
+        var tr2=document.createElement('tr'); if(t===0) tr2.className='best';
+        tr2.innerHTML='<td>Kanat '+t3[t].n+'</td><td>'+t3[t].d.toFixed(1)+'°</td><td>'+t3[t].f.toFixed(1)+'°</td><td>'+(t===0?'✓ En yakın':t===1?'2. yakın':'3. yakın')+'</td>';
+        tb.appendChild(tr2);
+      }
+    } else { tb.innerHTML='<tr><td colspan="4" style="color:#444;text-align:center;font-size:12px;">Kanat sayısı girilmedi</td></tr>'; }
+
+    var st3=document.getElementById('statDiv');
+    st3.className=r.e<400?'sok':'swa';
+    st3.textContent=r.e<400?'✓ Hesaplama tamamlandı — düzeltme ağırlığını takın ve doğrulama ölçümü alın':'⚠ Yüksek dengesizlik — doğrulama kritik';
+
+    var df=document.getElementById('dFooter');
+    if(df) df.innerHTML='F2 &nbsp;|&nbsp; <span style="color:#555">● Kanat konumları</span> &nbsp;|&nbsp; '+(r.rot==='CW'?'<span style="color:#ff5533;font-weight:700;">↻ CW</span> — düzeltme CCW yönünde':'<span style="color:#4488ff;font-weight:700;">↺ CCW</span> — düzeltme CW yönünde');
+
+    document.getElementById('guideDiv').innerHTML=
+      '<div class="gtit">Fan Tarafı (F2)</div>'+
+      '<div class="grow"><div class="gnum b">1</div><div>Ekipmanı durdurun — LOTO uygulayın</div></div>'+
+      '<div class="grow"><div class="gnum b">2</div><div>0°\'den <span class="hb">'+r.ang.toFixed(1)+'°</span> konumunu işaretleyin</div></div>'+
+      '<div class="grow"><div class="gnum b">3</div><div>En yakın kanat: <span class="hb">'+r.nLbl+'</span></div></div>'+
+      '<div class="grow"><div class="gnum b">4</div><div><span class="hb">'+r.wc.toFixed(1)+' gram</span> ağırlık takın (r = '+r.fr+' mm)</div></div>'+
+      '<div class="gtit" style="color:#00cc66;margin-top:14px;">Doğrulama</div>'+
+      '<div class="grow"><div class="gnum g">5</div><div>Ekipmanı çalıştırın ve ölçüm alın</div></div>'+
+      '<div class="grow"><div class="gnum g">6</div><div>Hedef: <span class="hg">&lt; '+r.tgt.toFixed(2)+' mm/s</span>  (ISO '+r.iso.c+')</div></div>'+
+      '<div class="grow"><div class="gnum g">7</div><div>Hedef tutmadıysa yeni sekme açıp 2. çalışma başlatın</div></div>';
   }
 
-  // Dönüş yönü oku
-  var ea = document.getElementById('rotArrow'); if (ea) ea.parentNode.removeChild(ea);
-  var svEl = document.querySelector('#resultBox svg');
-  if (svEl) {
-    var rg = document.createElementNS('http://www.w3.org/2000/svg', 'g'); rg.setAttribute('id', 'rotArrow');
-    var rr2 = 98;
-    if (res.rot === 'CW') {
-      var as = (-50 - 90) * Math.PI / 180, ae = (50 - 90) * Math.PI / 180;
-      var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p.setAttribute('d', 'M ' + (100 + rr2 * Math.cos(as)) + ' ' + (100 + rr2 * Math.sin(as)) + ' A ' + rr2 + ' ' + rr2 + ' 0 0 1 ' + (100 + rr2 * Math.cos(ae)) + ' ' + (100 + rr2 * Math.sin(ae)));
-      p.setAttribute('fill', 'none'); p.setAttribute('stroke', '#ff5533'); p.setAttribute('stroke-width', '2.5'); p.setAttribute('stroke-linecap', 'round');
-      var ha = ae + 0.35, hx = 100 + rr2 * Math.cos(ae), hy = 100 + rr2 * Math.sin(ae);
-      var ah = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-      ah.setAttribute('points', (hx - 7 * Math.cos(ha - 0.4)) + ',' + (hy - 7 * Math.sin(ha - 0.4)) + ' ' + hx + ',' + hy + ' ' + (hx - 7 * Math.cos(ha + 0.4)) + ',' + (hy - 7 * Math.sin(ha + 0.4)));
-      ah.setAttribute('fill', 'none'); ah.setAttribute('stroke', '#ff5533'); ah.setAttribute('stroke-width', '2.5'); ah.setAttribute('stroke-linecap', 'round');
-      var lt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      lt.setAttribute('x', '170'); lt.setAttribute('y', '52'); lt.setAttribute('text-anchor', 'middle');
-      lt.setAttribute('fill', '#ff5533'); lt.setAttribute('font-size', '10'); lt.setAttribute('font-family', 'monospace'); lt.setAttribute('font-weight', 'bold'); lt.textContent = 'CCW ↺';
-      rg.appendChild(p); rg.appendChild(ah); rg.appendChild(lt);
-    } else {
-      var as2 = (50 - 90) * Math.PI / 180, ae2 = (-50 - 90) * Math.PI / 180;
-      var p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p2.setAttribute('d', 'M ' + (100 + rr2 * Math.cos(as2)) + ' ' + (100 + rr2 * Math.sin(as2)) + ' A ' + rr2 + ' ' + rr2 + ' 0 0 0 ' + (100 + rr2 * Math.cos(ae2)) + ' ' + (100 + rr2 * Math.sin(ae2)));
-      p2.setAttribute('fill', 'none'); p2.setAttribute('stroke', '#4488ff'); p2.setAttribute('stroke-width', '2.5'); p2.setAttribute('stroke-linecap', 'round');
-      var ha2 = ae2 - 0.35, hx2 = 100 + rr2 * Math.cos(ae2), hy2 = 100 + rr2 * Math.sin(ae2);
-      var ah2 = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-      ah2.setAttribute('points', (hx2 - 7 * Math.cos(ha2 - 0.4)) + ',' + (hy2 - 7 * Math.sin(ha2 - 0.4)) + ' ' + hx2 + ',' + hy2 + ' ' + (hx2 - 7 * Math.cos(ha2 + 0.4)) + ',' + (hy2 - 7 * Math.sin(ha2 + 0.4)));
-      ah2.setAttribute('fill', 'none'); ah2.setAttribute('stroke', '#4488ff'); ah2.setAttribute('stroke-width', '2.5'); ah2.setAttribute('stroke-linecap', 'round');
-      var lt2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      lt2.setAttribute('x', '30'); lt2.setAttribute('y', '52'); lt2.setAttribute('text-anchor', 'middle');
-      lt2.setAttribute('fill', '#4488ff'); lt2.setAttribute('font-size', '10'); lt2.setAttribute('font-family', 'monospace'); lt2.setAttribute('font-weight', 'bold'); lt2.textContent = 'CW ↻';
-      rg.appendChild(p2); rg.appendChild(ah2); rg.appendChild(lt2);
+  // --- PDF ---
+  function pdf() {
+    var r=sessions[active].res;
+    if(!r){alert('Önce hesaplama yapın.');return;}
+    var tn=active+1, td=new Date().toLocaleDateString('tr-TR');
+    var ic=r.iso.q==='ok'?'#006633':r.iso.q==='wa'?'#885500':'#cc2200';
+    var brows='';
+    if(r.bList.length>0){
+      var t3=r.bList.slice(0,Math.min(3,r.bList.length));
+      for(var i=0;i<t3.length;i++) brows+='<tr'+(i===0?' style="background:#e8f5e9;font-weight:700;"':'')+'>'+
+        '<td>Kanat '+t3[i].n+'</td><td>'+t3[i].d.toFixed(1)+'°</td><td>'+t3[i].f.toFixed(1)+'°</td>'+
+        '<td>'+(i===0?'✓ En yakın':i===1?'2. yakın':'3. yakın')+'</td></tr>';
+    } else brows='<tr><td colspan="4" style="color:#999;text-align:center;">Kanat sayısı girilmedi</td></tr>';
+    var bsec=r.bList.length>0?'<div class="sec"><div class="st">En Yakın Kanat Analizi</div><table><tr><th>Kanat</th><th>Konum</th><th>Fark</th><th>Durum</th></tr>'+brows+'</table></div>':'';
+    var srt=(r.e>200||r.G>10)?'<b style="color:#cc6600;">⚠ 2. Tur Gerekebilir:</b> Tahmini kalan: <b>'+(r.v0*0.20).toFixed(2)+' mm/s</b>.':'<span style="color:#006633;">✓</span> Dengesizlik makul — tek turda hedefe ulaşma olasılığı yüksek.';
+    var bpfr=r.bpf>0?'<tr style="background:#fafafa"><td>Kanat Geçiş Frekansı (BPF)</td><td>f_BPF = z×f</td><td>'+r.bpf.toFixed(1)+'</td><td>Hz</td></tr>':'';
+    var rsec='';
+    if(r.hasR){
+      var rzc=r.rZone==='ok'?'#006633':r.rZone==='ba'?'#cc2200':'#885500';
+      var rzk=r.rZone==='ok'?'iok':r.rZone==='ba'?'ibad':'iwarn';
+      var rzt=r.rZone==='ok'?'✓ Alt kritik bölge — Güvenli çalışma':r.rZone==='ba'?'⚠ KRİTİK REZONANS BÖLGESİ — Kritik hıza çok yakın!':'⚡ Üst kritik — Sürekli izleme önerilir';
+      var kr=(!isNaN(r.kCalc)&&r.kCalc>0)?'<tr style="background:#fafafa"><td>Sistem Rijitliği'+(r.hasFn?' (geri hesap)':' (katalog)')+'</td><td>k</td><td>'+r.kCalc.toExponential(3)+'</td><td>N/m</td></tr>':'';
+      rsec='<div class="sec"><div class="st">Rezonans / Kritik Hız Analizi</div>'+
+        '<div class="ibox '+rzk+'"><b>'+rzt+'</b></div>'+
+        '<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>'+
+        '<tr><td>Veri Kaynağı</td><td>—</td><td><b>'+r.rSrc+'</b></td><td>—</td></tr>'+
+        '<tr style="background:#fafafa"><td>Doğal / Kritik Frekans</td><td>f_n</td><td style="font-weight:700;color:'+rzc+';">'+r.fCrit.toFixed(2)+'</td><td>Hz</td></tr>'+
+        '<tr><td>Kritik Devir</td><td>n_krit</td><td style="font-weight:700;color:'+rzc+';">'+r.nCrit.toFixed(0)+'</td><td>RPM</td></tr>'+
+        kr+'<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>'+r.rpm+'</td><td>RPM</td></tr>'+
+        '<tr><td>Frekans Oranı</td><td>Ω/ω_n</td><td style="font-weight:700;color:'+rzc+';">'+r.rRat.toFixed(3)+'</td><td>—</td></tr>'+
+        '</table></div>';
     }
-    svEl.appendChild(rg);
-  }
+    var fnr=r.hasFn?'<tr style="background:#eaf5ea;"><td>Doğal Frekans (darbe testi)</td><td>f_n</td><td><b>'+r.fCrit.toFixed(2)+'</b></td><td>Hz</td></tr>':'';
+    var knr=(r.hasK&&!r.hasFn)?'<tr style="background:#eaf0ff;"><td>Yay Sabiti / Sertlik (Rijitlik)</td><td>k</td><td><b>'+r.k.toExponential(3)+'</b></td><td>N/m</td></tr>':'';
+    var zr=r.z>0?'<tr style="background:#fafafa"><td>Kanat Sayısı</td><td>z</td><td>'+r.z+'</td><td>adet</td></tr>':'';
 
-  // Kanat tablosu
-  var tb = document.getElementById('bladeTableBody'); tb.innerHTML = '';
-  if (res.bladeList.length > 0) {
-    var top3 = res.bladeList.slice(0, Math.min(3, res.bladeList.length));
-    for (var t = 0; t < top3.length; t++) {
-      var tr2 = document.createElement('tr'); if (t === 0) tr2.className = 'best';
-      tr2.innerHTML = '<td>Kanat ' + top3[t].num + '</td><td>' + top3[t].deg.toFixed(1) + '°</td><td>' + top3[t].diff.toFixed(1) + '°</td><td>' + (t === 0 ? '✓ En yakın' : t === 1 ? '2. yakın' : '3. yakın') + '</td>';
-      tb.appendChild(tr2);
-    }
-  } else {
-    tb.innerHTML = '<tr><td colspan="4" style="color:#444;text-align:center;font-size:12px;">Kanat sayısı girilmedi</td></tr>';
-  }
+    var css='*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:10.5pt;color:#111;}'+
+      '.pg{max-width:720px;margin:0 auto;padding:18px 24px;}'+
+      '.hdr{background:#0d0d0d;color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}'+
+      '.hdr h1{font-size:15pt;margin:0;color:#fff;}.hdr .dt{font-size:9pt;color:#aaa;}'+
+      '.sec{margin-bottom:16px;}.st{font-size:10.5pt;font-weight:700;color:#cc3311;border-bottom:2px solid #cc3311;padding-bottom:3px;margin-bottom:9px;letter-spacing:1px;text-transform:uppercase;}'+
+      'table{width:100%;border-collapse:collapse;margin-bottom:8px;}td,th{padding:5px 9px;border:1px solid #ddd;font-size:10pt;}th{background:#f0f0f0;font-weight:700;text-align:left;}'+
+      '.rb{font-size:15pt;font-weight:800;}.bl{color:#1144aa;}.rd{color:#cc3311;}.gr{color:#006633;}'+
+      '.ibox{padding:9px 12px;border-radius:3px;margin-bottom:10px;font-size:10pt;}'+
+      '.iok{background:#e8f5e9;border:1.5px solid #006633;color:#006633;}'+
+      '.iwarn{background:#fff8e0;border:1.5px solid #885500;color:#885500;}'+
+      '.ibad{background:#fdecea;border:1.5px solid #cc2200;color:#cc2200;}'+
+      '.sr{background:#fff8e0;border-left:4px solid #cc6600;padding:9px 12px;margin-bottom:10px;font-size:10pt;}'+
+      '.fbox{background:#f0f4ff;border-left:4px solid #2255cc;padding:10px 14px;font-family:monospace;font-size:9.5pt;line-height:2;margin-bottom:10px;}'+
+      '.gs{display:flex;gap:9px;margin-bottom:6px;align-items:flex-start;font-size:10pt;}'+
+      '.gn{min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5pt;font-weight:700;color:#fff;flex-shrink:0;}'+
+      '.gb{background:#2255cc;}.gg{background:#006633;}'+
+      '.ft{margin-top:20px;padding-top:8px;border-top:1px solid #ddd;font-size:8pt;color:#999;text-align:center;}'+
+      '.pbtn{display:block;width:100%;padding:14px;background:#006633;color:#fff;border:none;border-radius:5px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:18px;}'+
+      '@media print{.pbtn,.nop{display:none!important;}@page{margin:12mm;}}';
 
-  // Durum
-  var st2 = document.getElementById('statusDiv');
-  st2.className = res.e < 400 ? 'status-ok' : 'status-warn';
-  st2.textContent = res.e < 400 ? '✓ Hesaplama tamamlandı — düzeltme ağırlığını takın ve doğrulama ölçümü alın' : '⚠ Yüksek dengesizlik — düzeltme sonrası doğrulama kritik';
-
-  // Kadran etiketi
-  var df = document.getElementById('dialFooter');
-  if (df) df.innerHTML = 'F2 &nbsp;|&nbsp; <span style="color:#555">● Kanat konumları</span> &nbsp;|&nbsp; ' + (res.rot === 'CW' ? '<span style="color:#ff5533;font-weight:700;">↻ CW</span> — düzeltme CCW yönünde' : '<span style="color:#4488ff;font-weight:700;">↺ CCW</span> — düzeltme CW yönünde');
-
-  // Rehber
-  document.getElementById('guideContent').innerHTML =
-    '<div class="guide-section-title">Fan Tarafı (F2)</div>' +
-    '<div class="guide-row"><div class="guide-num blue">1</div><div>Ekipmanı durdurun — LOTO uygulayın</div></div>' +
-    '<div class="guide-row"><div class="guide-num blue">2</div><div>0°\'den <span class="highlight-blue">' + res.corrAngle.toFixed(1) + '°</span> konumunu işaretleyin</div></div>' +
-    '<div class="guide-row"><div class="guide-num blue">3</div><div>En yakın kanat: <span class="highlight-blue">' + res.nearLabel + '</span></div></div>' +
-    '<div class="guide-row"><div class="guide-num blue">4</div><div><span class="highlight-blue">' + res.wCorr.toFixed(1) + ' gram</span> ağırlık takın (r = ' + res.fanR + ' mm)</div></div>' +
-    '<div class="guide-section-title" style="color:#00cc66;margin-top:14px;">Doğrulama</div>' +
-    '<div class="guide-row"><div class="guide-num green">5</div><div>Ekipmanı çalıştırın ve ölçüm alın</div></div>' +
-    '<div class="guide-row"><div class="guide-num green">6</div><div>Hedef: <span class="highlight-green">&lt; ' + res.target.toFixed(2) + ' mm/s</span>  (ISO ' + res.iso.cls + ')</div></div>' +
-    '<div class="guide-row"><div class="guide-num green">7</div><div>Hedef tutmadıysa yeni sekme açıp 2. çalışma başlatın</div></div>';
-}
-
-// --- PDF ---
-
-function downloadPDF() {
-  var res = sessions[activeTab].result;
-  if (!res) { alert('Önce hesaplama yapın.'); return; }
-  var tabNum = activeTab + 1;
-  var today  = new Date().toLocaleDateString('tr-TR');
-  var isoClr = res.iso.cat === 'ok' ? '#006633' : res.iso.cat === 'warn' ? '#885500' : '#cc2200';
-
-  var bladeRows = '';
-  if (res.bladeList.length > 0) {
-    var top3 = res.bladeList.slice(0, Math.min(3, res.bladeList.length));
-    for (var i = 0; i < top3.length; i++) {
-      bladeRows += '<tr' + (i === 0 ? ' style="background:#e8f5e9;font-weight:700;"' : '') + '>' +
-        '<td>Kanat ' + top3[i].num + '</td><td>' + top3[i].deg.toFixed(1) + '°</td>' +
-        '<td>' + top3[i].diff.toFixed(1) + '°</td><td>' + (i === 0 ? '✓ En yakın' : i === 1 ? '2. yakın' : '3. yakın') + '</td></tr>';
-    }
-  } else { bladeRows = '<tr><td colspan="4" style="color:#999;text-align:center;">Kanat sayısı girilmedi</td></tr>'; }
-
-  var bladeSec = res.bladeList.length > 0
-    ? '<div class="sec"><div class="st">En Yakın Kanat Analizi</div><table><tr><th>Kanat</th><th>Konum</th><th>Fark</th><th>Durum</th></tr>' + bladeRows + '</table></div>'
-    : '';
-
-  var srTxt = (res.e > 200 || res.G > 10)
-    ? '<b style="color:#cc6600;">⚠ 2. Tur Gerekebilir:</b> Tahmini kalan: <b>' + (res.v0 * 0.20).toFixed(2) + ' mm/s</b>. Hedef (' + res.target.toFixed(2) + ' mm/s) tutmadıysa 2. çalışma başlatın.'
-    : '<span style="color:#006633;">✓</span> Dengesizlik makul — tek turda hedefe ulaşma olasılığı yüksek.';
-
-  var bpfRow = res.bpf > 0
-    ? '<tr style="background:#fafafa"><td>Kanat Geçiş Frekansı (BPF)</td><td>f_BPF = z × f</td><td>' + res.bpf.toFixed(1) + '</td><td>Hz</td></tr>'
-    : '';
-
-  var resonSec = '';
-  if (res.hasR) {
-    var rzClr = res.rZone === 'ok' ? '#006633' : res.rZone === 'bad' ? '#cc2200' : '#885500';
-    var rzCls = res.rZone === 'ok' ? 'iok'     : res.rZone === 'bad' ? 'ibad'    : 'iwarn';
-    var rzTxt = res.rZone === 'ok'
-      ? '✓ Alt kritik bölge — Güvenli çalışma'
-      : res.rZone === 'bad'
-        ? '⚠ KRİTİK REZONANS BÖLGESİ — Kritik hıza çok yakın (±%30)!'
-        : '⚡ Üst kritik bölge — Sürekli izleme önerilir';
-    var kRow = (!isNaN(res.kCalc) && res.kCalc > 0)
-      ? '<tr style="background:#fafafa"><td>Sistem Rijitliği' + (res.hasFn ? ' (geri hesap)' : ' (katalog)') + '</td><td>k</td><td>' + res.kCalc.toExponential(3) + '</td><td>N/m</td></tr>'
-      : '';
-    var katRow = (res.hasR && res.hasFn && res.hasK)
-      ? '<tr><td>Yatak Rijitliği (katalog, referans)</td><td>k_kat</td><td>' + res.stiff.toExponential(3) + '</td><td>N/m</td></tr>'
-      : '';
-    resonSec =
-      '<div class="sec"><div class="st">Rezonans / Kritik Hız Analizi</div>' +
-      '<div class="ibox ' + rzCls + '"><b>' + rzTxt + '</b></div>' +
-      '<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>' +
-      '<tr><td>Veri Kaynağı</td><td>—</td><td><b>' + res.rSrc + '</b></td><td>—</td></tr>' +
-      '<tr style="background:#fafafa"><td>Doğal / Kritik Frekans</td><td>f_n</td><td style="font-weight:700;color:' + rzClr + ';">' + res.fCrit.toFixed(2) + '</td><td>Hz</td></tr>' +
-      '<tr><td>Kritik Devir</td><td>n_krit</td><td style="font-weight:700;color:' + rzClr + ';">' + res.nCrit.toFixed(0) + '</td><td>RPM</td></tr>' +
-      kRow + katRow +
-      '<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>' + res.rpm + '</td><td>RPM</td></tr>' +
-      '<tr><td>Frekans Oranı</td><td>Ω/ω_n</td><td style="font-weight:700;color:' + rzClr + ';">' + res.rRatio.toFixed(3) + '</td><td>—</td></tr>' +
-      '</table></div>';
-  }
-
-  var fnRow  = res.hasFn ? '<tr style="background:#eaf5ea;"><td>Doğal Frekans (darbe testi)</td><td>f_n</td><td><b>' + res.fCrit.toFixed(2) + '</b></td><td>Hz</td></tr>' : '';
-  var kInRow = (res.hasK && !res.hasFn) ? '<tr style="background:#eaf0ff;"><td>Yatak Rijitliği (katalog)</td><td>k</td><td><b>' + res.stiff.toExponential(3) + '</b></td><td>N/m</td></tr>' : '';
-  var zRow   = res.z > 0 ? '<tr style="background:#fafafa"><td>Kanat Sayısı</td><td>z</td><td>' + res.z + '</td><td>adet</td></tr>' : '';
-
-  var css =
-    '*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:10.5pt;color:#111;}' +
-    '.pg{max-width:720px;margin:0 auto;padding:18px 24px;}' +
-    '.hdr{background:#0d0d0d;color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}' +
-    '.hdr h1{font-size:15pt;margin:0;color:#fff;}.hdr .dt{font-size:9pt;color:#aaa;}' +
-    '.sec{margin-bottom:16px;}.st{font-size:10.5pt;font-weight:700;color:#cc3311;border-bottom:2px solid #cc3311;padding-bottom:3px;margin-bottom:9px;letter-spacing:1px;text-transform:uppercase;}' +
-    'table{width:100%;border-collapse:collapse;margin-bottom:8px;}td,th{padding:5px 9px;border:1px solid #ddd;font-size:10pt;}th{background:#f0f0f0;font-weight:700;text-align:left;}' +
-    '.rb{font-size:15pt;font-weight:800;}.bl{color:#1144aa;}.rd{color:#cc3311;}.gr{color:#006633;}' +
-    '.ibox{padding:9px 12px;border-radius:3px;margin-bottom:10px;font-size:10pt;}' +
-    '.iok{background:#e8f5e9;border:1.5px solid #006633;color:#006633;}' +
-    '.iwarn{background:#fff8e0;border:1.5px solid #885500;color:#885500;}' +
-    '.ibad{background:#fdecea;border:1.5px solid #cc2200;color:#cc2200;}' +
-    '.sr{background:#fff8e0;border-left:4px solid #cc6600;padding:9px 12px;margin-bottom:10px;font-size:10pt;}' +
-    '.gs{display:flex;gap:9px;margin-bottom:6px;align-items:flex-start;font-size:10pt;}' +
-    '.gn{min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5pt;font-weight:700;color:#fff;flex-shrink:0;}' +
-    '.gb{background:#2255cc;}.gg{background:#006633;}' +
-    '.fbox{background:#f0f4ff;border-left:4px solid #2255cc;padding:10px 14px;font-family:monospace;font-size:9.5pt;line-height:2;margin-bottom:10px;}' +
-    '.ft{margin-top:20px;padding-top:8px;border-top:1px solid #ddd;font-size:8pt;color:#999;text-align:center;}' +
-    '.pbtn{display:block;width:100%;padding:14px;background:#006633;color:#fff;border:none;border-radius:5px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:18px;}' +
-    '@media print{.pbtn,.nop{display:none!important;}@page{margin:12mm;}}';
-
-  var h =
-    '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Fan Balans ' + tabNum + '. Çalışma</title>' +
-    '<style>' + css + '</style></head><body><div class="pg">' +
+    var h='<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Fan Balans '+tn+'. Çalışma</title>'+
+      '<style>'+css+'</style></head><body><div class="pg">'+
 
 ```
-'<div class="hdr"><h1>Fan Balans — ' + tabNum + '. Çalışma</h1><span class="dt">' + today + '</span></div>' +
+  '<div class="hdr"><h1>Fan Balans — '+tn+'. Çalışma</h1><span class="dt">'+td+'</span></div>'+
 
-'<div class="sec"><div class="st">Giriş Değerleri</div>' +
-'<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>' +
-'<tr><td>Referans Titreşim (Ağırlıksız)</td><td>V₀</td><td>' + res.v0.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'<tr style="background:#fafafa"><td>0° Titreşim</td><td>V_A</td><td>' + res.vA.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'<tr><td>120° Titreşim</td><td>V_B</td><td>' + res.vB.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'<tr style="background:#fafafa"><td>240° Titreşim</td><td>V_C</td><td>' + res.vC.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'<tr><td>Deneme Ağırlığı</td><td>W_t</td><td>' + res.wt.toFixed(1) + '</td><td>gram</td></tr>' +
-'<tr style="background:#fafafa"><td>Fan Kütlesi</td><td>m</td><td>' + res.fanM.toFixed(1) + '</td><td>kg</td></tr>' +
-'<tr><td>Fan Yarıçapı</td><td>r</td><td>' + res.fanR.toFixed(0) + '</td><td>mm</td></tr>' +
-'<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>' + res.rpm + '</td><td>RPM</td></tr>' +
-'<tr><td>Açısal Hız</td><td>ω = 2π·n/60</td><td>' + res.omega.toFixed(3) + '</td><td>rad/s</td></tr>' +
-zRow + fnRow + kInRow +
-'<tr style="background:#fafafa"><td>Dönüş Yönü</td><td>—</td><td><b>' + (res.rot === 'CW' ? 'Saat Yönü (CW)' : 'Saat Yönü Tersi (CCW)') + '</b></td><td>—</td></tr>' +
-'</table></div>' +
+  '<div class="sec"><div class="st">Giriş Değerleri</div>'+
+  '<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>'+
+  '<tr><td>Referans Titreşim (Ağırlıksız)</td><td>V₀</td><td>'+r.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
+  '<tr style="background:#fafafa"><td>0° Titreşim</td><td>V_A</td><td>'+r.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
+  '<tr><td>120° Titreşim</td><td>V_B</td><td>'+r.vB.toFixed(2)+'</td><td>mm/s</td></tr>'+
+  '<tr style="background:#fafafa"><td>240° Titreşim</td><td>V_C</td><td>'+r.vC.toFixed(2)+'</td><td>mm/s</td></tr>'+
+  '<tr><td>Deneme Ağırlığı</td><td>W_t</td><td>'+r.wt.toFixed(1)+'</td><td>gram</td></tr>'+
+  '<tr style="background:#fafafa"><td>Fan Kütlesi</td><td>m</td><td>'+r.fm.toFixed(1)+'</td><td>kg</td></tr>'+
+  '<tr><td>Fan Yarıçapı</td><td>r</td><td>'+r.fr.toFixed(0)+'</td><td>mm</td></tr>'+
+  '<tr style="background:#fafafa"><td>Çalışma Devri</td><td>n</td><td>'+r.rpm+'</td><td>RPM</td></tr>'+
+  '<tr><td>Açısal Hız</td><td>ω = 2π·n/60</td><td>'+r.om.toFixed(3)+'</td><td>rad/s</td></tr>'+
+  zr+fnr+knr+
+  '<tr style="background:#fafafa"><td>Dönüş Yönü</td><td>—</td><td><b>'+(r.rot==='CW'?'Saat Yönü (CW)':'Saat Yönü Tersi (CCW)')+'</b></td><td>—</td></tr>'+
+  '</table></div>'+
 
-'<div class="sec"><div class="st">Ara Hesaplama Değerleri</div>' +
-'<div class="fbox">' +
-'dA = V_A²−V₀² = ' + res.vA.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = ' + res.dA.toFixed(4) + ' (mm/s)²<br>' +
-'dB = V_B²−V₀² = ' + res.vB.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = ' + res.dB.toFixed(4) + ' (mm/s)²<br>' +
-'dC = V_C²−V₀² = ' + res.vC.toFixed(2) + '²−' + res.v0.toFixed(2) + '² = ' + res.dC.toFixed(4) + ' (mm/s)²<br>' +
-'x  = (2·dA−dB−dC)/3          = ' + res.x.toFixed(4) + '<br>' +
-'y  = (dB−dC)/√3              = ' + res.y.toFixed(4) + '<br>' +
-'θ  = atan2(y,x)              = ' + res.tDeg.toFixed(2) + '°  →  θ+180° = ' + res.corrAngle.toFixed(2) + '°<br>' +
-'W_düz = 2·V₀²·W_t / √(x²+y²) = <b>' + res.wCorr.toFixed(1) + ' g</b>' +
-'</div></div>' +
+  '<div class="sec"><div class="st">Ara Hesaplama Değerleri</div><div class="fbox">'+
+  'dA = V_A²−V₀² = '+r.vA.toFixed(2)+'²−'+r.v0.toFixed(2)+'² = '+r.dA.toFixed(4)+' (mm/s)²<br>'+
+  'dB = V_B²−V₀² = '+r.vB.toFixed(2)+'²−'+r.v0.toFixed(2)+'² = '+r.dB.toFixed(4)+' (mm/s)²<br>'+
+  'dC = V_C²−V₀² = '+r.vC.toFixed(2)+'²−'+r.v0.toFixed(2)+'² = '+r.dC.toFixed(4)+' (mm/s)²<br>'+
+  'x  = (2·dA−dB−dC)/3 = '+r.x.toFixed(4)+'<br>'+
+  'y  = (dB−dC)/√3 = '+r.y.toFixed(4)+'<br>'+
+  'θ  = atan2(y,x) = '+r.tDeg.toFixed(2)+'°  →  +180° = '+r.ang.toFixed(2)+'°<br>'+
+  'W_düz = 2·V₀²·W_t / √(x²+y²) = <b>'+r.wc.toFixed(1)+' g</b>'+
+  '</div></div>'+
 
-'<div class="sec"><div class="st">Hesaplanan Sonuçlar</div>' +
-'<table><tr><th>Sonuç</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>' +
-'<tr><td>Düzeltme Ağırlığı</td><td>W_düz</td><td><span class="rb rd">' + res.wCorr.toFixed(1) + '</span></td><td>gram</td></tr>' +
-'<tr style="background:#fafafa"><td>Yerleştirme Açısı</td><td>θ_düz</td><td><span class="rb bl">' + res.corrAngle.toFixed(1) + '°</span></td><td>0°\'den</td></tr>' +
-(res.bladeList.length > 0 ? '<tr><td>En Yakın Kanat</td><td>—</td><td><span class="gr" style="font-weight:700;">' + res.nearLabel + '</span></td><td>fark: ' + res.bladeList[0].diff.toFixed(1) + '°</td></tr>' : '') +
-'<tr style="background:#fafafa"><td>Dengesizlik</td><td>U = W_düz × r</td><td>' + res.U.toFixed(0) + '</td><td>g·mm</td></tr>' +
-'<tr><td>Özgül Dengesizlik</td><td>e = U / m</td><td>' + res.e.toFixed(1) + '</td><td>μm</td></tr>' +
-'<tr style="background:#fafafa"><td>Hedef Titreşim</td><td>V₀ × 0,15</td><td>&lt; ' + res.target.toFixed(2) + '</td><td>mm/s</td></tr>' +
-'</table></div>' +
+  '<div class="sec"><div class="st">Hesaplanan Sonuçlar</div>'+
+  '<table><tr><th>Sonuç</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>'+
+  '<tr><td>Düzeltme Ağırlığı</td><td>W_düz</td><td><span class="rb rd">'+r.wc.toFixed(1)+'</span></td><td>gram</td></tr>'+
+  '<tr style="background:#fafafa"><td>Yerleştirme Açısı</td><td>θ_düz</td><td><span class="rb bl">'+r.ang.toFixed(1)+'°</span></td><td>0°\'den</td></tr>'+
+  (r.bList.length>0?'<tr><td>En Yakın Kanat</td><td>—</td><td><span class="gr" style="font-weight:700;">'+r.nLbl+'</span></td><td>fark: '+r.bList[0].f.toFixed(1)+'°</td></tr>':'')+
+  '<tr style="background:#fafafa"><td>Dengesizlik</td><td>U = W_düz×r</td><td>'+r.U.toFixed(0)+'</td><td>g·mm</td></tr>'+
+  '<tr><td>Özgül Dengesizlik</td><td>e = U/m</td><td>'+r.e.toFixed(1)+'</td><td>μm</td></tr>'+
+  '<tr style="background:#fafafa"><td>Hedef Titreşim</td><td>V₀×0,15</td><td>&lt; '+r.tgt.toFixed(2)+'</td><td>mm/s</td></tr>'+
+  '</table></div>'+
 
-'<div class="sec"><div class="st">ISO 1940-1 Kalite Sınıfı</div>' +
-'<div class="ibox i' + res.iso.cat + '"><b>ISO ' + res.iso.cls + '</b>  |  G = ' + res.G.toFixed(2) + ' mm/s  |  ' + res.iso.desc + '</div>' +
-'<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>' +
-'<tr><td>ISO G Değeri</td><td>G = (e/1000)·ω</td><td style="font-weight:700;color:' + isoClr + ';">' + res.G.toFixed(2) + ' → ' + res.iso.cls + '</td><td>mm/s</td></tr>' +
-'<tr style="background:#fafafa"><td>Açısal Hız</td><td>ω = 2π·n/60</td><td>' + res.omega.toFixed(3) + '</td><td>rad/s</td></tr>' +
-'<tr><td>Çalışma Frekansı</td><td>f = n/60</td><td>' + res.fHz.toFixed(2) + '</td><td>Hz</td></tr>' +
-bpfRow +
-'</table></div>' +
+  '<div class="sec"><div class="st">ISO 1940-1 Kalite Sınıfı</div>'+
+  '<div class="ibox i'+r.iso.q.replace('wa','warn').replace('ba','bad').replace('ok','ok')+'"><b>ISO '+r.iso.c+'</b>  |  G = '+r.G.toFixed(2)+' mm/s  |  '+r.iso.d+'</div>'+
+  '<table><tr><th>Parametre</th><th>Sembol</th><th>Değer</th><th>Birim</th></tr>'+
+  '<tr><td>ISO G Değeri</td><td>G=(e/1000)·ω</td><td style="font-weight:700;color:'+ic+';">'+r.G.toFixed(2)+' → '+r.iso.c+'</td><td>mm/s</td></tr>'+
+  '<tr style="background:#fafafa"><td>Açısal Hız</td><td>ω=2π·n/60</td><td>'+r.om.toFixed(3)+'</td><td>rad/s</td></tr>'+
+  '<tr><td>Çalışma Frekansı</td><td>f=n/60</td><td>'+r.fHz.toFixed(2)+'</td><td>Hz</td></tr>'+
+  bpfr+'</table></div>'+
 
-'<div class="sec"><div class="st">2. Tur Değerlendirmesi</div><div class="sr">' + srTxt + '</div></div>' +
+  '<div class="sec"><div class="st">2. Tur Değerlendirmesi</div><div class="sr">'+srt+'</div></div>'+
+  rsec+bsec+
 
-resonSec + bladeSec +
+  '<div class="sec"><div class="st">Yerleştirme Talimatı</div>'+
+  '<div class="gs"><div class="gn gb">1</div><div>Ekipmanı durdurun — LOTO uygulayın</div></div>'+
+  '<div class="gs"><div class="gn gb">2</div><div>0° referansından <b>'+r.ang.toFixed(1)+'°</b> konumunu işaretleyin</div></div>'+
+  '<div class="gs"><div class="gn gb">3</div><div>En yakın kanat: <b>'+r.nLbl+'</b></div></div>'+
+  '<div class="gs"><div class="gn gb">4</div><div><b>'+r.wc.toFixed(1)+' gram</b> ağırlık takın (r = '+r.fr+' mm)</div></div>'+
+  '<div class="gs"><div class="gn gg">5</div><div>Ekipmanı çalıştırın ve doğrulama ölçümü alın</div></div>'+
+  '<div class="gs"><div class="gn gg">6</div><div>Hedef: <b>&lt; '+r.tgt.toFixed(2)+' mm/s</b> (ISO '+r.iso.c+')</div></div>'+
+  '</div>'+
 
-'<div class="sec"><div class="st">Yerleştirme Talimatı</div>' +
-'<div class="gs"><div class="gn gb">1</div><div>Ekipmanı durdurun — LOTO uygulayın</div></div>' +
-'<div class="gs"><div class="gn gb">2</div><div>0° referansından <b>' + res.corrAngle.toFixed(1) + '°</b> konumunu işaretleyin</div></div>' +
-'<div class="gs"><div class="gn gb">3</div><div>En yakın kanat: <b>' + res.nearLabel + '</b></div></div>' +
-'<div class="gs"><div class="gn gb">4</div><div><b>' + res.wCorr.toFixed(1) + ' gram</b> ağırlık takın (r = ' + res.fanR + ' mm)</div></div>' +
-'<div class="gs"><div class="gn gg">5</div><div>Ekipmanı çalıştırın ve doğrulama ölçümü alın</div></div>' +
-'<div class="gs"><div class="gn gg">6</div><div>Hedef: <b>&lt; ' + res.target.toFixed(2) + ' mm/s</b> (ISO ' + res.iso.cls + ')</div></div>' +
-'</div>' +
+  '<button class="pbtn" onclick="window.print()">⬇ PDF OLARAK KAYDET / YAZDIR</button>'+
+  '<p class="nop" style="font-size:9pt;color:#999;text-align:center;margin-top:6px;">Yazdır → Hedef: PDF Kaydet</p>'+
+  '<div class="ft">Fan Balans — Thearle 3 Nokta — v2.5 — '+td+'</div>'+
+  '</div></body></html>';
 
-'<button class="pbtn" onclick="window.print()">⬇ PDF OLARAK KAYDET / YAZDIR</button>' +
-'<p class="nop" style="font-size:9pt;color:#999;text-align:center;margin-top:6px;">Yazdır → Hedef: PDF Kaydet</p>' +
-'<div class="ft">Fan Balans — Thearle 3 Nokta Yöntemi — v2.4 — ' + today + '</div>' +
-'</div></body></html>';
+var pw=null; try{pw=window.open('','_blank');}catch(e){}
+if(pw&&pw.document){pw.document.write(h);pw.document.close();}
+else{
+  var old2=document.getElementById('_pf'); if(old2) old2.parentNode.removeChild(old2);
+  var ifr=document.createElement('iframe'); ifr.id='_pf';
+  ifr.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff;';
+  document.body.appendChild(ifr); ifr.contentDocument.write(h); ifr.contentDocument.close();
+  var cb=document.createElement('button'); cb.textContent='✕ Kapat';
+  cb.style.cssText='position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;';
+  cb.onclick=function(){document.body.removeChild(ifr);document.body.removeChild(cb);}; document.body.appendChild(cb);
+}
 ```
 
-var pw = null;
-try { pw = window.open(’’, ‘_blank’); } catch (e) {}
-if (pw && pw.document) { pw.document.write(h); pw.document.close(); }
-else {
-var old = document.getElementById(’_pf’); if (old) old.parentNode.removeChild(old);
-var ifr = document.createElement(‘iframe’); ifr.id = ‘_pf’;
-ifr.style.cssText = ‘position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff;’;
-document.body.appendChild(ifr);
-ifr.contentDocument.write(h); ifr.contentDocument.close();
-var cb = document.createElement(‘button’); cb.textContent = ‘✕ Kapat’;
-cb.style.cssText = ‘position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;’;
-cb.onclick = function () { document.body.removeChild(ifr); document.body.removeChild(cb); };
-document.body.appendChild(cb);
-}
 }
 
 // — RESET —
-
-function doReset() {
-sessions[activeTab] = newSession(activeTab + 1);
-for (var i = 0; i < INPUT_IDS.length; i++) {
-var el = document.getElementById(INPUT_IDS[i]);
-if (el) el.value = ‘’;
-}
+function reset() {
+sessions[active]=mkSess(active+1);
+for(var i=0;i<IDS.length;i++){var el=document.getElementById(IDS[i]);if(el)el.value=’’;}
 setDir(‘CW’);
-document.getElementById(‘resultBox’).style.display = ‘none’;
-buildTabs();
-window.scrollTo(0, 0);
+document.getElementById(‘resultBox’).style.display=‘none’;
+buildTabs(); window.scrollTo(0,0);
 }
 
-// — BAŞLAT —
-sessions.push(newSession(1));
+// — INIT —
+function init() {
+sessions.push(mkSess(1));
 buildTabs();
+drawTicks();
+}
+
+init();
+return { calc:calc, pdf:pdf, reset:reset, setDir:setDir };
+
+})();
 </script>
 
 </body>
