@@ -409,13 +409,13 @@ function showResult(r) {
   document.getElementById('rE').className = 'v '+(r.e<150?'ok':r.e<400?'wa':'ba');
   document.getElementById('rG').className = 'v '+(r.G<6.3?'ok':r.G<16?'wa':'ba');
 
-  document.getElementById('f1').innerHTML='dA = VA&sup2; - V0&sup2; = '+r.vA.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dA.toFixed(4)+' (mm/s)&sup2;</em>';
-  document.getElementById('f2').innerHTML='dB = VB&sup2; - V0&sup2; = '+r.vB.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dB.toFixed(4)+' (mm/s)&sup2;</em>';
-  document.getElementById('f3').innerHTML='dC = VC&sup2; - V0&sup2; = '+r.vC.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dC.toFixed(4)+' (mm/s)&sup2;</em>';
-  document.getElementById('f4').innerHTML='x = (2&times;dA - dB - dC) / 3 = <em>'+r.x.toFixed(4)+'</em>';
-  document.getElementById('f5').innerHTML='y = (dB - dC) / &radic;3 = <em>'+r.y.toFixed(4)+'</em>';
-  document.getElementById('f6').innerHTML='&theta; = atan2(y, x) = <em>'+r.tDeg.toFixed(2)+'&deg;</em>  &rarr;  +180&deg; = '+r.ang.toFixed(2)+'&deg;  (yerlesim acisi)';
-  document.getElementById('f7').innerHTML='W_duz = 2&times;V0&sup2;&times;Wt / &radic;(x&sup2;+y&sup2;) = <em>'+r.wc.toFixed(1)+' g</em>  (takilacak agirlik)';
+  document.getElementById('f1').innerHTML='<b>dA</b> = VA&sup2; - V0&sup2; = '+r.vA.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dA.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// 0° konumundaki etki farkı (mm/s)²</span>';
+  document.getElementById('f2').innerHTML='<b>dB</b> = VB&sup2; - V0&sup2; = '+r.vB.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dB.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// 120° konumundaki etki farkı (mm/s)²</span>';
+  document.getElementById('f3').innerHTML='<b>dC</b> = VC&sup2; - V0&sup2; = '+r.vC.toFixed(2)+'&sup2; - '+r.v0.toFixed(2)+'&sup2; = <em>'+r.dC.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// 240° konumundaki etki farkı (mm/s)²</span>';
+  document.getElementById('f4').innerHTML='<b>x</b> = (2&times;dA - dB - dC) / 3 = <em>'+r.x.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// dengesizlik vektörü yatay bileşeni</span>';
+  document.getElementById('f5').innerHTML='<b>y</b> = (dB - dC) / &radic;3 = <em>'+r.y.toFixed(4)+'</em> &nbsp;<span style="color:#444;font-size:10px">// dengesizlik vektörü dikey bileşeni</span>';
+  document.getElementById('f6').innerHTML='<b>&theta;</b> = atan2(y, x) = <em>'+r.tDeg.toFixed(2)+'&deg;</em> + 180&deg; = <em>'+r.ang.toFixed(2)+'&deg;</em> &nbsp;<span style="color:#444;font-size:10px">// dengesizlik yönü → +180° ile düzeltme konumu</span>';
+  document.getElementById('f7').innerHTML='<b>W_düz</b> = 2&times;V0&sup2;&times;Wt / &radic;(x&sup2;+y&sup2;) = <em>'+r.wc.toFixed(1)+' g</em> &nbsp;<span style="color:#444;font-size:10px">// takılacak düzeltme ağırlığı</span>';
 
   var ib=document.getElementById('isoBan');
   ib.className='ban '+r.iso.q;
@@ -658,15 +658,17 @@ function doPdf() {
     '</table></div>' +
 
     '<div class="sec"><div class="st">Ara Hesaplama De&#287;erleri</div>' +
-    '<div class="fbox">' +
-    'dA = V_A&#178; &#8722; V&#8320;&#178; = ' + r.vA.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dA.toFixed(4) + ' (mm/s)&#178;<br>' +
-    'dB = V_B&#178; &#8722; V&#8320;&#178; = ' + r.vB.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dB.toFixed(4) + ' (mm/s)&#178;<br>' +
-    'dC = V_C&#178; &#8722; V&#8320;&#178; = ' + r.vC.toFixed(2) + '&#178; &#8722; ' + r.v0.toFixed(2) + '&#178; = ' + r.dC.toFixed(4) + ' (mm/s)&#178;<br>' +
-    'x = (2&#183;dA &#8722; dB &#8722; dC) / 3 = ' + r.x.toFixed(4) + '<br>' +
-    'y = (dB &#8722; dC) / &#8730;3 = ' + r.y.toFixed(4) + '<br>' +
-    '&#952; = atan2(y, x) = ' + r.tDeg.toFixed(2) + '&#176;  &#8594;  +180&#176; = ' + r.ang.toFixed(2) + '&#176;<br>' +
-    'W_d&#252;z = 2&#183;V&#8320;&#178;&#183;W_t / &#8730;(x&#178;+y&#178;) = <b>' + r.wc.toFixed(1) + ' g</b>' +
-    '</div></div>' +
+    '<table><tr><th>Sembol</th><th>Anlam</th><th>Hesaplama</th><th>Sonu&#231;</th></tr>' +
+    '<tr><td><b>dA</b></td><td>0&#176; konumu etki fark&#305;</td><td>V_A&#178; &#8722; V&#8320;&#178;</td><td>' + r.dA.toFixed(4) + ' (mm/s)&#178;</td></tr>' +
+    '<tr style="background:#fafafa"><td><b>dB</b></td><td>120&#176; konumu etki fark&#305;</td><td>V_B&#178; &#8722; V&#8320;&#178;</td><td>' + r.dB.toFixed(4) + ' (mm/s)&#178;</td></tr>' +
+    '<tr><td><b>dC</b></td><td>240&#176; konumu etki fark&#305;</td><td>V_C&#178; &#8722; V&#8320;&#178;</td><td>' + r.dC.toFixed(4) + ' (mm/s)&#178;</td></tr>' +
+    '<tr style="background:#fafafa"><td><b>x</b></td><td>Dengesizlik vekt&#246;r&#252; yatay bile&#351;eni</td><td>(2&#183;dA &#8722; dB &#8722; dC) / 3</td><td>' + r.x.toFixed(4) + '</td></tr>' +
+    '<tr><td><b>y</b></td><td>Dengesizlik vekt&#246;r&#252; dikey bile&#351;eni</td><td>(dB &#8722; dC) / &#8730;3</td><td>' + r.y.toFixed(4) + '</td></tr>' +
+    '<tr style="background:#fafafa"><td><b>&#952;</b></td><td>Dengesizlik y&#246;n&#252; (atan2: y/x ters tanjant)</td><td>atan2(y, x)</td><td>' + r.tDeg.toFixed(2) + '&#176;</td></tr>' +
+    '<tr><td><b>&#952;_d&#252;z</b></td><td>D&#252;zeltme konumu (&#952; + 180&#176; = kar&#351;&#305; y&#246;n)</td><td>&#952; + 180&#176;</td><td>' + r.ang.toFixed(2) + '&#176;</td></tr>' +
+    '<tr style="background:#fafafa"><td><b>|UV|</b></td><td>Dengesizlik vekt&#246;r&#252; b&#252;y&#252;kl&#252;&#287;&#252;</td><td>&#8730;(x&#178; + y&#178;)</td><td>' + r.uMag.toFixed(4) + '</td></tr>' +
+    '<tr><td><b>W_d&#252;z</b></td><td>Tak&#305;lacak d&#252;zeltme a&#287;&#305;rl&#305;&#287;&#305;</td><td>2 &#215; V&#8320;&#178; &#215; W_t / |UV|</td><td><b>' + r.wc.toFixed(1) + ' gram</b></td></tr>' +
+    '</table></div>' +
 
     '<div class="sec"><div class="st">Hesaplanan Sonu&#231;lar</div>' +
     '<table><tr><th>Sonu&#231;</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>' +
