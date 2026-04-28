@@ -226,8 +226,22 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid #1a1a1a;font-size:1
     <table class="btab"><thead><tr><th>Kanat No</th><th>Konum</th><th>Fark</th><th>Durum</th></tr></thead><tbody id="bTBody"></tbody></table>
     <div id="statDiv" class="sok">-</div>
     <div class="guide"><div id="guideDiv"></div></div>
-    <button class="pbtn" onclick="doPdf()">&#11015; PDF İndir</button>
-    <button class="rbtn" onclick="doReset()">&#8635; Bu Çalışmayı Temizle</button>
+    <!-- BALANS SONRASI VIBRASYON -->
+    <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-left:4px solid #00cc66;border-radius:4px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#00cc66;margin-bottom:10px">// Balans Sonrası Doğrulama Ölçümü</div>
+      <div class="ig" style="margin-bottom:6px">
+        <div class="ilbl" style="color:#00cc66">Balans Sonrası Titreşim (V_son)</div>
+        <input type="text" id="vPost" inputmode="decimal" placeholder="örn: 2.10" oninput="updatePostResult()">
+        <div class="iunit">mm/s — balans ağırlığı takıldıktan sonra alınan ölçüm</div>
+      </div>
+      <div id="vPostResult" style="display:none"></div>
+    </div>
+
+```
+<button class="pbtn" onclick="doPdf()">&#11015; PDF İndir</button>
+<button class="rbtn" onclick="doReset()">&#8635; Bu Çalışmayı Temizle</button>
+```
+
   </div>
 </div>
 
@@ -240,7 +254,7 @@ var ACTIVE = 0;
 var SESSIONS = [makeSess(1)];
 
 function makeSess(n) {
-  return {n:n, inp:{v0:'',vA:'',vB:'',vC:'',wt:'',fanM:'',fanR:'',rpm:'',blades:'',fn:'',stiff:'',rot:'CW'}, res:null};
+  return {n:n, inp:{v0:'',vA:'',vB:'',vC:'',wt:'',fanM:'',fanR:'',rpm:'',blades:'',fn:'',stiff:'',vPost:'',rot:'CW'}, res:null};
 }
 
 function getNum(id) {
@@ -268,7 +282,7 @@ function setDir(d) {
 
 function saveInputs() {
   var s = SESSIONS[ACTIVE];
-  var ids = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff'];
+  var ids = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff','vPost'];
   for (var i=0; i<ids.length; i++) {
     var el = document.getElementById(ids[i]);
     if (el) s.inp[ids[i]] = el.value;
@@ -278,14 +292,14 @@ function saveInputs() {
 
 function loadInputs(idx) {
   var s = SESSIONS[idx];
-  var ids = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff'];
+  var ids = ['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff','vPost'];
   for (var i=0; i<ids.length; i++) {
     var el = document.getElementById(ids[i]);
     if (el) el.value = s.inp[ids[i]] || '';
   }
   setDir(s.inp.rot || 'CW');
   var rb = document.getElementById('resBox');
-  if (s.res) { showResult(s.res); rb.style.display = 'block'; }
+  if (s.res) { showResult(s.res); rb.style.display = 'block'; updatePostResult(); }
   else rb.style.display = 'none';
 }
 
@@ -534,6 +548,33 @@ function showResult(r) {
     '<div class="grow"><div class="gn g">7</div><div>Hedef tutmadiysa yeni sekme acip 2. calisma baslat</div></div>';
 }
 
+function updatePostResult() {
+  var r = SESSIONS[ACTIVE].res;
+  var el = document.getElementById('vPostResult');
+  var vp = getNum('vPost');
+  if (!r || isNaN(vp) || vp <= 0) { if(el) el.style.display='none'; return; }
+  var azalma = ((r.v0 - vp) / r.v0 * 100).toFixed(1);
+  var hedefTuttu = vp < r.tgt;
+  var q = hedefTuttu ? 'ok' : (vp < r.v0 * 0.5 ? 'wa' : 'ba');
+  var qColor = q==='ok' ? '#00cc66' : q==='wa' ? '#ffaa00' : '#ff5533';
+  var qBg    = q==='ok' ? 'rgba(0,204,102,0.08)' : q==='wa' ? 'rgba(255,170,0,0.08)' : 'rgba(255,85,51,0.08)';
+  var icon   = hedefTuttu ? '&#10003;' : '&#9888;';
+  var msg    = hedefTuttu
+    ? 'HEDEF TUTTU — Balans basarili!'
+    : (vp < r.v0 ? 'Iyilesme var ancak hedef tutmadi. 2. tur onerilir.' : 'Titresim artmis — agirlik konumu kontrol edilmeli.');
+  el.style.display = '';
+  el.innerHTML =
+    '<div style="background:'+qBg+';border:1.5px solid '+qColor+';border-radius:4px;padding:12px 14px;font-family:monospace;font-size:12px;color:'+qColor+'">'+
+    '<div style="font-size:14px;font-weight:700;margin-bottom:6px">'+icon+' '+msg+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">'+
+    '<div style="text-align:center;background:rgba(0,0,0,0.2);padding:8px;border-radius:4px"><div style="font-size:10px;opacity:0.7">ONCESI</div><div style="font-size:20px;font-weight:800">'+r.v0.toFixed(2)+'</div><div style="font-size:10px;opacity:0.7">mm/s</div></div>'+
+    '<div style="text-align:center;background:rgba(0,0,0,0.2);padding:8px;border-radius:4px"><div style="font-size:10px;opacity:0.7">SONRASI</div><div style="font-size:20px;font-weight:800">'+vp.toFixed(2)+'</div><div style="font-size:10px;opacity:0.7">mm/s</div></div>'+
+    '<div style="text-align:center;background:rgba(0,0,0,0.2);padding:8px;border-radius:4px"><div style="font-size:10px;opacity:0.7">AZALMA</div><div style="font-size:20px;font-weight:800">%'+azalma+'</div><div style="font-size:10px;opacity:0.7">iyilesme</div></div>'+
+    '</div>'+
+    '<div style="margin-top:8px;font-size:11px;opacity:0.8">Hedef: &lt; '+r.tgt.toFixed(2)+' mm/s — Gerceklesen: '+vp.toFixed(2)+' mm/s</div>'+
+    '</div>';
+}
+
 function doReset() {
   SESSIONS[ACTIVE] = makeSess(ACTIVE+1);
   var ids=['v0','vA','vB','vC','wt','fanM','fanR','rpm','blades','fn','stiff'];
@@ -550,6 +591,29 @@ function doPdf() {
   var tn = ACTIVE + 1;
   var td = new Date().toLocaleDateString('tr-TR');
   var ic = r.iso.q === 'ok' ? '#006633' : r.iso.q === 'wa' ? '#885500' : '#cc2200';
+
+  var vPost = getNum('vPost');
+  var hasPost = (!isNaN(vPost) && vPost > 0);
+  var postSection = '';
+  if (hasPost) {
+    var azalma = ((r.v0 - vPost) / r.v0 * 100).toFixed(1);
+    var hedefTuttu = vPost < r.tgt;
+    var pColor = hedefTuttu ? '#006633' : (vPost < r.v0 * 0.5 ? '#885500' : '#cc2200');
+    var pClass = hedefTuttu ? 'iok' : (vPost < r.v0 * 0.5 ? 'iwarn' : 'ibad');
+    var pMsg   = hedefTuttu
+      ? '&#10003; HEDEF TUTTU &#8212; Balans basarili!'
+      : (vPost < r.v0 ? '&#9888; Iyilesme var ancak hedef tutmadi. 2. tur onerilir.' : '&#9888; Titresim artmis &#8212; agirlik konumu kontrol edilmeli.');
+    postSection =
+      '<div class="sec"><div class="st">Balans Sonrasi Dogrulama Olcumu</div>'+
+      '<div class="ibox ' + pClass + '"><b>' + pMsg + '</b></div>'+
+      '<table><tr><th>Parametre</th><th>Sembol</th><th>Deger</th><th>Birim</th></tr>'+
+      '<tr><td>Balans Oncesi Titresim</td><td>V&#8320;</td><td>' + r.v0.toFixed(2) + '</td><td>mm/s</td></tr>'+
+      '<tr style="background:#fafafa"><td>Balans Sonrasi Titresim</td><td>V_son</td><td style="font-weight:700;color:' + pColor + '">' + vPost.toFixed(2) + '</td><td>mm/s</td></tr>'+
+      '<tr><td>Hedef Titresim (V&#8320; x 0.15)</td><td>V_hedef</td><td>' + r.tgt.toFixed(2) + '</td><td>mm/s</td></tr>'+
+      '<tr style="background:#fafafa"><td>Azalma Orani</td><td>&#916;V%</td><td style="font-weight:700;color:' + pColor + '">% ' + azalma + '</td><td>iyilesme</td></tr>'+
+      '<tr><td>Hedef Durumu</td><td>&#8212;</td><td style="font-weight:700;color:' + pColor + '">' + (hedefTuttu ? '&#10003; TUTTU' : '&#9888; TUTMADI') + '</td><td>&#8212;</td></tr>'+
+      '</table></div>';
+  }
 
   var brows = '';
   if (r.bList.length > 0) {
@@ -690,6 +754,7 @@ function doPdf() {
 
     '<div class="sec"><div class="st">2. Tur De&#287;erlendirmesi</div><div class="sr">' + srt + '</div></div>' +
 
+    postSection +
     rsec + bsec +
 
     '<div class="sec"><div class="st">Yerle&#351;tirme Talimat&#305;</div>' +
