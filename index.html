@@ -760,10 +760,8 @@ function doPdf() {
 // INIT — DOM hazir oldugunda cagrilacak
 // ============================================================
 function initApp() {
-  // Varsayilan: gunduz modu (light)
-  // localStorage'da kayitli tercih varsa onu yukle, yoksa light
   var saved = '';
-  try { saved = localStorage.getItem('theme') || 'light'; } catch(e) { saved = 'light'; }
+  try { saved = localStorage.getItem('theme') || 'dark'; } catch(e) { saved = 'dark'; }
   if (saved === 'light') {
     document.body.classList.add('light');
     document.getElementById('themeBtn').textContent = '😎';
@@ -784,7 +782,7 @@ function initApp() {
     <h1><b>Tek Düzlem Fan Balans</b></h1>
     <div class="sub">// Thearle 3 Nokta — ISO 1940-1 / ISO 10816 — v3.0 — Umut Küçük</div>
   </div>
-  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">😎</button>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🙂</button>
 </div>
 
 <div class="tabs" id="tabBar"></div>
