@@ -267,56 +267,64 @@ function updatePostResult(){
 
 function doReset(){SESSIONS[ACTIVE]=makeSess(ACTIVE+1);IDS.forEach(function(id){var el=document.getElementById(id);if(el){if(el.tagName==='SELECT')el.value='3';else el.value='';}});setDir('CW');document.getElementById('resBox').style.display='none';buildTabs();window.scrollTo(0,0);}
 
-function doPdf(){
-  var r=SESSIONS[ACTIVE].res;if(!r){alert('Once hesaplama yapin.');return;}
-  var tn=ACTIVE+1,td=new Date().toLocaleDateString('tr-TR');
+// ============================================================
+// PDF - ORTAK SEKSIYON OLUSTURUCU
+// ============================================================
+function genSessionHtml(r, hasPost, vPost, tn, td) {
   var ic=r.iso.q==='ok'?'#006633':r.iso.q==='wa'?'#885500':'#cc2200';
-  var vPost=getNum('vPost'),hasPost=(!isNaN(vPost)&&vPost>0);
   var brows='';
   if(r.bList.length>0){r.bList.slice(0,Math.min(3,r.bList.length)).forEach(function(b,i){
     var sd=((r.ang-b.d+540)%360)-180;
     var farkPdf=(sd>=0?'+':'')+sd.toFixed(1)+'&#176;';
     brows+='<tr'+(i===0?' style="background:#e8f5e9;font-weight:700"':'')+'>'+
-    '<td>Kanat '+b.n+'</td><td>'+b.d.toFixed(1)+'&#176;</td><td>'+farkPdf+'</td>'+
-    '<td>'+(i===0?'&#10003; En yak&#305;n':i===1?'2. yak&#305;n':'3. yak&#305;n')+'</td></tr>';});}
+      '<td>Kanat '+b.n+'</td><td>'+b.d.toFixed(1)+'&#176;</td><td>'+farkPdf+'</td>'+
+      '<td>'+(i===0?'&#10003; En yak&#305;n':i===1?'2. yak&#305;n':'3. yak&#305;n')+'</td></tr>';});}
   else brows='<tr><td colspan="4" style="color:#999;text-align:center">Girilmedi</td></tr>';
   var bsec=r.bList.length>0?'<div class="sec"><div class="st">En Yak&#305;n Kanat Analizi</div><table><tr><th>Kanat</th><th>Konum</th><th>Fark</th><th>Durum</th></tr>'+brows+'</table></div>':'';
   var srt=(r.e>200||r.G>10)?'<b style="color:#cc6600">&#9888; 2. Tur Gerekebilir:</b> Tahmini kalan: <b>'+(r.v0*0.20).toFixed(2)+' mm/s</b>.':'<span style="color:#006633">&#10003;</span> Dengesizlik makul.';
   var postSec='';
-  if(hasPost){
+  if(hasPost&&!isNaN(vPost)){
     var az=((r.v0-vPost)/r.v0*100).toFixed(1);
     var zpAfter=iso10816Zone(vPost,r.isoSel);
     var zpBefore=r.zone10816;
     var zoneIyilesti=(zpAfter.z<zpBefore.z);
     var pc=zpAfter.q==='ok'?'#006633':(zpAfter.q==='wa'?'#885500':'#cc2200');
     var pk=zpAfter.q==='ok'?'iok':(zpAfter.q==='wa'?'iwarn':'ibad');
-    var zoneAciklama={'A':'A &#8212; &#304;yi (Yeni makine beklentisi)','B':'B &#8212; Kabul edilebilir','C':'C &#8212; Alarm (K&#305;sa vadeli)','D':'D &#8212; Tehlike (Durdur!)'};
-    var durumMsg=vPost<r.v0
-      ?('&#304;yile&#351;me var &#8212; '+(zoneIyilesti?'Kalite s&#305;n&#305;f&#305; y&#252;kseldi':'Ayn&#305; b&#246;lgede devam'))
-      :'Titre&#351;im artm&#305;&#351; &#8212; konum kontrol edilmeli';
-    postSec='<div class="sec"><div class="st">Balan&#351; Sonras&#305; Do&#287;rulama &#214;l&#231;&#252;m&#252;</div>'+
+    var zA={'A':'A &#8212; &#304;yi (Yeni makine beklentisi)','B':'B &#8212; Kabul edilebilir','C':'C &#8212; Alarm (K&#305;sa vadeli)','D':'D &#8212; Tehlike (Durdur!)'};
+    var durumMsg=vPost<r.v0?('&#304;yile&#351;me var &#8212; '+(zoneIyilesti?'Kalite s&#305;n&#305;f&#305; y&#252;kseldi':'Ayn&#305; b&#246;lgede devam')):'Titre&#351;im artm&#305;&#351; &#8212; konum kontrol edilmeli';
+    postSec='<div class="sec"><div class="st">Balans Sonras&#305; Do&#287;rulama &#214;l&#231;&#252;m&#252;</div>'+
       '<div class="ibox '+pk+'"><b>'+(vPost<r.v0?'&#10003;':'&#9888;')+' '+durumMsg+'</b><br>'+
-      'B&#246;lge &#214;ncesi: <b>'+zpBefore.z+'</b> &nbsp;&#8594;&nbsp; B&#246;lge Sonras&#305;: <b style="color:'+pc+'">'+zoneAciklama[zpAfter.z]+'</b>'+
+      'B&#246;lge &#214;ncesi: <b>'+zpBefore.z+'</b> &nbsp;&#8594;&nbsp; B&#246;lge Sonras&#305;: <b style="color:'+pc+'">'+zA[zpAfter.z]+'</b>'+
       (zoneIyilesti?' &nbsp;&#8593; <b>B&#246;lge iyile&#351;ti!</b>':'')+
       '</div>'+
       '<table><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>'+
-      '<tr><td>Balan&#351; &#214;ncesi Titre&#351;im</td><td>V&#8320;</td><td>'+r.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
-      '<tr style="background:#fafafa"><td>Balan&#351; Sonras&#305; Titre&#351;im</td><td>V_son</td><td style="font-weight:700;color:'+pc+'">'+vPost.toFixed(2)+'</td><td>mm/s</td></tr>'+
+      '<tr><td>Balans &#214;ncesi Titre&#351;im</td><td>V&#8320;</td><td>'+r.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
+      '<tr style="background:#fafafa"><td>Balans Sonras&#305; Titre&#351;im</td><td>V_son</td><td style="font-weight:700;color:'+pc+'">'+vPost.toFixed(2)+'</td><td>mm/s</td></tr>'+
       '<tr><td>Hedef Titre&#351;im (V&#8320; &#215; 0,15)</td><td>V_hedef</td><td>'+r.tgt.toFixed(2)+'</td><td>mm/s</td></tr>'+
       '<tr style="background:#fafafa"><td>Azalma Oran&#305;</td><td>&#916;V%</td><td style="font-weight:700;color:'+pc+'">%'+az+'</td><td>iyile&#351;me</td></tr>'+
       '<tr><td>ISO 10816 B&#246;lgesi (&#214;nce)</td><td>&#8212;</td><td>B&#246;lge '+zpBefore.z+' &#8212; '+zpBefore.d+'</td><td>&#8212;</td></tr>'+
-      '<tr style="background:#fafafa"><td>ISO 10816 B&#246;lgesi (Sonra)</td><td>&#8212;</td><td style="font-weight:700;color:'+pc+'">'+zoneAciklama[zpAfter.z]+'</td><td>&#8212;</td></tr>'+
+      '<tr style="background:#fafafa"><td>ISO 10816 B&#246;lgesi (Sonra)</td><td>&#8212;</td><td style="font-weight:700;color:'+pc+'">'+zA[zpAfter.z]+'</td><td>&#8212;</td></tr>'+
       '</table></div>';
   }
   var rsec='';
   if(r.hasR){var rzc=r.rZone==='ok'?'#006633':r.rZone==='ba'?'#cc2200':'#885500';var rzk=r.rZone==='ok'?'iok':r.rZone==='ba'?'ibad':'iwarn';var rzt=r.rZone==='ok'?'&#10003; Alt kritik b&#246;lge &#8212; G&#252;venli':r.rZone==='ba'?'&#9888; KR&#304;T&#304;K REZONANS!':'&#9889; &#220;st kritik b&#246;lge';var kr=(!isNaN(r.kCalc)&&r.kCalc>0)?'<tr><td>Sistem Rijitli&#287;i</td><td>k</td><td>'+r.kCalc.toExponential(3)+'</td><td>N/m</td></tr>':'';rsec='<div class="sec"><div class="st">Rezonans / Kritik H&#305;z</div><div class="ibox '+rzk+'"><b>'+rzt+' | &#937;/&#969;_n='+r.rRat.toFixed(3)+'</b></div><table><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr><tr><td>Kaynak</td><td>&#8212;</td><td>'+r.rSrc+'</td><td>&#8212;</td></tr><tr><td>Kritik Frekans</td><td>f_n</td><td style="color:'+rzc+';font-weight:700">'+r.fCrit.toFixed(2)+'</td><td>Hz</td></tr><tr><td>Kritik Devir</td><td>n_krit</td><td style="color:'+rzc+';font-weight:700">'+r.nCrit.toFixed(0)+'</td><td>RPM</td></tr>'+kr+'<tr><td>&#199;al&#305;&#351;ma Devri</td><td>n</td><td>'+r.rpm+'</td><td>RPM</td></tr><tr><td>Frekans Oran&#305;</td><td>&#937;/&#969;_n</td><td style="color:'+rzc+';font-weight:700">'+r.rRat.toFixed(3)+'</td><td>&#8212;</td></tr></table></div>';}
-  var cls10Names={'1':'S&#305;n&#305;f I (&lt;15 kW)','2':'S&#305;n&#305;f II (15&#8211;75 kW)','3':'S&#305;n&#305;f III (sabit zemin, &gt;75 kW)','4':'S&#305;n&#305;f IV (esnek zemin, &gt;75 kW)'};
-  var isoDesc={'G1':'Hassas &#8212; T&#252;rbin seviyesi','G2.5':'&#304;yi &#8212; Elektrik motoru','G6.3':'Normal &#8212; End&#252;striyel fan kabul','G16':'Kaba &#8212; &#304;yile&#351;tirme &#246;nerilir','G40':'&#199;ok kaba &#8212; Ek balan&#351; gerekli','G40+':'Kritik &#8212; Acil m&#252;dahale'};
+  var cls10N={'1':'S&#305;n&#305;f I (&lt;15 kW)','2':'S&#305;n&#305;f II (15&#8211;75 kW)','3':'S&#305;n&#305;f III (sabit zemin, &gt;75 kW)','4':'S&#305;n&#305;f IV (esnek zemin, &gt;75 kW)'};
+  var isoDesc={'G1':'Hassas &#8212; T&#252;rbin seviyesi','G2.5':'&#304;yi &#8212; Elektrik motoru','G6.3':'Normal &#8212; End&#252;striyel fan kabul','G16':'Kaba &#8212; &#304;yile&#351;tirme &#246;nerilir','G40':'&#199;ok kaba &#8212; Ek balans gerekli','G40+':'Kritik &#8212; Acil m&#252;dahale'};
   var isoDescStr=isoDesc[r.iso.c]||r.iso.d;
-  var z10=r.zone10816,L=r.lims10816;var z10k=z10.q==='ok'?'iok':z10.q==='wa'?'iwarn':'ibad';
-  var css='*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:10.5pt;color:#111}.pg{max-width:720px;margin:0 auto;padding:18px 24px}.hdr{background:#0d0d0d;color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.hdr h1{font-size:15pt;margin:0;color:#fff}.hdr .dt{font-size:9pt;color:#aaa}.sec{margin-bottom:16px}.st{font-size:10.5pt;font-weight:700;color:#cc3311;border-bottom:2px solid #cc3311;padding-bottom:3px;margin-bottom:9px;letter-spacing:1px;text-transform:uppercase}table{width:100%;border-collapse:collapse;margin-bottom:8px}td,th{padding:5px 9px;border:1px solid #ddd;font-size:10pt}th{background:#f0f0f0;font-weight:700;text-align:left}.rb{font-size:15pt;font-weight:800}.bl{color:#1144aa}.rd{color:#cc3311}.gr{color:#006633}.ibox{padding:9px 12px;border-radius:3px;margin-bottom:10px;font-size:10pt}.iok{background:#e8f5e9;border:1.5px solid #006633;color:#006633}.iwarn{background:#fff8e0;border:1.5px solid #885500;color:#885500}.ibad{background:#fdecea;border:1.5px solid #cc2200;color:#cc2200}.sr{background:#fff8e0;border-left:4px solid #cc6600;padding:9px 12px;margin-bottom:10px;font-size:10pt}.gs{display:flex;gap:9px;margin-bottom:6px;align-items:flex-start;font-size:10pt}.gn{min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5pt;font-weight:700;color:#fff;flex-shrink:0}.gb{background:#2255cc}.gg{background:#006633}.ft{margin-top:20px;padding-top:8px;border-top:1px solid #ddd;font-size:8pt;color:#999;text-align:center}.pbtn{display:block;width:100%;padding:14px;background:#006633;color:#fff;border:none;border-radius:5px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:18px}@media print{.pbtn,.nop{display:none!important}@page{margin:12mm}}';
-  var h='<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Fan Balan&#351; '+tn+'. &#199;al&#305;&#351;ma</title><style>'+css+'<\/style><\/head><body><div class="pg">'+
-    '<div class="hdr"><h1>Fan Balan&#351; &#8212; '+tn+'. &#199;al&#305;&#351;ma</h1><span class="dt">'+td+'</span></div>'+
+  var z10=r.zone10816,L=r.lims10816,z10k=z10.q==='ok'?'iok':z10.q==='wa'?'iwarn':'ibad';
+  var z10after=hasPost&&!isNaN(vPost)?iso10816Zone(vPost,r.isoSel):null;
+  var hdrRow=z10after?'<tr><th>B&#246;lge</th><th>Tan&#305;m</th><th>Limit (mm/s)</th><th>Balans &#214;ncesi ('+r.v0.toFixed(2)+')</th><th>Balans Sonras&#305; ('+vPost.toFixed(2)+')</th></tr>':'<tr><th>B&#246;lge</th><th>Tan&#305;m</th><th>Limit (mm/s)</th><th>Durum ('+r.v0.toFixed(2)+' mm/s)</th></tr>';
+  var isoRows=[{z:'A',bg:'#e8f5e9',def:'&#304;yi &#8212; Yeni makine beklentisi',lim:'&#8804;'+L[0]},{z:'B',bg:'#fff',def:'Kabul edilebilir &#8212; S&#252;rekli &#231;al&#305;&#351;ma',lim:L[0]+'&#8211;'+L[1]},{z:'C',bg:'#fff8e0',def:'Alarm &#8212; K&#305;sa vadeli, bak&#305;m planla',lim:L[1]+'&#8211;'+L[2]},{z:'D',bg:'#fdecea',def:'Tehlike &#8212; Hasara yol a&#231;abilir, durdur!',lim:'&gt;'+L[2]}];
+  var isoTableRows=isoRows.map(function(row){
+    var bc=z10.z===row.z?'<b style="color:'+(z10.q==='ok'?'#006633':z10.q==='wa'?'#885500':'#cc2200')+'">&#10003; BU B&#214;LGE</b>':'&#8212;';
+    var ac=z10after?(z10after.z===row.z?'<b style="color:'+(z10after.q==='ok'?'#006633':z10after.q==='wa'?'#885500':'#cc2200')+'">&#10003; BU B&#214;LGE</b>':'&#8212;'):'';
+    return '<tr style="background:'+row.bg+'"><td><b>'+row.z+'</b></td><td>'+row.def+'</td><td>'+row.lim+'</td><td style="text-align:center">'+bc+'</td>'+(z10after?'<td style="text-align:center">'+ac+'</td>':'')+'</tr>';
+  }).join('');
+  var isoSumRow=z10after?'<tr style="background:#f0f0f0;font-weight:700"><td colspan="3">Sonu&#231;</td><td style="text-align:center;color:'+(z10.q==='ok'?'#006633':z10.q==='wa'?'#885500':'#cc2200')+'">B&#246;lge '+z10.z+'</td><td style="text-align:center;color:'+(z10after.q==='ok'?'#006633':z10after.q==='wa'?'#885500':'#cc2200')+'">B&#246;lge '+z10after.z+(z10after.z!==z10.z?' &#8593; &#304;yile&#351;ti':'')+'</td></tr>':'';
+  var isoBanner=z10after?'<div class="ibox '+(z10after.q==='ok'?'iok':z10after.q==='wa'?'iwarn':'ibad')+'"><b>'+cls10N[r.isoSel]+'</b><br>Balans &#214;ncesi: V&#8320;='+r.v0.toFixed(2)+' mm/s &#8594; B&#246;lge '+z10.z+'<br>Balans Sonras&#305;: V_son='+vPost.toFixed(2)+' mm/s &#8594; B&#246;lge '+z10after.z+(z10after.z!==z10.z?' &nbsp;&#10003; <b>B&#246;lge iyile&#351;ti!</b>':' &nbsp;(B&#246;lge de&#287;i&#351;medi)')+'</div>':'<div class="ibox '+z10k+'"><b>'+cls10N[r.isoSel]+' | V&#8320;='+r.v0.toFixed(2)+' mm/s &#8594; B&#246;lge '+z10.z+'</b></div>';
+
+  return '<div class="pg">'+
+    '<div class="hdr"><h1>Fan Balans &#8212; '+tn+'. &#199;al&#305;&#351;ma</h1><span class="dt">'+td+'</span></div>'+
     '<div class="sec"><div class="st">Giri&#351; De&#287;erleri</div><table><tr><th>Parametre</th><th>Sembol</th><th>De&#287;er</th><th>Birim</th></tr>'+
     '<tr><td>Referans Titre&#351;im (A&#287;&#305;rl&#305;ks&#305;z)</td><td>V&#8320;</td><td>'+r.v0.toFixed(2)+'</td><td>mm/s</td></tr>'+
     '<tr style="background:#fafafa"><td>0&#176; Titre&#351;im</td><td>V_A</td><td>'+r.vA.toFixed(2)+'</td><td>mm/s</td></tr>'+
@@ -328,7 +336,7 @@ function doPdf(){
     '<tr style="background:#fafafa"><td>&#199;al&#305;&#351;ma Devri</td><td>n</td><td>'+r.rpm+'</td><td>RPM</td></tr>'+
     '<tr><td>A&#231;&#305;sal H&#305;z</td><td>&#969;=2&#960;n/60</td><td>'+r.om.toFixed(3)+'</td><td>rad/s</td></tr>'+
     (r.z>0?'<tr style="background:#fafafa"><td>Kanat Say&#305;s&#305;</td><td>z</td><td>'+r.z+'</td><td>adet</td></tr>':'')+
-    '<tr><td>ISO 10816 S&#305;n&#305;f&#305;</td><td>&#8212;</td><td>'+cls10Names[r.isoSel]+'</td><td>&#8212;</td></tr>'+
+    '<tr><td>ISO 10816 S&#305;n&#305;f&#305;</td><td>&#8212;</td><td>'+cls10N[r.isoSel]+'</td><td>&#8212;</td></tr>'+
     '<tr style="background:#fafafa"><td>D&#246;n&#252;&#351; Y&#246;n&#252;</td><td>&#8212;</td><td><b>'+(r.rot==='CW'?'Saat Y&#246;n&#252; (CW)':'Saat Y&#246;n&#252; Tersi (CCW)')+'</b></td><td>&#8212;</td></tr></table></div>'+
     '<div class="sec"><div class="st">Ara Hesaplama De&#287;erleri</div><table><tr><th>Sembol</th><th>Anlam</th><th>Hesaplama</th><th>Sonu&#231;</th></tr>'+
     '<tr><td><b>dA</b></td><td>0&#176; etki fark&#305;</td><td>V_A&#178;&#8722;V&#8320;&#178;</td><td>'+r.dA.toFixed(4)+' (mm/s)&#178;</td></tr>'+
@@ -358,49 +366,7 @@ function doPdf(){
     (r.bpf>0?'<tr><td>BPF</td><td>z&#215;f</td><td>'+r.bpf.toFixed(1)+'</td><td>Hz</td></tr>':'')+
     '</table></div>'+
     '<div class="sec"><div class="st">ISO 10816 Titre&#351;im Alarm S&#305;n&#305;f&#305;</div>'+
-    (function(){
-      var z10after = hasPost ? iso10816Zone(vPost, r.isoSel) : null;
-      var z10c_before = z10.q==='ok'?'#006633':z10.q==='wa'?'#885500':'#cc2200';
-      var hdrRow = hasPost
-        ? '<tr><th>B&#246;lge</th><th>Tan&#305;m</th><th>Limit (mm/s)</th><th>Balans &#214;ncesi ('+r.v0.toFixed(2)+' mm/s)</th><th>Balans Sonras&#305; ('+vPost.toFixed(2)+' mm/s)</th></tr>'
-        : '<tr><th>B&#246;lge</th><th>Tan&#305;m</th><th>Limit (mm/s)</th><th>Durum ('+r.v0.toFixed(2)+' mm/s)</th></tr>';
-      function cell(v, zone, targetZone) {
-        return v.z === targetZone
-          ? '<b style="color:'+(v.q==='ok'?'#006633':v.q==='wa'?'#885500':'#cc2200')+'">&#10003; BU B&#214;LGE</b>'
-          : '&#8212;';
-      }
-      var rows = [
-        {z:'A', bg:'#e8f5e9', def:'&#304;yi &#8212; Yeni makine beklentisi', lim:'&#8804;'+L[0]},
-        {z:'B', bg:'#ffffff', def:'Kabul edilebilir &#8212; S&#252;rekli &#231;al&#305;&#351;ma', lim:L[0]+'&#8211;'+L[1]},
-        {z:'C', bg:'#fff8e0', def:'Alarm &#8212; K&#305;sa vadeli, bak&#305;m planla', lim:L[1]+'&#8211;'+L[2]},
-        {z:'D', bg:'#fdecea', def:'Tehlike &#8212; Hasara yol a&#231;abilir, durdur!', lim:'&gt;'+L[2]},
-      ];
-      var tableRows = rows.map(function(row){
-        var beforeCell = z10.z===row.z
-          ? '<b style="color:'+(z10.q==='ok'?'#006633':z10.q==='wa'?'#885500':'#cc2200')+'">&#10003; BU B&#214;LGE</b>'
-          : '&#8212;';
-        var afterCell = z10after
-          ? (z10after.z===row.z
-              ? '<b style="color:'+(z10after.q==='ok'?'#006633':z10after.q==='wa'?'#885500':'#cc2200')+'">&#10003; BU B&#214;LGE</b>'
-              : '&#8212;')
-          : '';
-        return '<tr style="background:'+row.bg+'"><td><b>'+row.z+'</b></td><td>'+row.def+'</td><td>'+row.lim+'</td><td style="text-align:center">'+beforeCell+'</td>'+(hasPost?'<td style="text-align:center">'+afterCell+'</td>':'')+'</tr>';
-      }).join('');
-      var summaryRow = hasPost
-        ? '<tr style="background:#f0f0f0;font-weight:700"><td colspan="3">Sonuç</td>'+
-          '<td style="text-align:center;color:'+(z10.q==='ok'?'#006633':z10.q==='wa'?'#885500':'#cc2200')+'">B&#246;lge '+z10.z+'</td>'+
-          '<td style="text-align:center;color:'+(z10after.q==='ok'?'#006633':z10after.q==='wa'?'#885500':'#cc2200')+'">B&#246;lge '+z10after.z+(z10after.z!==z10.z?' &#8593; &#304;yile&#351;ti':'')+'</td></tr>'
-        : '';
-      var banner = hasPost
-        ? '<div class="ibox '+(z10after.q==='ok'?'iok':z10after.q==='wa'?'iwarn':'ibad')+'">'+
-          '<b>'+cls10Names[r.isoSel]+'</b><br>'+
-          'Balans &#214;ncesi: V&#8320; = '+r.v0.toFixed(2)+' mm/s &#8594; B&#246;lge '+z10.z+'<br>'+
-          'Balans Sonras&#305;: V_son = '+vPost.toFixed(2)+' mm/s &#8594; B&#246;lge '+z10after.z+
-          (z10after.z!==z10.z?' &nbsp;&#10003; <b>B&#246;lge iyile&#351;ti!</b>':' &nbsp;(B&#246;lge de&#287;i&#351;medi)')+'</div>'
-        : '<div class="ibox '+z10k+'"><b>'+cls10Names[r.isoSel]+' | V&#8320; = '+r.v0.toFixed(2)+' mm/s &#8594; B&#246;lge '+z10.z+'</b></div>';
-      return banner+'<table>'+hdrRow+tableRows+summaryRow+'</table>';
-    })()+
-    '</div>'+
+    isoBanner+'<table>'+hdrRow+isoTableRows+isoSumRow+'</table></div>'+
     '<div class="sec"><div class="st">2. Tur De&#287;erlendirmesi</div><div class="sr">'+srt+'</div></div>'+
     postSec+rsec+bsec+
     '<div class="sec"><div class="st">Yerle&#351;tirme Talimat&#305;</div>'+
@@ -410,13 +376,55 @@ function doPdf(){
     '<div class="gs"><div class="gn gb">4</div><div><b>'+r.wc.toFixed(1)+' gram</b> a&#287;&#305;rl&#305;k tak&#305;n (r='+r.fr+' mm)</div></div>'+
     '<div class="gs"><div class="gn gg">5</div><div>Ekipman&#305; &#231;al&#305;&#351;t&#305;r&#305;n, do&#287;rulama &#246;l&#231;&#252;m&#252; al&#305;n</div></div>'+
     '<div class="gs"><div class="gn gg">6</div><div>Hedef: <b>&lt;'+r.tgt.toFixed(2)+' mm/s</b> (ISO '+r.iso.c+')</div></div></div>'+
+    '<div class="ft">Fan Balans &#8212; '+tn+'. &#199;al&#305;&#351;ma &#8212; Thearle 3 Nokta &#8212; v3.0 &#8212; Umut K&#252;&#231;&#252;k &#8212; '+td+'</div>'+
+    '</div>';
+}
+
+function getPdfCss(){
+  return '*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:10.5pt;color:#111}'+
+    '.pg{max-width:720px;margin:0 auto;padding:18px 24px}.pb{page-break-before:always}'+
+    '.hdr{background:#0d0d0d;color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}'+
+    '.hdr h1{font-size:15pt;margin:0;color:#fff}.hdr .dt{font-size:9pt;color:#aaa}'+
+    '.sec{margin-bottom:16px}.st{font-size:10.5pt;font-weight:700;color:#cc3311;border-bottom:2px solid #cc3311;padding-bottom:3px;margin-bottom:9px;letter-spacing:1px;text-transform:uppercase}'+
+    'table{width:100%;border-collapse:collapse;margin-bottom:8px}td,th{padding:5px 9px;border:1px solid #ddd;font-size:10pt}th{background:#f0f0f0;font-weight:700;text-align:left}'+
+    '.rb{font-size:15pt;font-weight:800}.bl{color:#1144aa}.rd{color:#cc3311}.gr{color:#006633}'+
+    '.ibox{padding:9px 12px;border-radius:3px;margin-bottom:10px;font-size:10pt}'+
+    '.iok{background:#e8f5e9;border:1.5px solid #006633;color:#006633}'+
+    '.iwarn{background:#fff8e0;border:1.5px solid #885500;color:#885500}'+
+    '.ibad{background:#fdecea;border:1.5px solid #cc2200;color:#cc2200}'+
+    '.sr{background:#fff8e0;border-left:4px solid #cc6600;padding:9px 12px;margin-bottom:10px;font-size:10pt}'+
+    '.gs{display:flex;gap:9px;margin-bottom:6px;align-items:flex-start;font-size:10pt}'+
+    '.gn{min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5pt;font-weight:700;color:#fff;flex-shrink:0}'+
+    '.gb{background:#2255cc}.gg{background:#006633}'+
+    '.ft{margin-top:20px;padding-top:8px;border-top:1px solid #ddd;font-size:8pt;color:#999;text-align:center}'+
+    '.pbtn{display:block;width:100%;padding:14px;background:#006633;color:#fff;border:none;border-radius:5px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:18px}'+
+    '@media print{.pbtn,.nop{display:none!important}@page{margin:12mm}}';
+}
+
+function openPdfWin(bodyHtml,title){
+  var h='<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>'+title+'</title>'+
+    '<style>'+getPdfCss()+'<\/style><\/head><body>'+bodyHtml+
     '<button class="pbtn" onclick="window.print()">&#11015; PDF OLARAK KAYDET / YAZDIR</button>'+
-    '<div class="ft">Fan Balan&#351; &#8212; Thearle 3 Nokta &#8212; v3.0 &#8212; Umut K&#252;&#231;&#252;k &#8212; '+td+'</div>'+
-    '</div><\/body><\/html>';
+    '<\/body><\/html>';
   var pw=null;try{pw=window.open('','_blank');}catch(e){}
   if(pw&&pw.document){pw.document.write(h);pw.document.close();}
-  else{var old2=document.getElementById('_pf');if(old2)old2.parentNode.removeChild(old2);var ifr=document.createElement('iframe');ifr.id='_pf';ifr.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff';document.body.appendChild(ifr);ifr.contentDocument.write(h);ifr.contentDocument.close();var cb=document.createElement('button');cb.textContent='X Kapat';cb.style.cssText='position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer';cb.onclick=function(){document.body.removeChild(ifr);document.body.removeChild(cb);};document.body.appendChild(cb);}
+  else{var old2=document.getElementById('_pf');if(old2)old2.parentNode.removeChild(old2);
+    var ifr=document.createElement('iframe');ifr.id='_pf';
+    ifr.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;border:none;background:#fff';
+    document.body.appendChild(ifr);ifr.contentDocument.write(h);ifr.contentDocument.close();
+    var cb=document.createElement('button');cb.textContent='X Kapat';
+    cb.style.cssText='position:fixed;top:12px;right:12px;z-index:100000;padding:10px 18px;background:#ff5533;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer';
+    cb.onclick=function(){document.body.removeChild(ifr);document.body.removeChild(cb);};
+    document.body.appendChild(cb);}
 }
+
+function doPdf(){
+  var r=SESSIONS[ACTIVE].res;if(!r){alert('Once hesaplama yapin.');return;}
+  var tn=ACTIVE+1,td=new Date().toLocaleDateString('tr-TR');
+  var vPost=getNum('vPost'),hasPost=(!isNaN(vPost)&&vPost>0);
+  openPdfWin(genSessionHtml(r,hasPost,vPost,tn,td),'Fan Balans '+tn+'. Çalışma');
+}
+
 
 function initApp(){var saved='';try{saved=localStorage.getItem('theme')||'dark';}catch(e){saved='dark';}if(saved==='light'){document.body.classList.add('light');document.getElementById('themeBtn').textContent='😎';}else{document.body.classList.remove('light');document.getElementById('themeBtn').textContent='🙂';}buildTabs();drawTicks('dTicks');}
 </script>
