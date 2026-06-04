@@ -367,14 +367,16 @@ function isoPanel(r, vPost, hasPost){
   var frac=Math.max(0,Math.min(1,(gv-lo)/(hi-lo)));
   var na=st+zi*seg+frac*seg;
   var ar=na*Math.PI/180, ndx=Math.sin(ar), ndy=-Math.cos(ar), npx=Math.cos(ar), npy=Math.sin(ar);
-  var tip=[cx+(rMid-3)*ndx, cy+(rMid-3)*ndy], nb1=[cx+4*npx,cy+4*npy], nb2=[cx-4*npx,cy-4*npy];
+  var ri=rMid*0.52, rt=rMid-2;
+  var pin=[cx+ri*ndx, cy+ri*ndy];
+  var tip=[cx+rt*ndx, cy+rt*ndy], nb1=[pin[0]+3.2*npx,pin[1]+3.2*npy], nb2=[pin[0]-3.2*npx,pin[1]-3.2*npy];
   var gauge='<svg viewBox="0 0 124 104" width="100%" style="max-width:108px;display:block;margin:0 auto">'+
     garc(st,st+seg,ZC.A)+garc(st+seg,st+2*seg,ZC.B)+garc(st+2*seg,st+3*seg,ZC.C)+garc(st+3*seg,st+4*seg,ZC.D)+
     '<polygon points="'+tip[0].toFixed(1)+','+tip[1].toFixed(1)+' '+nb1[0].toFixed(1)+','+nb1[1].toFixed(1)+' '+nb2[0].toFixed(1)+','+nb2[1].toFixed(1)+'" fill="#333"/>'+
-    '<circle cx="'+cx+'" cy="'+cy+'" r="3.3" fill="#333"/>'+
-    '<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-size="4.8" fill="#999" font-weight="700">&#214;L&#199;&#220;M SONUCU</text>'+
-    '<text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="12" fill="#2e8b46" font-weight="800">'+gv.toFixed(2)+'</text>'+
-    '<text x="'+cx+'" y="'+(cy+24)+'" text-anchor="middle" font-size="5" fill="#999">mm/s</text>'+
+    '<circle cx="'+pin[0].toFixed(1)+'" cy="'+pin[1].toFixed(1)+'" r="2.4" fill="#333"/>'+
+    '<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-size="4.8" fill="#999" font-weight="700">&#214;L&#199;&#220;M SONUCU</text>'+
+    '<text x="'+cx+'" y="'+(cy+9)+'" text-anchor="middle" font-size="12" fill="#2e8b46" font-weight="800">'+gv.toFixed(2)+'</text>'+
+    '<text x="'+cx+'" y="'+(cy+18)+'" text-anchor="middle" font-size="5" fill="#999">mm/s</text>'+
     '</svg>';
   var beforeZ=iso10816Zone(r.v0,sel).z;
   var statusShort=hasPost?(gv<r.v0?'&#304;Y&#304;LE&#350;ME VAR':'T&#304;TRE&#350;&#304;M ARTMI&#350;'):('B&#246;lge '+zone);
