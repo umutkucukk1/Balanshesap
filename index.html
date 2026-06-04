@@ -353,13 +353,13 @@ function isoPanel(r, vPost, hasPost){
   var ZTX={A:'#fff',B:'#4a3c00',C:'#fff',D:'#fff'};
   var chk='<svg width="13" height="13" viewBox="0 0 24 24" style="vertical-align:-2px"><circle cx="12" cy="12" r="11" fill="#3a9d4f"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var shield='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3a9d4f" stroke-width="2" style="vertical-align:-2px"><path d="M12 3l7 2.5V11c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5V5.5z"/><path d="M9 12l2 2 4-4"/></svg>';
-  function lrow(z,t,d){return '<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:5px"><div style="flex:0 0 18px;height:18px;background:'+ZC[z]+';color:'+ZTX[z]+';border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9pt;font-weight:800">'+z+'</div><div style="flex:1"><div style="font-size:8pt;font-weight:800;color:#222;line-height:1.1">'+t+'</div><div style="font-size:6.5pt;color:#777;line-height:1.15">'+d+'</div></div></div>';}
-  var legend='<div style="background:#14532d;color:#fff;font-size:7.5pt;font-weight:800;border-radius:5px;padding:4px 8px;margin-bottom:6px;text-align:center;letter-spacing:0.3px">ISO 10816 LEJANT TABLOSU</div>'+
+  function lrow(z,t,d){return '<div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px"><div style="flex:0 0 15px;height:15px;background:'+ZC[z]+';color:'+ZTX[z]+';border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:7.5pt;font-weight:800">'+z+'</div><div style="flex:1"><div style="font-size:7pt;font-weight:800;color:#222;line-height:1.05">'+t+'</div><div style="font-size:5.8pt;color:#777;line-height:1.05">'+d+'</div></div></div>';}
+  var legend='<div style="background:#14532d;color:#fff;font-size:6.5pt;font-weight:800;border-radius:4px;padding:3px 6px;margin-bottom:4px;text-align:center;letter-spacing:0.2px">ISO 10816 LEJANT TABLOSU</div>'+
     lrow('A','&#304;yi','Uzun s&#252;re &#231;al&#305;&#351;abilir')+
     lrow('B','Kabul edilebilir','S&#252;rekli &#231;al&#305;&#351;maya uygun')+
-    lrow('C','Alarm','K&#305;s&#305;tl&#305; &#231;al&#305;&#351;ma, bak&#305;m planlay&#305;n')+
+    lrow('C','Alarm','K&#305;s&#305;tl&#305; &#231;al&#305;&#351;ma, bak&#305;m')+
     lrow('D','Acil m&#252;dahale','Durdurun, hasar riski');
-  var cx=80,cy=80,rMid=52,thick=13,st=225,seg=67.5;
+  var cx=62,cy=60,rMid=40,thick=10,st=225,seg=67.5;
   function GP(a,rad){var t=a*Math.PI/180;return [cx+rad*Math.sin(t), cy-rad*Math.cos(t)];}
   function garc(a1,a2,col){var p1=GP(a1,rMid),p2=GP(a2,rMid),la=(a2-a1)>180?1:0;return '<path d="M'+p1[0].toFixed(1)+' '+p1[1].toFixed(1)+' A'+rMid+' '+rMid+' 0 '+la+' 1 '+p2[0].toFixed(1)+' '+p2[1].toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="'+thick+'"/>';}
   var zi={A:0,B:1,C:2,D:3}[zone];
@@ -367,30 +367,30 @@ function isoPanel(r, vPost, hasPost){
   var frac=Math.max(0,Math.min(1,(gv-lo)/(hi-lo)));
   var na=st+zi*seg+frac*seg;
   var ar=na*Math.PI/180, ndx=Math.sin(ar), ndy=-Math.cos(ar), npx=Math.cos(ar), npy=Math.sin(ar);
-  var tip=[cx+(rMid-3)*ndx, cy+(rMid-3)*ndy], nb1=[cx+5*npx,cy+5*npy], nb2=[cx-5*npx,cy-5*npy];
-  var gauge='<svg viewBox="0 0 160 134" width="100%" style="max-width:150px;display:block;margin:0 auto">'+
+  var tip=[cx+(rMid-3)*ndx, cy+(rMid-3)*ndy], nb1=[cx+4*npx,cy+4*npy], nb2=[cx-4*npx,cy-4*npy];
+  var gauge='<svg viewBox="0 0 124 104" width="100%" style="max-width:108px;display:block;margin:0 auto">'+
     garc(st,st+seg,ZC.A)+garc(st+seg,st+2*seg,ZC.B)+garc(st+2*seg,st+3*seg,ZC.C)+garc(st+3*seg,st+4*seg,ZC.D)+
     '<polygon points="'+tip[0].toFixed(1)+','+tip[1].toFixed(1)+' '+nb1[0].toFixed(1)+','+nb1[1].toFixed(1)+' '+nb2[0].toFixed(1)+','+nb2[1].toFixed(1)+'" fill="#333"/>'+
-    '<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#333"/>'+
-    '<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" font-size="6" fill="#999" font-weight="700">&#214;L&#199;&#220;M SONUCU</text>'+
-    '<text x="'+cx+'" y="'+(cy+23)+'" text-anchor="middle" font-size="16" fill="#2e8b46" font-weight="800">'+gv.toFixed(2)+'</text>'+
-    '<text x="'+cx+'" y="'+(cy+33)+'" text-anchor="middle" font-size="6.5" fill="#999">mm/s</text>'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="3.3" fill="#333"/>'+
+    '<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-size="4.8" fill="#999" font-weight="700">&#214;L&#199;&#220;M SONUCU</text>'+
+    '<text x="'+cx+'" y="'+(cy+16)+'" text-anchor="middle" font-size="12" fill="#2e8b46" font-weight="800">'+gv.toFixed(2)+'</text>'+
+    '<text x="'+cx+'" y="'+(cy+24)+'" text-anchor="middle" font-size="5" fill="#999">mm/s</text>'+
     '</svg>';
   var beforeZ=iso10816Zone(r.v0,sel).z;
   var statusShort=hasPost?(gv<r.v0?'&#304;Y&#304;LE&#350;ME VAR':'T&#304;TRE&#350;&#304;M ARTMI&#350;'):('B&#246;lge '+zone);
   var statusCol=hasPost?(gv<r.v0?'#15662f':'#a01722'):'#15662f';
-  var improveBlock='<div style="text-align:center;margin-top:5px;line-height:1.3">'+
-    '<div style="font-size:8.5pt;font-weight:800;color:'+statusCol+'">'+chk+' '+statusShort+'</div>'+
-    (hasPost?'<div style="font-size:8pt;margin-top:3px">'+zoneBadge(beforeZ,beforeZ)+' &#8594; '+zoneBadge(zone,zone)+'</div>':'')+
+  var improveBlock='<div style="text-align:center;margin-top:2px;line-height:1.2">'+
+    '<div style="font-size:7.5pt;font-weight:800;color:'+statusCol+'">'+chk+' '+statusShort+'</div>'+
+    (hasPost?'<div style="font-size:7pt;margin-top:2px">'+zoneBadge(beforeZ,beforeZ)+' &#8594; '+zoneBadge(zone,zone)+'</div>':'')+
     '</div>';
   function cr(c,z){var A=iso10816Limits(c);if(z==='A')return '0 &#8211; '+A[0].toFixed(2);if(z==='B')return A[0].toFixed(2)+' &#8211; '+A[1].toFixed(2);if(z==='C')return A[1].toFixed(2)+' &#8211; '+A[2].toFixed(2);return '&gt; '+A[2].toFixed(2);}
-  var tdS='border:1px solid #e3e3e3;padding:6px 4px;font-size:8pt;text-align:center';
-  var thS='border:1px solid #e3e3e3;padding:6px 4px;font-size:7.5pt;font-weight:800;text-align:center;background:#f4f4f4;color:#333';
-  function trow(z){return '<tr><td style="border:1px solid #e3e3e3;padding:6px 4px;background:'+ZC[z]+';color:'+ZTX[z]+';font-weight:800;text-align:center;font-size:9pt;width:9%">'+z+'</td><td style="'+tdS+'">'+cr('1',z)+'</td><td style="'+tdS+'">'+cr('2',z)+'</td><td style="'+tdS+'">'+cr('3',z)+'</td><td style="'+tdS+'">'+cr('4',z)+'</td></tr>';}
-  var tbl='<div style="font-size:8pt;font-weight:800;color:#333;text-align:center;margin-bottom:6px">T&#304;TRE&#350;&#304;M &#350;&#304;DDET&#304; (mm/s RMS)</div>'+
+  var tdS='border:1px solid #e3e3e3;padding:3px 3px;font-size:6.5pt;text-align:center';
+  var thS='border:1px solid #e3e3e3;padding:3px 3px;font-size:6.3pt;font-weight:800;text-align:center;background:#f4f4f4;color:#333';
+  function trow(z){return '<tr><td style="border:1px solid #e3e3e3;padding:3px 3px;background:'+ZC[z]+';color:'+ZTX[z]+';font-weight:800;text-align:center;font-size:7.5pt;width:9%">'+z+'</td><td style="'+tdS+'">'+cr('1',z)+'</td><td style="'+tdS+'">'+cr('2',z)+'</td><td style="'+tdS+'">'+cr('3',z)+'</td><td style="'+tdS+'">'+cr('4',z)+'</td></tr>';}
+  var tbl='<div style="font-size:7pt;font-weight:800;color:#333;text-align:center;margin-bottom:4px">T&#304;TRE&#350;&#304;M &#350;&#304;DDET&#304; (mm/s RMS)</div>'+
     '<table style="width:100%;border-collapse:collapse"><tr><th style="'+thS+';width:9%"></th><th style="'+thS+'">SINIF I</th><th style="'+thS+'">SINIF II</th><th style="'+thS+'">SINIF III</th><th style="'+thS+'">SINIF IV</th></tr>'+
     trow('A')+trow('B')+trow('C')+trow('D')+'</table>'+
-    '<div style="margin-top:8px;font-size:8pt;color:#444;line-height:1.4">'+shield+' &#214;l&#231;&#252;m sonucu <b>S&#305;n&#305;f '+roman[sel]+' i&#231;in B&#246;lge '+zone+'\u2019dad&#305;r.</b></div>';
+    '<div style="margin-top:5px;font-size:6.8pt;color:#444;line-height:1.35">'+shield+' &#214;l&#231;&#252;m sonucu <b>S&#305;n&#305;f '+roman[sel]+' i&#231;in B&#246;lge '+zone+'\u2019dad&#305;r.</b></div>';
   return '<div style="border:1px solid #e2e2e2;border-radius:8px;padding:7px 10px;background:#fff;margin:4px 0 2px">'+
     '<table style="width:100%;border-collapse:collapse"><tr>'+
       '<td style="width:30%;vertical-align:top;padding-right:8px">'+legend+'</td>'+
@@ -615,7 +615,7 @@ function getPdfCss(){
     '.dialbox{border:1px solid #ebebeb;border-radius:7px;padding:6px;text-align:center}.dialbox svg{max-width:230px!important}.note{display:flex;align-items:center;gap:7px;background:#f6f6f6;border-radius:6px;padding:7px 11px;font-size:8pt;color:#777;margin-top:7px}'+
     '.pbtn{display:block;width:auto;min-width:340px;max-width:480px;margin:20px auto 12px;padding:16px 36px;background:#00833e;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;box-shadow:0 2px 10px rgba(0,131,62,0.35);text-align:center}'+
     '.pbtn:hover{background:#00602d}'+
-    '@media print{.pbtn,.nop{display:none!important}@page{margin:6mm;size:A4}.pg{padding:0 4mm!important}.topbar{padding:0 2px 3px!important}.logo{height:28px!important}.dept{font-size:8pt!important}.hdr{padding:6px 13px!important}.hdr h1{font-size:12pt!important}.hsub{font-size:8.5pt!important}.dt{font-size:8.5pt!important}.tbar{padding:5px 12px!important;margin-bottom:4px!important;font-size:9pt!important}.rtitle{font-size:8.5pt!important;margin:5px 0 3px!important}.sechead2{margin:4px 0 3px!important}.snum2{width:17px!important;height:17px!important;font-size:9pt!important}.stit2{font-size:8.5pt!important}.okbanner{margin:3px 0!important;padding:6px 12px!important;font-size:8pt!important}.cards{gap:7px!important;margin:5px 0!important}.statcard{padding:6px 5px!important}.sccirc{width:26px!important;height:26px!important;margin-bottom:1px!important}.sclbl{font-size:7pt!important;min-height:18px!important}.scval{font-size:14pt!important}.scunit{font-size:7.5pt!important}.iconlist{padding:1px 11px!important}.ir{padding:2px 0!important}.irl{font-size:8pt!important}.irv{font-size:8pt!important}.lr2{margin-top:2px!important}.lr2 td{padding:2px 9px!important;font-size:7.5pt!important}.grid td,.grid th{padding:1px 4px!important;font-size:6.5pt!important}.ibox{padding:4px 9px!important;margin-bottom:3px!important;font-size:7.5pt!important}.trophy{gap:10px!important;padding:8px 13px!important;margin-top:5px!important;font-size:8.5pt!important}.trophy b{font-size:10pt!important}.trophy svg{width:34px!important;height:34px!important}.steps2{padding:6px 11px!important}.st2{padding:1.5px 0!important;font-size:8pt!important}.stn{width:16px!important;height:16px!important;font-size:8pt!important}.dialbox{padding:4px!important}.dialbox svg{max-width:195px!important}.note{margin-top:4px!important;padding:5px 10px!important;font-size:7pt!important}}';
+    '@media print{.pbtn,.nop{display:none!important}@page{margin:6mm;size:A4}.pg{padding:0 4mm!important}.topbar{padding:0 2px 3px!important}.logo{height:28px!important}.dept{font-size:8pt!important}.hdr{padding:6px 13px!important}.hdr h1{font-size:12pt!important}.hsub{font-size:8.5pt!important}.dt{font-size:8.5pt!important}.tbar{padding:5px 12px!important;margin-bottom:4px!important;font-size:9pt!important}.rtitle{font-size:8.5pt!important;margin:4px 0 2px!important}.sechead2{margin:4px 0 3px!important}.snum2{width:17px!important;height:17px!important;font-size:9pt!important}.stit2{font-size:8.5pt!important}.okbanner{margin:3px 0!important;padding:6px 12px!important;font-size:8pt!important}.cards{gap:7px!important;margin:3px 0!important}.statcard{padding:4px 5px!important}.sccirc{width:22px!important;height:22px!important;margin-bottom:1px!important}.sclbl{font-size:7pt!important;min-height:14px!important}.scval{font-size:13pt!important}.scunit{font-size:7.5pt!important}.iconlist{padding:1px 11px!important}.ir{padding:2px 0!important}.irl{font-size:8pt!important}.irv{font-size:8pt!important}.lr2{margin-top:2px!important}.lr2 td{padding:2px 9px!important;font-size:7.5pt!important}.grid td,.grid th{padding:1px 4px!important;font-size:6.5pt!important}.ibox{padding:4px 9px!important;margin-bottom:3px!important;font-size:7.5pt!important}.trophy{gap:10px!important;padding:8px 13px!important;margin-top:5px!important;font-size:8.5pt!important}.trophy b{font-size:10pt!important}.trophy svg{width:34px!important;height:34px!important}.steps2{padding:6px 11px!important}.st2{padding:1.5px 0!important;font-size:8pt!important}.stn{width:16px!important;height:16px!important;font-size:8pt!important}.dialbox{padding:4px!important}.dialbox svg{max-width:155px!important}.note{margin-top:4px!important;padding:5px 10px!important;font-size:7pt!important}}';
 }
 
 function openPdfWin(bodyHtml,title){
