@@ -367,16 +367,20 @@ function isoPanel(r, vPost, hasPost){
   var frac=Math.max(0,Math.min(1,(gv-lo)/(hi-lo)));
   var na=st+zi*seg+frac*seg;
   var ar=na*Math.PI/180, ndx=Math.sin(ar), ndy=-Math.cos(ar), npx=Math.cos(ar), npy=Math.sin(ar);
-  var ri=rMid*0.52, rt=rMid-2;
+  var ri=rMid*0.7, rt=rMid-1;
   var pin=[cx+ri*ndx, cy+ri*ndy];
   var tip=[cx+rt*ndx, cy+rt*ndy], nb1=[pin[0]+3.2*npx,pin[1]+3.2*npy], nb2=[pin[0]-3.2*npx,pin[1]-3.2*npy];
+  var bL=GP(st+seg,rMid+9), bT=GP(st+2*seg,rMid+9), bR=GP(st+3*seg,rMid+9);
   var gauge='<svg viewBox="0 0 124 104" width="100%" style="max-width:108px;display:block;margin:0 auto">'+
     garc(st,st+seg,ZC.A)+garc(st+seg,st+2*seg,ZC.B)+garc(st+2*seg,st+3*seg,ZC.C)+garc(st+3*seg,st+4*seg,ZC.D)+
+    '<text x="'+bL[0].toFixed(1)+'" y="'+bL[1].toFixed(1)+'" text-anchor="middle" font-size="4.2" fill="#555" font-weight="700">'+T[0].toFixed(2)+'</text>'+
+    '<text x="'+bT[0].toFixed(1)+'" y="'+bT[1].toFixed(1)+'" text-anchor="middle" font-size="4.2" fill="#555" font-weight="700">'+T[1].toFixed(2)+'</text>'+
+    '<text x="'+bR[0].toFixed(1)+'" y="'+bR[1].toFixed(1)+'" text-anchor="middle" font-size="4.2" fill="#555" font-weight="700">'+T[2].toFixed(2)+'</text>'+
     '<polygon points="'+tip[0].toFixed(1)+','+tip[1].toFixed(1)+' '+nb1[0].toFixed(1)+','+nb1[1].toFixed(1)+' '+nb2[0].toFixed(1)+','+nb2[1].toFixed(1)+'" fill="#333"/>'+
     '<circle cx="'+pin[0].toFixed(1)+'" cy="'+pin[1].toFixed(1)+'" r="2.4" fill="#333"/>'+
-    '<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-size="4.8" fill="#999" font-weight="700">&#214;L&#199;&#220;M SONUCU</text>'+
-    '<text x="'+cx+'" y="'+(cy+9)+'" text-anchor="middle" font-size="12" fill="#2e8b46" font-weight="800">'+gv.toFixed(2)+'</text>'+
-    '<text x="'+cx+'" y="'+(cy+18)+'" text-anchor="middle" font-size="5" fill="#999">mm/s</text>'+
+    '<text x="'+cx+'" y="'+(cy-1)+'" text-anchor="middle" font-size="4.8" fill="#999" font-weight="700">&#214;L&#199;&#220;M SONUCU</text>'+
+    '<text x="'+cx+'" y="'+(cy+11)+'" text-anchor="middle" font-size="12" fill="#2e8b46" font-weight="800">'+gv.toFixed(2)+'</text>'+
+    '<text x="'+cx+'" y="'+(cy+20)+'" text-anchor="middle" font-size="5" fill="#999">mm/s</text>'+
     '</svg>';
   var beforeZ=iso10816Zone(r.v0,sel).z;
   var statusShort=hasPost?(gv<r.v0?'&#304;Y&#304;LE&#350;ME VAR':'T&#304;TRE&#350;&#304;M ARTMI&#350;'):('B&#246;lge '+zone);
@@ -396,7 +400,7 @@ function isoPanel(r, vPost, hasPost){
   return '<div style="border:1px solid #e2e2e2;border-radius:8px;padding:7px 10px;background:#fff;margin:4px 0 2px">'+
     '<table style="width:100%;border-collapse:collapse"><tr>'+
       '<td style="width:30%;vertical-align:top;padding-right:8px">'+legend+'</td>'+
-      '<td style="width:30%;vertical-align:middle;border-left:1px solid #eee;border-right:1px solid #eee;padding:0 8px">'+gauge+improveBlock+'</td>'+
+      '<td style="width:30%;vertical-align:middle;border-left:1px solid #eee;border-right:1px solid #eee;padding:0 8px">'+'<div style="text-align:center;font-size:7pt;font-weight:800;color:#14532d;letter-spacing:0.5px;margin-bottom:1px">SINIF '+roman[sel]+'</div>'+gauge+improveBlock+'</td>'+
       '<td style="width:40%;vertical-align:top;padding-left:8px">'+tbl+'</td>'+
     '</tr></table>'+
   '</div>';
